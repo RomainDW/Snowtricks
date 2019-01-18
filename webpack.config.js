@@ -18,6 +18,7 @@ Encore
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
     .addEntry('app', './assets/js/app.js')
+    .addEntry('home', './assets/js/pages/home.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
@@ -50,6 +51,18 @@ Encore
     // uncomment if you use API Platform Admin (composer req api-admin)
     //.enableReactPreset()
     //.addEntry('admin', './assets/js/admin.js')
+    .copyFiles({
+        from: './assets/images',
+
+        // optional target path, relative to the output dir
+        //to: 'images/[path][name].[ext]',
+
+        // if versioning is enabled, add the file hash too
+        //to: 'images/[path][name].[hash:8].[ext]',
+
+        // only copy files matching this pattern
+        //pattern: /\.(png|jpg|jpeg)$/
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
