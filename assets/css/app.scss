@@ -8,5 +8,15 @@ body, html {
   min-height:100%;
 }
 
+body {
+  background-color: #EEEEEE;
+}
+
+main {
+  padding: 4rem 0;
+}
+
 // COMPONENTS
 @import "components/header";
+@import "components/footer";
+@import "components/navbar";
