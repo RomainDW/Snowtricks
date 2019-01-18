@@ -10,7 +10,9 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-    <nav>{% block nav %}{% include '_partials/nav.html.twig' %}{% endblock %}</nav>
+    <nav class="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">
+        {% block nav %}{% include '_partials/nav.html.twig' %}{% endblock %}
+    </nav>
     {% block header %}{% endblock %}
     <main>{% block body %}{% endblock %}</main>
     <footer>{% block footer %}{% include '_partials/footer.html.twig' %}{% endblock %}</footer>
