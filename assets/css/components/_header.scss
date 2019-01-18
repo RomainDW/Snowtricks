@@ -5,4 +5,13 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  @include e('title') {
+    font-weight: 400;
+  }
+
+  @include e('subtitle') {
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
 }
