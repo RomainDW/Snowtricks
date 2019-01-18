@@ -2,6 +2,7 @@ require('../../css/pages/home.scss');
 
 $(function () {
 
+    /* Start Navbar */
     let navbar = $('.navbar');
 
     checkScroll();
@@ -17,6 +18,16 @@ $(function () {
             navbar.css('background-color', '#343a40');
         }
     }
+    /* End navbar */
 
+    /* Start Smooth scrolling */
+    $('.masthead__button').click(function(e) {
+        e.preventDefault();
+        // scrollTo( $("#content") );
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#content").offset().top
+        }, 800);
+    });
+    /* End Smooth scrolling */
 
 });
