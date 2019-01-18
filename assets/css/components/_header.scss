@@ -42,4 +42,22 @@
       font-size: 1rem;
     }
   }
+
+  @include e('button') {
+    position: absolute;
+    font-size: 3rem;
+    cursor: pointer;
+    bottom: 20px;
+    right: 50%;
+    z-index: 2;
+    opacity: 0.5;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
