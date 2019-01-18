@@ -12,17 +12,17 @@
     {% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm fixed-top navbar-dark">
         {% block nav %}{% include '_partials/nav.html.twig' %}{% endblock %}
     </nav>
 
     {% block header %}{% endblock %}
 
-    <main>
+    <main class="container">
         {% block body %}{% endblock %}
     </main>
 
-    <footer>
+    <footer class="page-footer bg-dark text-white">
         {% block footer %}{% include '_partials/footer.html.twig' %}{% endblock %}
     </footer>
 
