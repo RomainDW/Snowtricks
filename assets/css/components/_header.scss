@@ -1,17 +1,45 @@
 .masthead {
-  height: calc(100vh - #{$navHeight});
+  position: relative;
+  height: calc(100vh);
   min-height: 500px;
-  background-image: url('https://source.unsplash.com/BtbjCFUvBXs/1920x1080');
+  background-image: url('../images/snow-header.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  color: #FFFFFF;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.4;
+    background-color: #000000;
+  }
+
+  .content-title {
+    z-index: 2;
+  }
 
   @include e('title') {
     font-weight: 400;
+
+    @media screen and (min-width: $medium) {
+      font-size: 3rem;
+    }
+
+    @media screen and (max-width: $small) {
+      font-size: 2rem;
+    }
   }
 
   @include e('subtitle') {
     font-size: 1.5rem;
     font-weight: 300;
+
+    @media screen and (max-width: $small) {
+      font-size: 1rem;
+    }
   }
 }
