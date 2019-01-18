@@ -13,16 +13,16 @@
     <!-- Start Navbar Mobile -->
     <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
+            <li class="nav-item {% if app.request.get('_route') == 'homepage' %}active{% endif %}">
                 <a class="nav-link" href="{{ url('homepage') }}">Accueil <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Tricks</a>
+            <li class="nav-item {% if app.request.get('_route') == 'tricks' %}active{% endif %}">
+                <a class="nav-link" href="#">Figures</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if app.request.get('_route') == 'login' %}active{% endif %}">
                 <a class="nav-link" href="#">Connexion</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if app.request.get('_route') == 'register' %}active{% endif %}">
                 <a class="nav-link" href="#">Inscription</a>
             </li>
         </ul>
