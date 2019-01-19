@@ -30,4 +30,14 @@ $(function () {
     });
     /* End Smooth scrolling */
 
+    /* Start Pagination */
+    $('body').on('click', '.page-link', function (e) {
+        e.preventDefault();
+
+        $.post($(this).attr('href'), function (data) {
+            $('#content').html(data);
+        })
+    })
+    /* End Pagination */
+
 });
