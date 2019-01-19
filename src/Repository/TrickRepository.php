@@ -19,32 +19,30 @@ class TrickRepository extends ServiceEntityRepository
         parent::__construct($registry, Trick::class);
     }
 
-    // /**
-    //  * @return Trick[] Returns an array of Trick objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param int $first_page
+     * @param int $results_per_page
+     * @return mixed
+     */
+    public function getTricksPagination(int $first_page, int $results_per_page)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+            ->setFirstResult($first_page)
+            ->setMaxResults($results_per_page)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Trick
+    /**
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getNumberOfTricks()
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('n')
+            ->select('COUNT(n)')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getSingleScalarResult();
     }
-    */
 }
