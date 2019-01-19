@@ -1,0 +1,18 @@
+<nav>
+    <ul class="pagination">
+
+        <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ path('pagination', {'page': current_page - 1}) }}" id="page-preview">Previous</a>
+        </li>
+
+        {% for i in 1..total_page %}
+            <li class="page-item {% if current_page == i %}active{% endif %}">
+                <a class="page-link" href="{{ path('pagination', {'page': i}) }}">{{ i }}</a>
+            </li>
+        {% endfor %}
+
+        <li class="page-item {% if current_page == total_page %}disabled{% endif %}">
+            <a class="page-link" id="page-next" href="{{ path('pagination', {'page': current_page + 1}) }}">Next</a>
+        </li>
+    </ul>
+</nav>
