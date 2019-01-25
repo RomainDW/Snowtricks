@@ -82,12 +82,19 @@ function loadPagination(){
                 } else {
                     loader.html('<div class="alert alert-warning" role="alert">Oops, il n\'y a plus d\'articles.</div>');
                 }
+
+                loader.find('.loader-gif').hide();
+                setTimeout(function () {
+                    loader.find('.loader-btn').show();
+                }, 300);
+
+                $("html, body").animate({
+                    scrollTop: $('.page-footer').offset().top
+                    - $(window).height()
+                }, 1000);
             });
 
-            loader.find('.loader-gif').hide();
-            setTimeout(function () {
-                loader.find('.loader-btn').show();
-            }, 300)
+
 
         }, 1500);
     });
