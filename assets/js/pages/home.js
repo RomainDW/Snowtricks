@@ -39,12 +39,12 @@ $(function () {
 
 function loadPagination(){
 
-    // cette variable contient notre offset
-    // par défaut à 6 puisqu'on a d'office les 6 premiers éléments au chargement de la page
-    let offset = 6;
-
     let cardDeck = $('.card-deck');
     let loader = cardDeck.find('#loader');
+
+    // cette variable contient notre offset
+    // par défaut à 6 puisqu'on a d'office les 6 premiers éléments au chargement de la page
+    let offset = cardDeck.data('number-of-results');
 
     // on initialise ajaxready à true au premier chargement de la fonction
     $(window).data('ajaxready', true);
@@ -72,7 +72,7 @@ function loadPagination(){
                     cardDeck.find($('#loader')).before(data);
 
                     // enfin on incrémente notre offset de 6 afin que la fois d'après il corresponde toujours
-                    offset+= 6;
+                    offset+= offset;
 
                     /* une fois tous les traitements effectués,
                      * on remet ajaxready à true
