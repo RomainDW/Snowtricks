@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('login') }}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <!-- Icon -->
+            <div class="fadeIn first">
+                <img src="{{ asset('build/images/user_icon.svg') }}" id="icon" alt="User Icon" />
+            </div>
+
+            <!-- Login Form -->
+            <form method="post">
+                <input type="email" id="inputEmail" class="fadeIn second" name="email" placeholder="e-mail" value="{{ last_username }}" required autofocus>
+                <input type="password" id="inputPassword" class="fadeIn third" name="password" placeholder="mot de passe" required>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <input type="submit" class="fadeIn fourth" value="Connexion">
+            </form>
+
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+                <a class="underlineHover" href="#">Mot de passe oublié ?</a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
