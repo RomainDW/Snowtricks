@@ -5,3 +5,14 @@
 .card {
   margin-bottom: 2rem !important;
 }
+
+#loader {
+  .loader-gif {
+    display: none;
+  }
+  .loader-btn {
+    .fas {
+      font-size: 12px;
+    }
+  }
+}
