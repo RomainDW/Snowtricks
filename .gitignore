@@ -1,4 +1,4 @@
-/src/Migrations/*
+/src/Migrations/Version*.php
 
 ###> symfony/framework-bundle ###
 /.env.local
