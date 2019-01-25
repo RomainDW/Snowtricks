@@ -33,6 +33,7 @@ $(function () {
 
     /* Init */
     loadPagination();
+    displayBackToTop();
 
 });
 
@@ -90,4 +91,11 @@ function loadPagination(){
 
         }, 1500);
     });
+}
+
+function displayBackToTop () {
+
+    $( document ).one('ajaxComplete', function () {
+        $('.cd-top').css('display', 'inline-block');
+    })
 }
