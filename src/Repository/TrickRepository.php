@@ -20,29 +20,18 @@ class TrickRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $first_page
+     * @param int $first_result
      * @param int $results_per_page
      * @return mixed
      */
-    public function getTricksPagination(int $first_page, int $results_per_page)
+    public function getTricksPagination(int $first_result, int $results_per_page)
     {
         return $this->createQueryBuilder('t')
-            ->setFirstResult($first_page)
+            ->setFirstResult($first_result)
             ->setMaxResults($results_per_page)
+            ->orderBy('t.createdAt', 'DESC')
             ->getQuery()
             ->getResult()
         ;
-    }
-
-    /**
-     * @return mixed
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getNumberOfTricks()
-    {
-        return $this->createQueryBuilder('n')
-            ->select('COUNT(n)')
-            ->getQuery()
-            ->getSingleScalarResult();
     }
 }
