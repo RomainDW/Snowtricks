@@ -1,9 +1,14 @@
 .page-alert {
   position: fixed;
   z-index: 10;
-  border-color: #155724;
   bottom: 2%;
   margin: 0 10px;
+  &.alert-success {
+    border-color: #155724;
+  }
+  &.alert-danger {
+    border-color: #721c24;
+  }
   @media screen and (min-width: $small) {
     margin: 0;
     bottom: 30px;
