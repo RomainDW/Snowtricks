@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('login') }}
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+
+            <!-- Icon -->
+            <div class="fadeIn first">
+                <img src="{{ asset('build/images/user_icon.svg') }}" id="icon" alt="User Icon" />
+            </div>
+
+            <!-- Login Form -->
+            {{ form_start(registrationForm) }}
+            <div class="registration-errors">
+                {{ form_errors(registrationForm) }}
+            </div>
+
+            {{ form_row(registrationForm.email, { 'attr' : {'class' : 'fadeIn second'} }) }}
+                {{ form_row(registrationForm.plainPassword.first, { 'attr' : {'class' : 'fadeIn third'} }) }}
+                {{ form_row(registrationForm.plainPassword.second, { 'attr' : {'class' : 'fadeIn third'} }) }}
+                <input type="submit" class="fadeIn fourth" value="Inscription">
+            {{ form_end(registrationForm) }}
+
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+                <a class="underlineHover" href="{{ path('app_login') }}">J'ai déjà un compte</a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
