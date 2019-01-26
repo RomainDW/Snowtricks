@@ -12,6 +12,19 @@ require('../css/app.scss');
 // const $ = require('jquery');
 
 (function(){
+    backToTopInit();
+    logoutInit();
+})();
+
+
+function logoutInit() {
+    $( '.js-logout, .js-cancel' ).on('click', function () {
+        $( '.logout-modal' ).toggle();
+        $( 'body').toggleClass('logout');
+    })
+}
+
+function backToTopInit() {
     var backTop = document.getElementsByClassName('js-cd-top')[0],
         // browser window scroll (in pixels) after which the "back to top" link is shown
         offset = 300,
@@ -85,4 +98,4 @@ require('../css/app.scss');
         }
         if (classList.length > 1) removeClass(el, classList.slice(1).join(' '));
     }
-})();
+}

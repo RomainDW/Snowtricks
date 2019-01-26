@@ -1,4 +1,41 @@
 .navbar {
   background-color: #343a40;
   transition: all 0.3s;
+
+  .navbar-brand {
+    font-family: 'Pacifico', cursive;
+  }
+
+  .logout-modal {
+    display: none;
+    background: #fff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    border: solid 1px #FFFFFF;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+  }
+}
+
+body {
+  &:before {
+    display: none;
+    content: '';
+    background-color: #616161;
+    opacity: 0.5;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+  }
+
+  &.logout:before {
+    display: block;
+  }
 }

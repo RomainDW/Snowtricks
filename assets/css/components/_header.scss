@@ -23,6 +23,7 @@
   }
 
   @include e('title') {
+    font-family: 'Pacifico', cursive;
     font-weight: 400;
 
     @media screen and (min-width: $medium) {
@@ -35,6 +36,7 @@
   }
 
   @include e('subtitle') {
+    font-family: 'Pacifico', cursive;
     font-size: 1.5rem;
     font-weight: 300;
 
@@ -48,7 +50,8 @@
     font-size: 3rem;
     cursor: pointer;
     bottom: 20px;
-    right: 50%;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 2;
     opacity: 0.5;
     -webkit-transition: all 0.3s;

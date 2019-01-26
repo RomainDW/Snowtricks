@@ -1,3 +1,6 @@
+// FONTS
+@import url('https://fonts.googleapis.com/css?family=Pacifico');
+
 // VARIABLES
 @import "tools/variables";
 @import "tools/mixins";
@@ -21,3 +24,4 @@ main {
 @import "components/footer";
 @import "components/navbar";
 @import "components/back-to-top";
+@import "components/alerts";
