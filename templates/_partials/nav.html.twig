@@ -24,10 +24,10 @@
                 <li class="nav-item {% if app.request.get('_route') == 'app_login' %}active{% endif %}">
                     <a class="nav-link" href="{{ url('app_login') }}">Connexion</a>
                 </li>
+                <li class="nav-item {% if app.request.get('_route') == 'register' %}active{% endif %}">
+                    <a class="nav-link" href="{{ url('app_login') }}">Inscription</a>
+                </li>
             {% endif %}
-            <li class="nav-item {% if app.request.get('_route') == 'register' %}active{% endif %}">
-                <a class="nav-link" href="{{ url('app_login') }}">Inscription</a>
-            </li>
         </ul>
     </div>
     <!-- End Navbar Mobile -->
