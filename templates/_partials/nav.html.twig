@@ -24,8 +24,8 @@
                 <li class="nav-item {% if app.request.get('_route') == 'app_login' %}active{% endif %}">
                     <a class="nav-link" href="{{ url('app_login') }}">Connexion</a>
                 </li>
-                <li class="nav-item {% if app.request.get('_route') == 'register' %}active{% endif %}">
-                    <a class="nav-link" href="{{ url('app_login') }}">Inscription</a>
+                <li class="nav-item {% if app.request.get('_route') == 'app_register' %}active{% endif %}">
+                    <a class="nav-link" href="{{ url('app_register') }}">Inscription</a>
                 </li>
             {% endif %}
         </ul>
