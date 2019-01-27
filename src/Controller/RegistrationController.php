@@ -38,7 +38,7 @@ class RegistrationController extends AbstractController
                     $user,
                     $form->get('plainPassword')->getData()
                 )
-            )->setRoles(['ROLE_USER']);
+            )->setRoles(['ROLE_USER_NOT_VERIFIED']);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
