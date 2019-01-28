@@ -38,6 +38,11 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $vkey;
+
     public function getId()
     {
         return $this->id;
@@ -71,8 +76,6 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -114,5 +117,17 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getVkey(): ?string
+    {
+        return $this->vkey;
+    }
+
+    public function setVkey(string $vkey): self
+    {
+        $this->vkey = $vkey;
+
+        return $this;
     }
 }
