@@ -25,12 +25,12 @@ class AccountVerification
         $hasAccess = in_array('ROLE_USER_NOT_VERIFIED', $user->getRoles());
 
         if (!$hasAccess) {
-            return 'Votre compte est déjà vérifié';
+            return false;
         } else {
             $user->setRoles(['ROLE_USER']);
             $this->manager->persist($user);
             $this->manager->flush();
-            return "Merci d'avoir vérifié votre compte, vous êtes maintenant connecté !";
+            return true;
         }
     }
 }
