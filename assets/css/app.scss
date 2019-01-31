@@ -2,23 +2,12 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico');
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
-// VARIABLES
+// TOOLS
 @import "tools/variables";
 @import "tools/mixins";
 
 // STYLE GUIDE
-html {
-  height: 100%;
-}
-body {
-  min-height:100%;
-  background-color: #EEEEEE;
-  font-family: 'Roboto', sans-serif;
-}
-
-main {
-  padding: 4rem 0;
-}
+@import "tools/styleguide";
 
 // COMPONENTS
 @import "components/header";
