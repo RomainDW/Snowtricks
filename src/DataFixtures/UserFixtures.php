@@ -27,6 +27,7 @@ class UserFixtures extends Fixture
 
         $user->setPassword($this->passwordEncoder->encodePassword(
             $user, 'password'))
+            ->setUsername('Romain')
             ->setEmail('user@email.com')
             ->setRoles(['ROLE_USER'])
             ->setVkey($vkey);

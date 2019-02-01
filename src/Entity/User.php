@@ -43,6 +43,11 @@ class User implements UserInterface
      */
     private $vkey;
 
+    /**
+     * @ORM\Column(type="string", length=60)
+     */
+    private $username;
+
     public function getId()
     {
         return $this->id;
@@ -67,7 +72,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
     }
 
     /**
@@ -127,6 +132,13 @@ class User implements UserInterface
     public function setVkey(string $vkey): self
     {
         $this->vkey = $vkey;
+
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }
