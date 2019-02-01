@@ -11,9 +11,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationController extends AbstractController
 {
+    private $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     /**
      * @Route("/register", name="app_register")
      *
@@ -27,6 +35,11 @@ class RegistrationController extends AbstractController
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer): Response
     {
+        if ($this->isGranted('ROLE_USER')) {
+            $this->addFlash('error', 'Vous êtes déjà connecté(e)');
+            return $this->redirectToRoute('homepage');
+        }
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
@@ -34,41 +47,48 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $userDTO = $form->getData();
             // encode the plain password
-            $user->setPassword($passwordEncoder->encodePassword($user, $userDTO->getPassword()))
-                ->setEmail($userDTO->getEmail())
-                ->setUsername($userDTO->getUsername())
-                ->setVkey($userDTO->getVkey())
-                ->setRoles($userDTO->getRole());
+            $userDTO->password = $passwordEncoder->encodePassword($user, $userDTO->password);
+            $user->createFromRegistration($userDTO);
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $violations = $this->validator->validate($user);
 
-            $message = (new \Swift_Message('Confirmation de création de compte'))
-                ->setFrom('noreply@snowtricks.com')
-                ->setTo('romain.ollier34@gmail.com')
-                ->setBody(
-                    $this->renderView(
-                        'emails/registration.html.twig',
-                        ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->getVkey()]
-                    ),
-                    'text/html'
-                )
-                /*
-                 * plaintext version
-                ->addPart(
-                    $this->renderView(
-                        'emails/registration.txt.twig',
-                        ['name' => $name]
-                    ),
-                    'text/plain'
-                )
-                */
-            ;
+            if (0 !== count($violations)) {
 
-            $mailer->send($message);
+                foreach ($violations as $violation) {
+                    $this->addFlash('error', $violation->getMessage());
+                }
 
-            return $this->redirectToRoute('app_mail_sent', ['id' => $user->getId()]);
+            } else {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $message = (new \Swift_Message('Confirmation de création de compte'))
+                    ->setFrom('noreply@snowtricks.com')
+                    ->setTo('romain.ollier34@gmail.com')
+                    ->setBody(
+                        $this->renderView(
+                            'emails/registration.html.twig',
+                            ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->vkey]
+                        ),
+                        'text/html'
+                    )
+                    /*
+                     * plaintext version
+                    ->addPart(
+                        $this->renderView(
+                            'emails/registration.txt.twig',
+                            ['name' => $name]
+                        ),
+                        'text/plain'
+                    )
+                    */
+                ;
+
+                $mailer->send($message);
+
+                return $this->redirectToRoute('app_mail_sent', ['id' => $user->getId()]);
+            }
         }
 
         return $this->render('registration/register.html.twig', [
@@ -85,7 +105,7 @@ class RegistrationController extends AbstractController
      */
     public function mailSent(User $user)
     {
-        $hasAccess = in_array('ROLE_USER_NOT_VERIFIED', $user->getRoles());
+        $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
 
         if (!$hasAccess) {
             $this->addFlash('error', 'Votre compte est déjà vérifié.');
