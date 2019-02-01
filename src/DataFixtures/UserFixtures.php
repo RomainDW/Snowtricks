@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\DTO\UserRegistrationDTO;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -18,19 +19,20 @@ class UserFixtures extends Fixture
 
     /**
      * @param ObjectManager $manager
+     *
      * @throws \Exception
      */
     public function load(ObjectManager $manager)
     {
         $user = new User();
-        $vkey = md5(random_bytes(10));
+        $userRegistrationDTO = new UserRegistrationDTO();
 
-        $user->setPassword($this->passwordEncoder->encodePassword(
-            $user, 'password'))
-            ->setUsername('Romain')
-            ->setEmail('user@email.com')
-            ->setRoles(['ROLE_USER'])
-            ->setVkey($vkey);
+        // encode password
+        $password = ($this->passwordEncoder->encodePassword($user, 'password'));
+
+        $userRegistrationDTO->createUser('Romain', 'user@email.com', $password, ['ROLE_USER']);
+
+        $user->createFromRegistration($userRegistrationDTO);
 
         $manager->persist($user);
         $manager->flush();
