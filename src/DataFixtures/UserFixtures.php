@@ -16,14 +16,21 @@ class UserFixtures extends Fixture
         $this->passwordEncoder = $passwordEncoder;
     }
 
+    /**
+     * @param ObjectManager $manager
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager)
     {
         $user = new User();
+        $vkey = md5(random_bytes(10));
 
         $user->setPassword($this->passwordEncoder->encodePassword(
             $user, 'password'))
+            ->setUsername('Romain')
             ->setEmail('user@email.com')
-            ->setRoles(['ROLE_USER']);
+            ->setRoles(['ROLE_USER'])
+            ->setVkey($vkey);
 
         $manager->persist($user);
         $manager->flush();

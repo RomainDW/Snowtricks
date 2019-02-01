@@ -17,6 +17,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->isGranted('ROLE_USER')) {
+            $this->addFlash('error', 'Vous êtes déjà connecté(e)');
             return $this->redirectToRoute('homepage');
         }
 

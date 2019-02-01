@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('email-send') }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="page-title">Merci pour votre inscription !</h1>
+    <h2 class="page-subtitle">un email de vérification vous a été envoyé à l'adresse : <strong>{{ userEmail }}</strong></h2>
+{% endblock %}

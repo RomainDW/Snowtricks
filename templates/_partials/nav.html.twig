@@ -24,10 +24,10 @@
                 <li class="nav-item {% if app.request.get('_route') == 'app_login' %}active{% endif %}">
                     <a class="nav-link" href="{{ url('app_login') }}">Connexion</a>
                 </li>
+                <li class="nav-item {% if app.request.get('_route') == 'app_register' %}active{% endif %}">
+                    <a class="nav-link" href="{{ url('app_register') }}">Inscription</a>
+                </li>
             {% endif %}
-            <li class="nav-item {% if app.request.get('_route') == 'register' %}active{% endif %}">
-                <a class="nav-link" href="{{ url('app_login') }}">Inscription</a>
-            </li>
         </ul>
     </div>
     <!-- End Navbar Mobile -->
@@ -36,7 +36,7 @@
 
 <div class="logout-modal">
     <p>Voulez-vous vraiment vous déconnecter ?</p>
-    <div class="d-flex">
+    <div class="d-flex justify-content-end">
         <div class="btn btn-danger js-cancel mr-1">Annuler</div>
         <a class="btn btn-success" href="{{ url('app_logout') }}" >Confirmer</a>
     </div>

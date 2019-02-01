@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription confirmée{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('email-send') }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="page-title">Merci de votre inscription !</h1>
+    <h2 class="page-subtitle">Vous pouvez maintenant commenter et modifier les figures !</h2>
+    <a href="{{ path('homepage') }}">Aller à l'accueil <i class="fas fa-home"></i></a>
+{% endblock %}

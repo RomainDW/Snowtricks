@@ -22,10 +22,10 @@
 
             <!-- Login Form -->
             <form method="post">
-                <input type="email" id="inputEmail" class="fadeIn second" name="email" placeholder="e-mail" value="{{ last_username }}" required autofocus>
-                <input type="password" id="inputPassword" class="fadeIn third" name="password" placeholder="mot de passe" required>
+                <input type="email" id="inputEmail" class="fadeIn second form-input" name="email" placeholder="e-mail" value="{{ last_username }}" required autofocus>
+                <input type="password" id="inputPassword" class="fadeIn third form-input" name="password" placeholder="mot de passe" required>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                <input type="submit" class="fadeIn fourth" value="Connexion">
+                <input type="submit" class="fadeIn fourth form-submit" value="Connexion">
             </form>
 
             <!-- Remind Passowrd -->

@@ -1,0 +1,1 @@
+require('../../css/pages/email-send.scss');
