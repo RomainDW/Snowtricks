@@ -22,10 +22,11 @@
                 {{ form_errors(registrationForm) }}
             </div>
 
-            {{ form_row(registrationForm.email, { 'attr' : {'class' : 'fadeIn second'} }) }}
-                {{ form_row(registrationForm.plainPassword.first, { 'attr' : {'class' : 'fadeIn third'} }) }}
-                {{ form_row(registrationForm.plainPassword.second, { 'attr' : {'class' : 'fadeIn third'} }) }}
-                <input type="submit" class="fadeIn fourth" value="Inscription">
+            {{ form_row(registrationForm.username, { 'attr' : {'class' : 'fadeIn second form-input'} }) }}
+            {{ form_row(registrationForm.email, { 'attr' : {'class' : 'fadeIn third form-input'} }) }}
+            {{ form_row(registrationForm.plainPassword.first, { 'attr' : {'class' : 'fadeIn fourth form-input'} }) }}
+            {{ form_row(registrationForm.plainPassword.second, { 'attr' : {'class' : 'fadeIn fourth form-input'} }) }}
+            <input type="submit" class="fadeIn fifth form-submit" value="Inscription">
             {{ form_end(registrationForm) }}
 
             <!-- Remind Passowrd -->
