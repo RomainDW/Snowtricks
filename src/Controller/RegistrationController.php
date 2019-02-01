@@ -48,7 +48,7 @@ class RegistrationController extends AbstractController
                 ->setBody(
                     $this->renderView(
                         'emails/registration.html.twig',
-                        ['name' => $form->get('email'), 'vkey' => $vkey]
+                        ['name' => $form->get('username')->getData(), 'vkey' => $vkey]
                     ),
                     'text/html'
                 )
@@ -65,8 +65,6 @@ class RegistrationController extends AbstractController
             ;
 
             $mailer->send($message);
-
-//            $this->addFlash('email_send', 'un email de vérification vous a été envoyé à l\'adresse : <strong>'.$user->getEmail().'</strong>');
 
             return $this->redirectToRoute('app_mail_sent', ['id' => $user->getId()]);
         }
