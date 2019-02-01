@@ -8,7 +8,7 @@
 
 namespace App\Form;
 
-use App\DTO\UserDTO;
+use App\DTO\UserRegistrationDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -69,7 +69,7 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => UserDTO::class,
+            'data_class' => UserRegistrationDTO::class,
             'empty_data' => null,
         ]);
     }
@@ -83,9 +83,9 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function mapDataToForms($userDTO, $forms)
     {
         $forms = iterator_to_array($forms);
-        $forms['email']->setData($userDTO ? $userDTO->getEmail() : '');
-        $forms['plainPassword']->setData($userDTO ? $userDTO->getPassword() : '');
-        $forms['username']->setData($userDTO ? $userDTO->getUsername() : '');
+        $forms['email']->setData($userDTO ? $userDTO->email : '');
+        $forms['plainPassword']->setData($userDTO ? $userDTO->password : '');
+        $forms['username']->setData($userDTO ? $userDTO->username : '');
     }
 
     /**
@@ -99,10 +99,7 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function mapFormsToData($forms, &$userDTO)
     {
         $forms = iterator_to_array($forms);
-        $userDTO = new UserDTO(
-            $forms['email']->getData(),
-            $forms['plainPassword']->getData(),
-            $forms['username']->getData()
-        );
+        $userDTO = new UserRegistrationDTO();
+        $userDTO->createUser($forms['username']->getData(), $forms['email']->getData(), $forms['plainPassword']->getData());
     }
 }
