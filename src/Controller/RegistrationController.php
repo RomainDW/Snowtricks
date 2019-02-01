@@ -28,15 +28,17 @@ class RegistrationController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer): Response
     {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $vkey = md5(random_bytes(10));
+            $userDTO = $form->getData();
             // encode the plain password
-            $user->setPassword($passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData()))
-                ->setVkey($vkey)
-                ->setRoles(['ROLE_USER_NOT_VERIFIED']);
+            $user->setPassword($passwordEncoder->encodePassword($user, $userDTO->getPassword()))
+                ->setEmail($userDTO->getEmail())
+                ->setUsername($userDTO->getUsername())
+                ->setVkey($userDTO->getVkey())
+                ->setRoles($userDTO->getRole());
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
@@ -48,7 +50,7 @@ class RegistrationController extends AbstractController
                 ->setBody(
                     $this->renderView(
                         'emails/registration.html.twig',
-                        ['name' => $form->get('username')->getData(), 'vkey' => $vkey]
+                        ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->getVkey()]
                     ),
                     'text/html'
                 )
@@ -112,6 +114,7 @@ class RegistrationController extends AbstractController
 
         if (false === $verification) {
             $this->addFlash('error', 'Votre compte est déjà vérifié.');
+
             return $this->redirectToRoute('homepage');
         } else {
             // Connexion à mettre dans service

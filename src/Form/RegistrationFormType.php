@@ -1,21 +1,33 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: romain
+ * Date: 2/1/19
+ * Time: 12:24 PM.
+ */
 
 namespace App\Form;
 
-use App\Entity\User;
+use App\DTO\UserDTO;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-class RegistrationFormType extends AbstractType
+class RegistrationFormType extends AbstractType implements DataMapperInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $option
+     */
+    public function buildForm(FormBuilderInterface $builder, array $option): void
     {
         $builder
             ->add('username', TextType::class, [
@@ -51,13 +63,46 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-        ;
+            ->setDataMapper($this);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => UserDTO::class,
+            'empty_data' => null,
         ]);
+    }
+
+    /**
+     * Maps properties of some data to a list of forms.
+     *
+     * @param $userDTO
+     * @param FormInterface[]|\Traversable $forms A list of {@link FormInterface} instances
+     */
+    public function mapDataToForms($userDTO, $forms)
+    {
+        $forms = iterator_to_array($forms);
+        $forms['email']->setData($userDTO ? $userDTO->getEmail() : '');
+        $forms['plainPassword']->setData($userDTO ? $userDTO->getPassword() : '');
+        $forms['username']->setData($userDTO ? $userDTO->getUsername() : '');
+    }
+
+    /**
+     * Maps the data of a list of forms into the properties of some data.
+     *
+     * @param FormInterface[]|\Traversable $forms A list of {@link FormInterface} instances
+     * @param $userDTO
+     *
+     * @throws \Exception
+     */
+    public function mapFormsToData($forms, &$userDTO)
+    {
+        $forms = iterator_to_array($forms);
+        $userDTO = new UserDTO(
+            $forms['email']->getData(),
+            $forms['plainPassword']->getData(),
+            $forms['username']->getData()
+        );
     }
 }
