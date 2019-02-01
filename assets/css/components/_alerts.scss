@@ -1,12 +1,12 @@
-.page-alert {
+.flash-box {
   position: fixed;
   z-index: 10;
   bottom: 2%;
   margin: 0 10px;
-  &.alert-success {
+  .alert-success {
     border-color: #155724;
   }
-  &.alert-danger {
+  .alert-danger {
     border-color: #721c24;
   }
   @media screen and (min-width: $small) {
