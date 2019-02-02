@@ -30,9 +30,10 @@ class Image
     private $file_name;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Trick", inversedBy="images")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $id_trick;
+    private $trick;
 
     public function getId()
     {
@@ -63,14 +64,14 @@ class Image
         return $this;
     }
 
-    public function getIdTrick(): ?int
+    public function getTrick(): ?Trick
     {
-        return $this->id_trick;
+        return $this->trick;
     }
 
-    public function setIdTrick(int $id_trick): self
+    public function setTrick(?Trick $trick): self
     {
-        $this->id_trick = $id_trick;
+        $this->trick = $trick;
 
         return $this;
     }
