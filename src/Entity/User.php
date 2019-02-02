@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\DTO\UserRegistrationDTO;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -58,13 +59,6 @@ class User implements UserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -85,26 +79,12 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
     /**
      * @see UserInterface
      */
     public function getPassword(): string
     {
         return (string) $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -124,21 +104,25 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getVkey(): ?string
+    public function updateRole(array $roles)
     {
-        return $this->vkey;
-    }
-
-    public function setVkey(string $vkey): self
-    {
-        $this->vkey = $vkey;
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function setUsername(string $username): self
+    public function hasRole(string $role)
     {
-        $this->username = $username;
+        return in_array($role, $this->roles);
+    }
+
+    public function createFromRegistration(UserRegistrationDTO $registrationDTO): self
+    {
+        $this->email = $registrationDTO->email;
+        $this->password = $registrationDTO->password;
+        $this->username = $registrationDTO->username;
+        $this->vkey = $registrationDTO->vkey;
+        $this->roles = $registrationDTO->roles;
 
         return $this;
     }

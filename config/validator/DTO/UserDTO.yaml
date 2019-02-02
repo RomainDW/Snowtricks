@@ -1,0 +1,13 @@
+App\DTO\UserRegistrationDTO:
+  properties:
+    email:
+      - NotBlank: ~
+      - Email:
+          message: L'adresse email {{ value }} n'est pas valide.
+    username:
+      - NotBlank: ~
+      - Length:
+          min: 2
+          max: 10
+          minMessage: 'Votre pseudo doit au minimum avoir {{ limit }} caractères'
+          maxMessage: 'Votre pseudo ne doit pas dépasser {{ limit }} caractères'

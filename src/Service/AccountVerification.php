@@ -22,12 +22,12 @@ class AccountVerification
 
     public function verification(User $user)
     {
-        $hasAccess = in_array('ROLE_USER_NOT_VERIFIED', $user->getRoles());
+        $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
 
         if (!$hasAccess) {
             return false;
         } else {
-            $user->setRoles(['ROLE_USER']);
+            $user->updateRole(['ROLE_USER']);
             $this->manager->persist($user);
             $this->manager->flush();
             return true;
