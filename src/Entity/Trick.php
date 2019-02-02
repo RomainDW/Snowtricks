@@ -45,14 +45,10 @@ class Trick
     private $updatedAt;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="tricks")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $id_category;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $id_user;
+    private $category;
 
     public function getId()
     {
@@ -119,26 +115,14 @@ class Trick
         return $this;
     }
 
-    public function getIdCategory(): ?int
+    public function getCategory(): ?Category
     {
-        return $this->id_category;
+        return $this->category;
     }
 
-    public function setIdCategory(int $id_category): self
+    public function setCategory(?Category $category): self
     {
-        $this->id_category = $id_category;
-
-        return $this;
-    }
-
-    public function getIdUser(): ?int
-    {
-        return $this->id_user;
-    }
-
-    public function setIdUser(int $id_user): self
-    {
-        $this->id_user = $id_user;
+        $this->category = $category;
 
         return $this;
     }
