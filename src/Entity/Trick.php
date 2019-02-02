@@ -44,6 +44,16 @@ class Trick
      */
     private $updatedAt;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $id_category;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $id_user;
+
     public function getId()
     {
         return $this->id;
@@ -105,6 +115,30 @@ class Trick
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getIdCategory(): ?int
+    {
+        return $this->id_category;
+    }
+
+    public function setIdCategory(int $id_category): self
+    {
+        $this->id_category = $id_category;
+
+        return $this;
+    }
+
+    public function getIdUser(): ?int
+    {
+        return $this->id_user;
+    }
+
+    public function setIdUser(int $id_user): self
+    {
+        $this->id_user = $id_user;
 
         return $this;
     }
