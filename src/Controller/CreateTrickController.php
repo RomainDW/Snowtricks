@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Trick;
 use App\Form\AddTrickFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,15 +18,33 @@ use Symfony\Component\Routing\Annotation\Route;
 class CreateTrickController extends AbstractController
 {
     /**
-     * @param Request $request
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/trick/add", name="app_create_trick")
+     *
+     * @throws \Exception
      */
-    public function index(Request $request)
+    public function index(Request $request, EntityManagerInterface $entityManager)
     {
         $trick = new Trick();
         $form = $this->createForm(AddTrickFormType::class, $trick);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $trick->setCreatedAt(new \DateTime());
+            $trick->setUser($this->getUser());
+
+            $entityManager->persist($trick);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le trick a bien été ajouté !');
+
+            //TODO: redirect to the trick
+            return $this->redirectToRoute('app_create_trick');
+        }
 
         return $this->render('trick/create.html.twig', [
             'form' => $form->createView(),
