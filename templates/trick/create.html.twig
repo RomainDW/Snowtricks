@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('create_trick') }}
+{% endblock %}
+
+{% block flashMessages %}{% endblock %}
+
+{% block body %}
+
+    {% for label, flashes in app.session.flashbag.all %}
+        {% for flash in flashes %}
+            {% if ( label == 'success' ) %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ flash }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elseif ( label == 'error' ) %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ flash }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.slug) }}
+        {{ form_row(form.category) }}
+        <label>Vidéo(s)</label>
+        <ul class="videos" data-prototype="{{ form_row(form.videos.vars.prototype)|e('html_attr') }}"></ul>
+        <label>Image(s)</label>
+        <ul class="images" data-prototype="{{ form_row(form.images.vars.prototype)|e('html_attr') }}"></ul>
+    <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('create_trick') }}
+{% endblock %}

@@ -1,7 +1,10 @@
 {% for trick in tricks %}
     <div class="col-lg-4 col-sm-6 col-xs-12">
         <div class="card">
-            <img class="card-img-top" src="http://placehold.it/328x219" alt="Card image cap">
+            <img class="card-img-top"
+                 src="{% if trick.images is empty %}http://placehold.it/328x219{% else %}{{ asset('uploads/images/' ~ trick.images.0.fileName) }}{% endif %}"
+                 alt="{% if trick.images is empty %}Card image cap{% else %}{{ trick.images.0.alt }}{% endif %}"
+            >
             <div class="card-body">
                 <h5 class="card-title">{{ trick.title }}</h5>
             </div>
