@@ -6,20 +6,18 @@
 {% endblock %}
 
 {% block body %}
+    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+
     {{ form_start(form) }}
-    <div class="form-left">
         {{ form_row(form.title) }}
         {{ form_row(form.description) }}
         {{ form_row(form.slug) }}
         {{ form_row(form.category) }}
-    </div>
-    <div class="form-right">
         <label>Vidéo(s)</label>
         <ul class="videos" data-prototype="{{ form_row(form.videos.vars.prototype)|e('html_attr') }}"></ul>
         <label>Image(s)</label>
         <ul class="images" data-prototype="{{ form_row(form.images.vars.prototype)|e('html_attr') }}"></ul>
-    </div>
-    <input type="submit" class="form-submit" value="Enregistrer">
+    <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
     {{ form_end(form) }}
 {% endblock %}
 
