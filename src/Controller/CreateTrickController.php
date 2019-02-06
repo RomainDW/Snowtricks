@@ -40,7 +40,7 @@ class CreateTrickController extends AbstractController
             $entityManager->persist($trick);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Le trick a bien été ajouté !');
+            $this->addFlash('success', 'La figure a bien été ajoutée !');
 
             //TODO: redirect to the trick
             return $this->redirectToRoute('app_create_trick');
