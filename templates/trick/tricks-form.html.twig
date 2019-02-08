@@ -42,7 +42,7 @@
 
     {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}} ) }}
     {{ form_widget(form) }}
     <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
     {{ form_end(form) }}
