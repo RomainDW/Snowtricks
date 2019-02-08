@@ -9,7 +9,7 @@
 namespace App\Controller;
 
 use App\Entity\Trick;
-use App\Form\AddTrickFormType;
+use App\Form\TrickFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class CreateTrickController extends AbstractController
     public function index(Request $request, EntityManagerInterface $entityManager)
     {
         $trick = new Trick();
-        $form = $this->createForm(AddTrickFormType::class, $trick);
+        $form = $this->createForm(TrickFormType::class, $trick);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -46,7 +46,7 @@ class CreateTrickController extends AbstractController
             return $this->redirectToRoute('app_create_trick');
         }
 
-        return $this->render('trick/create.html.twig', [
+        return $this->render('trick/tricks-form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
