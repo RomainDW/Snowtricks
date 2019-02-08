@@ -32,6 +32,11 @@ class PictureUploader
         return $fileName;
     }
 
+    public function remove(Image $image)
+    {
+        unlink($this->getTargetDirectory().$image->getFileName());
+    }
+
     public function getTargetDirectory()
     {
         return $this->targetDirectory;
