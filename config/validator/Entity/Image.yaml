@@ -1,0 +1,5 @@
+App\Entity\Image:
+  properties:
+    file:
+      - Image:
+          mimeTypesMessage: L'image n'est pas au bon format ({{ type }}). Les formats autorisés sont {{ types }}.

@@ -1,0 +1,13 @@
+App\Entity\Trick:
+  constraints:
+    - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+        fields: [slug]
+        message: Le slug {{ value }} existe déjà.
+  properties:
+    title:
+      - NotBlank:
+          message: Le titre de la figure ne doit pas être vide.
+    description:
+      - NotBlank:
+          message: La description de la figure ne doit pas être vide.
+
