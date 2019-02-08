@@ -13,4 +13,6 @@ App\Entity\Trick:
         description:
             - NotBlank:
                   message: La description de la figure ne doit pas être vide.
+        images:
+            - Valid: ~
 
