@@ -53,7 +53,7 @@ class EditTrickController extends AbstractController
                 if (false === $trick->getImages()->contains($image)) {
                     // remove the Trick from the Image
                     $trick->removeImage($image);
-                    $em->persist($image);
+                    $em->remove($image);
                 }
             }
 
