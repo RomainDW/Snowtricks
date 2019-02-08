@@ -9,7 +9,7 @@
 namespace App\EventListener;
 
 use App\Entity\Image;
-use App\Service\PictureUploader;
+use App\Service\ImageUploader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
@@ -17,7 +17,7 @@ class ImageUploadListener
 {
     private $uploader;
 
-    public function __construct(PictureUploader $uploader)
+    public function __construct(ImageUploader $uploader)
     {
         $this->uploader = $uploader;
     }

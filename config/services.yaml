@@ -30,7 +30,7 @@ services:
         class: App\Service\AccountVerification
         arguments: ["@doctrine.orm.entity_manager"]
 
-    App\Service\PictureUploader:
+    App\Service\ImageUploader:
         arguments:
             $targetDirectory: '%uploaded_images_directory%'
 

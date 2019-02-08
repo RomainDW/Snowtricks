@@ -6,7 +6,7 @@ use App\Entity\Image;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class PictureUploader
+class ImageUploader
 {
     private $targetDirectory;
 
