@@ -3,6 +3,9 @@ App\Entity\Trick:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
               fields: [slug]
               message: Le slug {{ value }} existe déjà.
+        -   Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+                fields: [title]
+                message: Le titre {{ value }} existe déjà.
     properties:
         title:
             - NotBlank:
