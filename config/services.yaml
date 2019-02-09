@@ -28,14 +28,5 @@ services:
     # please note that last definitions always *replace* previous ones
     account_verification:
         class: App\Service\AccountVerification
-        arguments: ["@doctrine.orm.entity_manager"]
-
-    App\Service\ImageUploader:
         arguments:
-            $targetDirectory: '%uploaded_images_directory%'
-
-    App\EventListener\ImageUploadListener:
-        tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: postRemove }
+            - "@doctrine.orm.entity_manager"
