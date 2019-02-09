@@ -9,10 +9,14 @@
 namespace App\Controller;
 
 use App\Entity\Trick;
+use App\Event\ImageRemoveEvent;
+use App\Event\ImageUploadEvent;
+use App\EventSubscriber\ImageUploadSubscriber;
 use App\Form\TrickFormType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,6 +38,10 @@ class EditTrickController extends AbstractController
             throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
         }
 
+        $dispatcher = new EventDispatcher();
+        $subscriber = new ImageUploadSubscriber();
+        $dispatcher->addSubscriber($subscriber);
+
         $originalImages = new ArrayCollection();
 
         // Create an ArrayCollection of the current Tag objects in the database
@@ -47,13 +55,25 @@ class EditTrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setUpdatedAt(new \DateTime());
 
-            // remove the relationship between the image and the Trick
+            foreach ($trick->getImages() as $image) {
+                if (!empty($image->getFile() && !empty($image->getFileName()))) {
+                    $imageRemoveEvent = new ImageRemoveEvent($image);
+                    $dispatcher->dispatch(ImageRemoveEvent::NAME, $imageRemoveEvent);
+                }
+                if (!empty($image->getFile())) {
+                    $imageUploadEvent = new ImageUploadEvent($image);
+                    $dispatcher->dispatch(ImageUploadEvent::NAME, $imageUploadEvent);
+                }
+            }
+
             foreach ($originalImages as $image) {
                 // remove old images that has been removed
                 if (false === $trick->getImages()->contains($image)) {
-                    // remove the Trick from the Image
-                    $trick->removeImage($image);
+                    // remove the Image from the Trick
+                    $trick->getImages()->removeElement($image);
                     $em->remove($image);
+                    $event = new ImageRemoveEvent($image);
+                    $dispatcher->dispatch(ImageRemoveEvent::NAME, $event);
                 }
             }
 
