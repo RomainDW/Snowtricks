@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "342ecb4b62ac95c0ef35eb81710eef55",
+    "content-hash": "45462a13b90b0ae1da84424eaf7b5950",
     "packages": [
         {
             "name": "composer/semver",
@@ -2737,16 +2737,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v4.2.2",
+            "version": "v4.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "887de6d34c86cf0cb6cbf910afb170cdb743cb5e"
+                "reference": "bd09ad265cd50b2b9d09d65ce6aba2d29bc81fe1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/887de6d34c86cf0cb6cbf910afb170cdb743cb5e",
-                "reference": "887de6d34c86cf0cb6cbf910afb170cdb743cb5e",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/bd09ad265cd50b2b9d09d65ce6aba2d29bc81fe1",
+                "reference": "bd09ad265cd50b2b9d09d65ce6aba2d29bc81fe1",
                 "shasum": ""
             },
             "require": {
@@ -2797,7 +2797,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2019-01-05T16:37:49+00:00"
+            "time": "2019-01-16T20:35:37+00:00"
         },
         {
             "name": "symfony/filesystem",
