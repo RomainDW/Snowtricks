@@ -12,11 +12,12 @@ use App\Entity\Trick;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddTrickFormType extends AbstractType
+class TrickFormType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -26,7 +27,7 @@ class AddTrickFormType extends AbstractType
     {
         $builder
             ->add('title', TextType::class)
-            ->add('description', TextType::class)
+            ->add('description', TextareaType::class)
             ->add('slug', TextType::class)
             ->add('category', EntityType::class, [
                 'label' => 'Catégorie',
@@ -34,7 +35,7 @@ class AddTrickFormType extends AbstractType
                 'choice_label' => 'name',
             ])
             ->add('images', CollectionType::class, [
-                'label' => false,
+                'label' => 'Images',
                 'entry_type' => ImageFormType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => true,
@@ -42,7 +43,7 @@ class AddTrickFormType extends AbstractType
                 'by_reference' => false,
             ])
             ->add('videos', CollectionType::class, [
-                'label' => false,
+                'label' => 'Vidéos',
                 'entry_type' => VideoFormType::class,
                 'entry_options' => ['label' => false],
                 'allow_add' => true,

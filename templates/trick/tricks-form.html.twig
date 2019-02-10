@@ -1,8 +1,12 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    SnowTricks - {% if app.request.get('_route') is same as('app_edit_trick') %}Éditer{% elseif app.request.get('_route') is same as('app_create_trick') %}Créer{% endif %} une figure
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('create_trick') }}
+    {{ encore_entry_link_tags('tricks_form') }}
 {% endblock %}
 
 {% block flashMessages %}{% endblock %}
@@ -28,22 +32,23 @@
             {% endif %}
         {% endfor %}
     {% endfor %}
+
+    {% if app.request.get('_route') is same as('app_edit_trick') %}
+        <h1 class="trick-form-title">Modification de la figure {{ trick.title }}</h1>
+    {% elseif app.request.get('_route') is same as('app_create_trick') %}
+        <h1 class="trick-form-title">Création de figure</h1>
+    {% endif %}
+
+
     {% form_theme form 'bootstrap_4_layout.html.twig' %}
 
-    {{ form_start(form) }}
-        {{ form_row(form.title) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.slug) }}
-        {{ form_row(form.category) }}
-        <label>Vidéo(s)</label>
-        <ul class="videos" data-prototype="{{ form_row(form.videos.vars.prototype)|e('html_attr') }}"></ul>
-        <label>Image(s)</label>
-        <ul class="images" data-prototype="{{ form_row(form.images.vars.prototype)|e('html_attr') }}"></ul>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}} ) }}
+    {{ form_widget(form) }}
     <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
     {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('create_trick') }}
+    {{ encore_entry_script_tags('tricks_form') }}
 {% endblock %}

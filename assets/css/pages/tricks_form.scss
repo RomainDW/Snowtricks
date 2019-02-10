@@ -1,0 +1,29 @@
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+#content {
+  flex: 1;
+}
+
+.sub-form {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: solid 1px #9E9E9E;
+}
+
+.form-submit {
+  float: right;
+}
+
+.trick-form-title {
+  border-bottom: solid 1px;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}

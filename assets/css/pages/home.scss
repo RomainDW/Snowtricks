@@ -4,6 +4,32 @@
 
 .card {
   margin-bottom: 2rem !important;
+  .card-actions {
+    .delete-trick-form {
+      display: inline-block;
+    }
+    .trash-button {
+
+      @supports (all: unset) {
+        all: unset;
+      }
+
+      @supports not (all: unset) {
+        padding: 0;
+        margin: 0;
+        background: none;
+        border: none;
+      }
+
+      cursor: pointer !important;
+    }
+    .trash-icon {
+      color: #F44336;
+    }
+    .edit-icon {
+      color: #2196F3;
+    }
+  }
 }
 
 #loader {

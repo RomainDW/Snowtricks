@@ -22,7 +22,7 @@ class Trick
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      */
     private $title;
 
@@ -32,7 +32,7 @@ class Trick
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=false, unique=true)
      */
     private $slug;
 
