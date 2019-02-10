@@ -7,6 +7,16 @@
             >
             <div class="card-body">
                 <h5 class="card-title">{{ trick.title }}</h5>
+                {% if is_granted('ROLE_USER') %}
+                <div class="card-actions">
+                    <a href="{{ path('app_edit_trick', {'slug': trick.slug}) }}" title="Éditer"><i class="fas fa-edit edit-icon"></i></a>
+                    <form class="delete-trick-form" action="{{ path('app_delete_trick', {'slug': trick.slug}) }}" method="post">
+                        <button class="trash-button" type="submit" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette figure ?');">
+                            <i class="fas fa-trash-alt trash-icon"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
             <div class="card-footer">
                 <small class="text-muted">
