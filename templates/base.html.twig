@@ -13,7 +13,7 @@
     {% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm {% if app.request.get('_route') == 'homepage' %}fixed-top{% else %}sticky-top{% endif %} navbar-dark">
+    <nav class="navbar navbar-expand-sm {% if app.request.get('_route') == 'homepage' or app.request.get('_route') == 'app_show_trick' %}fixed-top{% else %}sticky-top{% endif %} navbar-dark">
         {% block nav %}{% include '_partials/nav.html.twig' %}{% endblock %}
     </nav>
 
