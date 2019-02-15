@@ -37,7 +37,7 @@ class HomeController extends AbstractController
      * @param $offset
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/more/{offset}/", name="loadPagination", methods={"POST"})
+     * @Route("/more/{offset}", name="loadPagination", methods={"POST"})
      */
     public function loadPagination($offset)
     {
