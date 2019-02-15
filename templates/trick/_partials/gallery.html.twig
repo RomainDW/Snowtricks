@@ -6,11 +6,26 @@
     {% endfor %}
     {% for video in trick.videos %}
         <div class="col-sm-6 col-lg-4 col-xs-12">
-            <iframe src="{{'https://www.youtube.com/embed/' ~ video.embed }}" frameborder="0"
+            <!-- Youtube -->
+            {% if video.type == 'youtube' %}
+            <iframe src="{{'https://www.youtube.com/embed/' ~ video.embed_id }}" frameborder="0"
                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                     class="trick-video img-thumbnail"
                     allowfullscreen>
             </iframe>
+            <!-- Dailymotion -->
+            {% elseif video.type == 'dailymotion' %}
+                <iframe src="{{ 'https://www.dailymotion.com/embed/video/' ~ video.embed_id }}" frameborder="0"
+                        class="trick-video img-thumbnail"
+                        allowfullscreen allow="autoplay">
+                </iframe>
+            <!-- Vimeo -->
+            {% elseif video.type == 'vimeo' %}
+                <iframe src="{{ 'https://player.vimeo.com/video/' ~ video.embed_id }}" frameborder="0"
+                        class="trick-video img-thumbnail"
+                        allowfullscreen>
+                </iframe>
+            {% endif %}
         </div>
     {% endfor %}
 </section>

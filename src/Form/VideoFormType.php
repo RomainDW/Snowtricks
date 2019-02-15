@@ -20,7 +20,8 @@ class VideoFormType extends AbstractType
     {
         $builder->add('embed', TextType::class, [
             'label' => false,
-            'attr' => ['placeholder' => 'embed'],
+            'attr' => ['placeholder' => 'url de la vidéo'],
+            'help' => 'Youtube, Dailymotion ou Vimeo.',
         ]);
     }
 

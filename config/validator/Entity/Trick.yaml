@@ -15,4 +15,6 @@ App\Entity\Trick:
                   message: La description de la figure ne doit pas être vide.
         images:
             - Valid: ~
+        videos:
+            -   Valid: ~
 

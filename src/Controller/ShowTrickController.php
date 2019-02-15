@@ -38,6 +38,8 @@ class ShowTrickController extends AbstractController
             throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
         }
 
+
+
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
