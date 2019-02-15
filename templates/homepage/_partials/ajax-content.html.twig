@@ -1,12 +1,16 @@
 {% for trick in tricks %}
     <div class="col-lg-4 col-sm-6 col-xs-12">
         <div class="card">
-            <img class="card-img-top"
-                 src="{% if trick.images is empty %}http://placehold.it/328x219{% else %}{{ asset('uploads/images/' ~ trick.images.0.fileName) }}{% endif %}"
-                 alt="{% if trick.images is empty %}Card image cap{% else %}{{ trick.images.0.alt }}{% endif %}"
-            >
+            <a href="{{ path('app_show_trick', {'slug': trick.slug}) }}">
+                <img class="card-img-top"
+                     src="{% if trick.images is empty %}http://placehold.it/328x219{% else %}{{ asset('uploads/images/' ~ trick.images.0.fileName) }}{% endif %}"
+                     alt="{% if trick.images is empty %}Card image cap{% else %}{{ trick.images.0.alt }}{% endif %}"
+                >
+            </a>
             <div class="card-body">
-                <h5 class="card-title">{{ trick.title }}</h5>
+                <a href="{{ path('app_show_trick', {'slug': trick.slug}) }}" class="link-to-trick">
+                    <h5 class="card-title">{{ trick.title }}</h5>
+                </a>
                 {% if is_granted('ROLE_USER') %}
                 <div class="card-actions">
                     <a href="{{ path('app_edit_trick', {'slug': trick.slug}) }}" title="Éditer"><i class="fas fa-edit edit-icon"></i></a>
