@@ -93,6 +93,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         $this->flashBag->add('success', 'Vous êtes maintenant connecté !');
 
+        // Todo: Redirect to "my account" ?
         return new RedirectResponse($this->urlGenerator->generate('homepage'));
     }
 

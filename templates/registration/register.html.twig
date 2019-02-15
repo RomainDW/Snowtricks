@@ -18,9 +18,12 @@
 
             <!-- Login Form -->
             {{ form_start(registrationForm) }}
-            <div class="registration-errors">
-                {{ form_errors(registrationForm) }}
-            </div>
+
+            {% if registrationForm.vars.errors|length %}
+                <div class="registration-errors">
+                    {{ form_errors(registrationForm) }}
+                </div>
+            {% endif %}
 
             {{ form_row(registrationForm.username, { 'attr' : {'class' : 'fadeIn second form-input'} }) }}
             {{ form_row(registrationForm.email, { 'attr' : {'class' : 'fadeIn third form-input'} }) }}

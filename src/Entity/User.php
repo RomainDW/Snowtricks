@@ -56,9 +56,15 @@ class User implements UserInterface
      */
     private $tricks;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
+     */
+    private $comments;
+
     public function __construct()
     {
         $this->tricks = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId()
@@ -164,6 +170,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($trick->getUser() === $this) {
                 $trick->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addCreatedAt(Comment $comments): self
+    {
+        if (!$this->comments->contains($comments)) {
+            $this->comments[] = $comments;
+            $comments->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCreatedAt(Comment $comments): self
+    {
+        if ($this->comments->contains(comments)) {
+            $this->comments->removeElement($comments);
+            // set the owning side to null (unless already changed)
+            if ($comments->getUser() === $this) {
+                $comments->setUser(null);
             }
         }
 

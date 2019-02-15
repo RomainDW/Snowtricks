@@ -1,0 +1,140 @@
+@import "../tools/mixins";
+@import "../tools/snippets";
+
+.masthead {
+  height: 50vh;
+}
+
+// Gallery
+.trick-image, .trick-video {
+  max-height: 200px;
+  object-fit: cover;
+  width: 100%;
+  margin-bottom: 2rem;
+  border: 1px solid #343a40;
+  background-color: #343a40;
+}
+
+// Information
+.trick-information {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+  border-bottom: solid 2px #343a40;
+
+  .information {
+    padding: 1rem;
+
+    @include e('label') {
+      font-weight: bold;
+    }
+  }
+}
+
+// Comments
+.trick-comments {
+
+  $placeholder: #ced2db;
+  $text-color: #555f77;
+  $links: #0095ff;
+
+  color: $text-color;
+  -webkit-font-smoothing: antialiased;
+
+
+  input, textarea {
+    outline: none;
+    border: none;
+    display: block;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1rem;
+    color: $text-color;
+    &::placeholder {
+      color: $placeholder;
+    }
+  }
+
+  p {
+    line-height: 21px;
+  }
+
+  .comments {
+    margin: 40px auto;
+    max-width: 972px;
+    padding: 0 20px;
+  }
+
+  .comment-wrap {
+    margin-bottom: 20px;
+    display: table;
+    width: 100%;
+    min-height: 85px;
+  }
+
+  .photo {
+    //background-color: #ff6666;
+    padding-top: 10px;
+    display: table-cell;
+    width: 56px;
+
+    .avatar {
+      width: 2.25rem;
+      height: 2.25rem;
+      //background-color: #0094ff;
+      border-radius: 50%;
+      background-size: contain;
+    }
+  }
+
+  .comment-block {
+    padding: 16px;
+    background-color: #fff;
+    display: table-cell;
+    vertical-align: top;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08);
+
+    textarea {
+      width: 100%;
+      resize: none;
+    }
+  }
+
+  .comment-text {
+    margin-bottom: 20px;
+  }
+
+  .bottom-comment {
+    color: #acb4c2;
+    font-size: 14px;
+  }
+
+  .comment-date {
+    float: left;
+  }
+
+  .comment-actions {
+    float: right;
+
+    li {
+      display: inline;
+      margin: -2px;
+
+      &.author {
+        padding-right: 12px;
+      }
+    }
+  }
+
+  .comment-errors {
+    @extend %form-errors;
+    ul {
+      width: auto;
+      text-align: center;
+    }
+  }
+
+
+}

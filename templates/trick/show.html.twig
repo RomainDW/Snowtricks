@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    SnowTricks - {{ trick.slug }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+    {{ encore_entry_link_tags('show_trick') }}
+    <style>
+        .masthead {
+            background-image: url({% if trick.images is empty %}'http://placehold.it/1920x500'{% else %}{{ asset('uploads/images/' ~ trick.images.0.fileName) }}{% endif %});
+        }
+    </style>
+{% endblock %}
+
+{% block flashMessages %}{% endblock %}
+
+{% block header %}{% include 'trick/_partials/header.html.twig' %}{% endblock %}
+
+{% block body %}
+
+    <!-- Gallery -->
+    {% include 'trick/_partials/gallery.html.twig' %}
+
+    <!-- Description -->
+    {% include 'trick/_partials/description.html.twig' %}
+
+    <!-- Information -->
+    {% include 'trick/_partials/information.html.twig' %}
+
+    <!-- Comments -->
+    {% include 'trick/_partials/comments.html.twig' %}
+
+{% endblock %}
+
+{% block backToTop %}
+    <a href="#0" class="cd-top js-cd-top">Top</a>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home') }}
+{% endblock %}
