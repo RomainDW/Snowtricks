@@ -1,0 +1,24 @@
+%form-errors {
+  ul {
+    padding: 0;
+    width: 85%;
+    margin: 0 auto 10px auto;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    li {
+      border: solid 1px #721c24;
+      padding: 0.8rem;
+      background-color: #f8d7da;
+      color: #721c24;
+      -webkit-border-radius: 0.8rem;
+      -moz-border-radius: 0.8rem;
+      border-radius: 5px;
+
+      &:not(:last-child) {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
