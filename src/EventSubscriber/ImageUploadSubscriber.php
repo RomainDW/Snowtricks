@@ -19,9 +19,9 @@ class ImageUploadSubscriber implements EventSubscriberInterface
 {
     private $targetDirectory;
 
-    public function __construct()
+    public function __construct($targetDirectory)
     {
-        $this->targetDirectory = 'uploads/images/';
+        $this->targetDirectory = $targetDirectory;
     }
 
     /**
