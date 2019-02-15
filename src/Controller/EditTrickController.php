@@ -12,6 +12,7 @@ use App\Entity\Trick;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
 use App\Form\TrickFormType;
+use App\Service\SlugService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,6 +51,8 @@ class EditTrickController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setUpdatedAt(new \DateTime());
+            $slug = SlugService::slugify($form->get('title')->getData());
+            $trick->setSlug($slug);
 
             foreach ($trick->getImages() as $image) {
                 if (!empty($image->getFile() && !empty($image->getFileName()))) {

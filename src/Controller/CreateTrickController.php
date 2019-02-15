@@ -11,6 +11,7 @@ namespace App\Controller;
 use App\Entity\Trick;
 use App\Event\ImageUploadEvent;
 use App\Form\TrickFormType;
+use App\Service\SlugService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -38,6 +39,8 @@ class CreateTrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setCreatedAt(new \DateTime());
             $trick->setUser($this->getUser());
+            $slug = SlugService::slugify($form->get('title')->getData());
+            $trick->setSlug($slug);
 
             foreach ($trick->getImages() as $image) {
                 $event = new ImageUploadEvent($image);

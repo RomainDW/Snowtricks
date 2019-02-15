@@ -28,7 +28,6 @@ class TrickFormType extends AbstractType
         $builder
             ->add('title', TextType::class)
             ->add('description', TextareaType::class)
-            ->add('slug', TextType::class)
             ->add('category', EntityType::class, [
                 'label' => 'Catégorie',
                 'class' => 'App\Entity\Category',
