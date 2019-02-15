@@ -11,12 +11,11 @@ namespace App\Controller;
 use App\Entity\Trick;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
-use App\EventSubscriber\ImageUploadSubscriber;
 use App\Form\TrickFormType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,23 +23,20 @@ class EditTrickController extends AbstractController
 {
     /**
      * @param $slug
-     * @param Request                $request
-     * @param EntityManagerInterface $em
+     * @param Request                  $request
+     * @param EntityManagerInterface   $em
+     * @param EventDispatcherInterface $dispatcher
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/trick/edit/{slug}", name="app_edit_trick")
      *
      * @throws \Exception
+     * @Route("/trick/edit/{slug}", name="app_edit_trick")
      */
-    public function index($slug, Request $request, EntityManagerInterface $em)
+    public function index($slug, Request $request, EntityManagerInterface $em, EventDispatcherInterface $dispatcher)
     {
         if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
             throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
         }
-
-        $dispatcher = new EventDispatcher();
-        $subscriber = new ImageUploadSubscriber();
-        $dispatcher->addSubscriber($subscriber);
 
         $originalImages = new ArrayCollection();
 

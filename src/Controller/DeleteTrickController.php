@@ -10,10 +10,9 @@ namespace App\Controller;
 
 use App\Entity\Trick;
 use App\Event\ImageRemoveEvent;
-use App\EventSubscriber\ImageUploadSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,20 +24,17 @@ class DeleteTrickController extends AbstractController
      *
      * @param Request $request
      * @param $slug
-     * @param EntityManagerInterface $em
+     * @param EntityManagerInterface   $em
+     * @param EventDispatcherInterface $dispatcher
      *
      * @return RedirectResponse
      */
-    public function delete(Request $request, $slug, EntityManagerInterface $em)
+    public function delete(Request $request, $slug, EntityManagerInterface $em, EventDispatcherInterface $dispatcher)
     {
         if ($request->isMethod('POST')) {
             if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
                 throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
             }
-
-            $dispatcher = new EventDispatcher();
-            $subscriber = new ImageUploadSubscriber();
-            $dispatcher->addSubscriber($subscriber);
 
             foreach ($trick->getImages() as $image) {
                 $imageRemoveEvent = new ImageRemoveEvent($image);

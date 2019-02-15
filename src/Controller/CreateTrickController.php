@@ -10,34 +10,30 @@ namespace App\Controller;
 
 use App\Entity\Trick;
 use App\Event\ImageUploadEvent;
-use App\EventSubscriber\ImageUploadSubscriber;
 use App\Form\TrickFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CreateTrickController extends AbstractController
 {
     /**
-     * @param Request                $request
-     * @param EntityManagerInterface $entityManager
+     * @param Request                  $request
+     * @param EntityManagerInterface   $entityManager
+     * @param EventDispatcherInterface $dispatcher
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Exception
      * @Route("/trick/add", name="app_create_trick")
      */
-    public function index(Request $request, EntityManagerInterface $entityManager)
+    public function index(Request $request, EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher)
     {
         $trick = new Trick();
         $form = $this->createForm(TrickFormType::class, $trick);
         $form->handleRequest($request);
-
-        $dispatcher = new EventDispatcher();
-        $subscriber = new ImageUploadSubscriber();
-        $dispatcher->addSubscriber($subscriber);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setCreatedAt(new \DateTime());
