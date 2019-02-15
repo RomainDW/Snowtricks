@@ -1,0 +1,16 @@
+{% for comment in comments %}
+    <div class="comment-wrap">
+        <div class="photo">
+            <div class="avatar" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/jsa/128.jpg')"></div>
+        </div>
+        <div class="comment-block">
+            <p class="comment-text">{{ comment.content }}</p>
+            <div class="bottom-comment">
+                <div class="comment-date">{{ comment.createdAt|date('d/m/ Y @ H\\hi') }}</div>
+                <ul class="comment-actions">
+                    <li class="author">{{ comment.user.username }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endfor %}
