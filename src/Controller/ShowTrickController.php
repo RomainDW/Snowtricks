@@ -83,7 +83,7 @@ class ShowTrickController extends AbstractController
 
         $comments = $repo->getCommentsPagination($offset, $this->number_of_results, $trick);
 
-        return $this->render('trick/_partials/comments.html.twig', [
+        return $this->render('trick/_partials/ajax-comments.html.twig', [
             'comments' => $comments,
         ]);
     }

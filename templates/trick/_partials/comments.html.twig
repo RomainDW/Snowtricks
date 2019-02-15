@@ -1,16 +1,66 @@
-{% for comment in comments %}
-    <div class="comment-wrap">
-        <div class="photo">
-            <div class="avatar" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/jsa/128.jpg')"></div>
-        </div>
-        <div class="comment-block">
-            <p class="comment-text">{{ comment.content }}</p>
-            <div class="bottom-comment">
-                <div class="comment-date">{{ comment.createdAt|date('d/m/ Y @ H\\hi') }}</div>
-                <ul class="comment-actions">
-                    <li class="author">{{ comment.user.username }}</li>
-                </ul>
+<section class="trick-comments" id="comments">
+
+    <div class="comments">
+
+        {% for label, flashes in app.session.flashbag.all %}
+            {% for flash in flashes %}
+                {% if ( label == 'comment-success' ) %}
+                    <div class="alert alert-success alert-dismissible fade show page-alert" role="alert">
+                        {{ flash }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% elseif ( label == 'comment-error' ) %}
+                    <div class="alert alert-danger alert-dismissible fade show page-alert" role="alert">
+                        {{ flash }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+        {% if is_granted('ROLE_USER') %}
+            {% if form.vars.errors|length %}
+                <div class="comment-errors">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+
+            <div class="comment-wrap">
+                <div class="photo">
+                    <div class="avatar" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg')"></div>
+                </div>
+                <div class="comment-block">
+                    {{ form_start(form) }}
+                    {{ form_row(form.content) }}
+                    <button type="submit" class="btn btn-secondary">Envoyer</button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Vour devez être connecté pour envoyer des commentaires
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        <div class="comments-wrapper wrapper" data-url="/load-comments/{{ trick.slug }}/" data-number-of-results="{{ number_of_results }}">
+
+            {% include 'trick/_partials/ajax-comments.html.twig' %}
+
+            <div class="loader-container col-sm-12 d-flex justify-content-center" id="loader">
+                <button class="btn btn-outline-primary loader-btn">
+                    Voir plus <i class="fas fa-arrow-down"></i>
+                </button>
+                <img src="{{ asset('build/images/loader-blue.gif') }}" alt="loader" class="loader-gif" height="50px">
             </div>
         </div>
+
     </div>
-{% endfor %}
+
+</section>

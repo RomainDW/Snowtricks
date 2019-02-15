@@ -20,110 +20,19 @@
 {% block header %}{% include 'trick/_partials/header.html.twig' %}{% endblock %}
 
 {% block body %}
-    <section class="row gallery">
-        {% for image in trick.images %}
-            <div class="col-lg-4 col-sm-6 col-xs-12">
-                <img class="trick-image img-thumbnail" src="{{ asset('uploads/images/' ~ image.fileName) }}" alt="{{ image.alt }}">
-            </div>
-        {% endfor %}
-        {% for video in trick.videos %}
-            <div class="col-sm-6 col-lg-4 col-xs-12">
-                <iframe src="{{'https://www.youtube.com/embed/' ~ video.embed }}" frameborder="0"
-                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                        class="trick-video img-thumbnail"
-                        allowfullscreen>
-                </iframe>
-            </div>
-        {% endfor %}
-    </section>
 
-    <section class="trick-description">
-        <p>{{ trick.description }}</p>
-    </section>
+    <!-- Gallery -->
+    {% include 'trick/_partials/gallery.html.twig' %}
 
-    <section class="trick-information">
-        <div class="trick-information__created-date information">
-            <span class="information__label">Créé le </span>{{ trick.createdAt|date("d/m/Y") }}
-        </div>
-        {% if trick.updatedAt is not null %}
-            <div class="trick-information__updated-date information">
-                <span class="information__label">Modifié le </span>{{ trick.updatedAt|date("d/m/Y") }}
-            </div>
-        {% endif %}
-        <div class="trick-information__category information">
-            <span class="information__label">Groupe : </span>{{ trick.category.name }}
-        </div>
-        <div class="trick-information__author information">
-            <span class="information__label">Auteur : </span>{{ trick.user.username }}
-        </div>
-    </section>
+    <!-- Description -->
+    {% include 'trick/_partials/description.html.twig' %}
 
-    <section class="trick-comments" id="comments">
+    <!-- Information -->
+    {% include 'trick/_partials/information.html.twig' %}
 
-        <div class="comments">
+    <!-- Comments -->
+    {% include 'trick/_partials/comments.html.twig' %}
 
-            {% for label, flashes in app.session.flashbag.all %}
-                {% for flash in flashes %}
-                    {% if ( label == 'comment-success' ) %}
-                        <div class="alert alert-success alert-dismissible fade show page-alert" role="alert">
-                            {{ flash }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% elseif ( label == 'comment-error' ) %}
-                        <div class="alert alert-danger alert-dismissible fade show page-alert" role="alert">
-                            {{ flash }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-
-            {% if is_granted('ROLE_USER') %}
-            {% if form.vars.errors|length %}
-                <div class="comment-errors">
-                    {{ form_errors(form) }}
-                </div>
-            {% endif %}
-
-            <div class="comment-wrap">
-                <div class="photo">
-                    <div class="avatar" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg')"></div>
-                </div>
-                <div class="comment-block">
-                    {{ form_start(form) }}
-                        {{ form_row(form.content) }}
-                        <button type="submit" class="btn btn-secondary">Envoyer</button>
-                    {{ form_end(form) }}
-                </div>
-            </div>
-            {% else %}
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i> Vour devez être connecté pour envoyer des commentaires
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endif %}
-
-            <div class="comments-wrapper wrapper" data-url="/load-comments/{{ trick.slug }}/" data-number-of-results="{{ number_of_results }}">
-
-                {% include 'trick/_partials/comments.html.twig' %}
-
-                <div class="loader-container col-sm-12 d-flex justify-content-center" id="loader">
-                    <button class="btn btn-outline-primary loader-btn">
-                        Voir plus <i class="fas fa-arrow-down"></i>
-                    </button>
-                    <img src="{{ asset('build/images/loader-blue.gif') }}" alt="loader" class="loader-gif" height="50px">
-                </div>
-            </div>
-
-        </div>
-
-    </section>
 {% endblock %}
 
 {% block backToTop %}

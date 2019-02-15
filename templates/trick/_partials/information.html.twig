@@ -1,0 +1,16 @@
+<section class="trick-information">
+    <div class="trick-information__created-date information">
+        <span class="information__label">Créé le </span>{{ trick.createdAt|date("d/m/Y") }}
+    </div>
+    {% if trick.updatedAt is not null %}
+        <div class="trick-information__updated-date information">
+            <span class="information__label">Modifié le </span>{{ trick.updatedAt|date("d/m/Y") }}
+        </div>
+    {% endif %}
+    <div class="trick-information__category information">
+        <span class="information__label">Groupe : </span>{{ trick.category.name }}
+    </div>
+    <div class="trick-information__author information">
+        <span class="information__label">Auteur : </span>{{ trick.user.username }}
+    </div>
+</section>
