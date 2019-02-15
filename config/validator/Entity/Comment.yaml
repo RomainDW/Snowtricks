@@ -1,0 +1,10 @@
+App\Entity\Comment:
+    properties:
+        content:
+            - NotBlank:
+                  message: 'Le commentaire ne doit pas être vide.'
+            - Length:
+                  min: 3
+                  max: 250
+                  minMessage: 'Le commentaire doit faire au minimum {{ limit }} caractères.'
+                  maxMessage: 'Le commentaire doit faire au maximum {{ limit }} caractères.'
