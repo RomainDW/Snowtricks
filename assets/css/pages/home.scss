@@ -30,6 +30,14 @@
       color: #2196F3;
     }
   }
+
+  .link-to-trick {
+    color: #000;
+    &:hover, &:focus {
+      color: #000;
+      text-decoration: none;
+    }
+  }
 }
 
 #loader {
