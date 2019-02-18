@@ -19,19 +19,18 @@ class UserRegistrationDTO
     /**
      * UserRegistrationDTO constructor.
      *
-     * @throws \Exception
+     * @param $username
+     * @param $email
+     * @param $password
+     * @param null  $vkey
+     * @param array $roles
      */
-    public function __construct()
-    {
-        $vkey = md5(random_bytes(10));
-        $this->vkey = $vkey;
-    }
-
-    public function createUser($username, $email, $password, $roles = ['ROLE_USER_NOT_VERIFIED'])
+    public function __construct($username, $email, $password, $vkey = null, $roles = ['ROLE_USER_NOT_VERIFIED'])
     {
         $this->username = $username;
         $this->password = $password;
         $this->email = $email;
         $this->roles = $roles;
+        $this->vkey = $vkey;
     }
 }
