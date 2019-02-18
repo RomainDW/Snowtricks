@@ -42,9 +42,9 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $vkey;
+    private $vkey = null;
 
     /**
      * @ORM\Column(type="string", length=60)
@@ -119,7 +119,7 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->vkey = null;
     }
 
     public function updateRole(array $roles)
@@ -129,9 +129,28 @@ class User implements UserInterface
         return $this;
     }
 
+    public function setVkey(string $vkey)
+    {
+        $this->vkey = $vkey;
+
+        return $this;
+    }
+
     public function hasRole(string $role)
     {
         return in_array($role, $this->roles);
+    }
+
+    public function exist(string $email)
+    {
+        return $email === $this->getEmail();
+    }
+
+    public function newPassword(string $password)
+    {
+        $this->password = $password;
+
+        return $this;
     }
 
     public function createFromRegistration(UserRegistrationDTO $registrationDTO): self
