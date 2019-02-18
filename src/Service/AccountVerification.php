@@ -28,6 +28,7 @@ class AccountVerification
             return false;
         } else {
             $user->updateRole(['ROLE_USER']);
+            $user->eraseCredentials();
             $this->manager->persist($user);
             $this->manager->flush();
             return true;
