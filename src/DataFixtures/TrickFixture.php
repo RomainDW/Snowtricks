@@ -26,12 +26,11 @@ class TrickFixture extends Fixture
     public function load(ObjectManager $manager)
     {
         $user = new User();
-        $userRegistrationDTO = new UserRegistrationDTO();
 
         // encode password
         $password = ($this->passwordEncoder->encodePassword($user, 'password'));
 
-        $userRegistrationDTO->createUser('Romain', 'user@email.com', $password, ['ROLE_USER']);
+        $userRegistrationDTO = new UserRegistrationDTO('Romain', 'user@email.com', $password, null, ['ROLE_USER']);
 
         $user->createFromRegistration($userRegistrationDTO);
 
