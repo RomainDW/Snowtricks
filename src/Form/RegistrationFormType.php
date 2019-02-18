@@ -99,7 +99,11 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function mapFormsToData($forms, &$userDTO)
     {
         $forms = iterator_to_array($forms);
-        $userDTO = new UserRegistrationDTO();
-        $userDTO->createUser($forms['username']->getData(), $forms['email']->getData(), $forms['plainPassword']->getData());
+        $userDTO = new UserRegistrationDTO(
+            $forms['username']->getData(),
+            $forms['email']->getData(),
+            $forms['plainPassword']->getData(),
+            md5(random_bytes(10))
+        );
     }
 }
