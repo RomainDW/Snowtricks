@@ -28,10 +28,9 @@
                     {{ form_errors(form) }}
                 </div>
             {% endif %}
-
             <div class="comment-wrap">
                 <div class="photo">
-                    <div class="avatar" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/dancounsell/128.jpg')"></div>
+                    <div class="avatar" style="background-image: url({% if app.user.picture %}{{ asset('uploads/images/' ~ app.user.picture.filename) }}{% else %}{{ asset('build/images/user_icon.svg') }}{% endif %})"></div>
                 </div>
                 <div class="comment-block">
                     {{ form_start(form) }}
@@ -53,12 +52,14 @@
 
             {% include 'trick/_partials/ajax-comments.html.twig' %}
 
-            <div class="loader-container col-sm-12 d-flex justify-content-center" id="loader">
-                <button class="btn btn-outline-primary loader-btn">
-                    Voir plus <i class="fas fa-arrow-down"></i>
-                </button>
-                <img src="{{ asset('build/images/loader-blue.gif') }}" alt="loader" class="loader-gif" height="50px">
-            </div>
+            {% if totalComments > 3 %}
+                <div class="loader-container col-sm-12 d-flex justify-content-center" id="loader">
+                    <button class="btn btn-outline-primary loader-btn">
+                        Voir plus <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <img src="{{ asset('build/images/loader-blue.gif') }}" alt="loader" class="loader-gif" height="50px">
+                </div>
+            {% endif %}
         </div>
 
     </div>
