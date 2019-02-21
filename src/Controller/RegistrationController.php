@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Picture;
 use App\Entity\User;
+use App\Event\UserPictureUploadEvent;
 use App\Form\RegistrationFormType;
 use App\Service\AccountVerification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,36 +31,45 @@ class RegistrationController extends AbstractController
      * @param Request                      $request
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param \Swift_Mailer                $mailer
+     * @param EventDispatcherInterface     $dispatcher
      *
      * @return Response
-     *
-     * @throws \Exception
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer): Response
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer, EventDispatcherInterface $dispatcher): Response
     {
         if ($this->isGranted('ROLE_USER')) {
             $this->addFlash('error', 'Vous êtes déjà connecté(e)');
+
             return $this->redirectToRoute('homepage');
         }
-
-        $user = new User();
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = new User();
             $userDTO = $form->getData();
             // encode the plain password
             $userDTO->password = $passwordEncoder->encodePassword($user, $userDTO->password);
+            $pictureDTO = $userDTO->picture;
+
             $user->createFromRegistration($userDTO);
+
+            if (null !== $pictureDTO) {
+                $event = new UserPictureUploadEvent($pictureDTO);
+                $dispatcher->dispatch(UserPictureUploadEvent::NAME, $event);
+                $pictureDTO->user = $user;
+
+                $userPicture = new Picture();
+                $userPicture->createFromRegistration($pictureDTO);
+                $user->setPicture($userPicture);
+            }
 
             $violations = $this->validator->validate($user);
 
             if (0 !== count($violations)) {
-
                 foreach ($violations as $violation) {
                     $this->addFlash('error', $violation->getMessage());
                 }
-
             } else {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);

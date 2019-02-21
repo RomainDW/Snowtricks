@@ -30,6 +30,13 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function buildForm(FormBuilderInterface $builder, array $option): void
     {
         $builder
+            ->add('picture', UserPictureFormType::class, [
+                'label' => false,
+                'attr' => ['placeholder' => 'Photo de profil'],
+                'required' => false,
+                'help' => 'photo de profil pas obligatoire',
+                'error_bubbling' => true,
+            ])
             ->add('username', TextType::class, [
                 'label' => false,
                 'attr' => ['placeholder' => 'pseudo', 'autofocus' => 'autofocus'],
@@ -86,6 +93,7 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
         $forms['email']->setData($userDTO ? $userDTO->email : '');
         $forms['plainPassword']->setData($userDTO ? $userDTO->password : '');
         $forms['username']->setData($userDTO ? $userDTO->username : '');
+        $forms['picture']->setData($userDTO ? $userDTO->picture : '');
     }
 
     /**
@@ -103,7 +111,8 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
             $forms['username']->getData(),
             $forms['email']->getData(),
             $forms['plainPassword']->getData(),
-            md5(random_bytes(10))
+            md5(random_bytes(10)),
+            $forms['picture']->getData()
         );
     }
 }

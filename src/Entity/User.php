@@ -61,6 +61,11 @@ class User implements UserInterface
      */
     private $comments;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Picture", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $picture;
+
     public function __construct()
     {
         $this->tricks = new ArrayCollection();
@@ -221,6 +226,23 @@ class User implements UserInterface
             if ($comments->getUser() === $this) {
                 $comments->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getPicture(): ?Picture
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(Picture $picture): self
+    {
+        $this->picture = $picture;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $picture->getUser()) {
+            $picture->setUser($this);
         }
 
         return $this;

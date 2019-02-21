@@ -38,8 +38,6 @@ class ShowTrickController extends AbstractController
             throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
         }
 
-
-
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
@@ -61,10 +59,13 @@ class ShowTrickController extends AbstractController
 
         $comments = $repo->getCommentsPagination(0, $this->number_of_results, $trick);
 
+        $totalComments = $repo->getNumberOfTotalComments($trick);
+
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
             'form' => $form->createView(),
             'comments' => $comments,
+            'totalComments' => $totalComments,
             'number_of_results' => $this->number_of_results,
         ]);
     }

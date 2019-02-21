@@ -34,6 +34,21 @@ class CommentRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @param Trick $trick
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getNumberOfTotalComments(Trick $trick)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('COUNT(c)')
+            ->where('c.trick = :trick')
+            ->setParameter('trick', $trick)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     // /**
     //  * @return Comment[] Returns an array of Comment objects
     //  */

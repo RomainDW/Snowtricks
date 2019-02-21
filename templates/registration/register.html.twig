@@ -26,6 +26,7 @@
             {% endif %}
 
             {{ form_row(registrationForm.username, { 'attr' : {'class' : 'fadeIn second form-input'} }) }}
+            {{ form_row(registrationForm.picture, { 'attr' : {'class' : 'fadeIn second form-input'} }) }}
             {{ form_row(registrationForm.email, { 'attr' : {'class' : 'fadeIn third form-input'} }) }}
             {{ form_row(registrationForm.plainPassword.first, { 'attr' : {'class' : 'fadeIn fourth form-input'} }) }}
             {{ form_row(registrationForm.plainPassword.second, { 'attr' : {'class' : 'fadeIn fourth form-input'} }) }}
