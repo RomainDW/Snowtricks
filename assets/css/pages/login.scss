@@ -132,7 +132,7 @@ h2:not(.page-subtitle).active {
 }
 
 .form-input {
-  background-color: #CFD8DC;
+  background-color: rgb(232, 240, 254);
   color: #0d0d0d;
   padding: 15px;
   text-align: center;
@@ -150,8 +150,7 @@ h2:not(.page-subtitle).active {
   -webkit-border-radius: 5px 5px 5px 5px;
   border-radius: 5px 5px 5px 5px;
 
-  &:focus {
-    background-color: #fff;
+  &:focus, &:hover {
     border-bottom: 2px solid #5fbae9;
   }
 
