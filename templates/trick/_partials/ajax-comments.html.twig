@@ -1,7 +1,7 @@
 {% for comment in comments %}
     <div class="comment-wrap">
         <div class="photo">
-            <div class="avatar" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/jsa/128.jpg')"></div>
+            <div class="avatar" style="background-image: url({% if comment.user.picture %}{{ asset('uploads/images/' ~ comment.user.picture.filename) }}{% else %}{{ asset('build/images/user_icon.svg') }}{% endif %})"></div>
         </div>
         <div class="comment-block">
             <p class="comment-text">{{ comment.content }}</p>
