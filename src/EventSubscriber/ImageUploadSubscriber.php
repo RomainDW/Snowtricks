@@ -74,7 +74,7 @@ class ImageUploadSubscriber implements EventSubscriberInterface
 
     public function onUserPictureUpload(UserPictureUploadEvent $event)
     {
-        $picture = $event->getPicture();
+        $picture = $event->getImage();
         $fileName = $this->uploadUserPicture($picture);
 
         if (null === $fileName) {

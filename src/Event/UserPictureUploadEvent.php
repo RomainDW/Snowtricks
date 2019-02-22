@@ -11,7 +11,7 @@ namespace App\Event;
 use App\DTO\PictureDTO;
 use Symfony\Component\EventDispatcher\Event;
 
-class UserPictureUploadEvent extends Event
+class UserPictureUploadEvent extends Event implements \ImageUploadInterface
 {
     public const NAME = 'user_picture.upload';
 
@@ -22,7 +22,7 @@ class UserPictureUploadEvent extends Event
         $this->picture = $picture;
     }
 
-    public function getPicture()
+    public function getImage()
     {
         return $this->picture;
     }
