@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Trick;
 use App\Event\ImageUploadEvent;
+use App\Event\VideoUploadEvent;
 use App\Form\TrickFormType;
 use App\Service\SlugService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,6 +46,11 @@ class CreateTrickController extends AbstractController
             foreach ($trick->getImages() as $image) {
                 $event = new ImageUploadEvent($image);
                 $dispatcher->dispatch(ImageUploadEvent::NAME, $event);
+            }
+
+            foreach ($trick->getVideos() as $video) {
+                $event = new VideoUploadEvent($video);
+                $dispatcher->dispatch(VideoUploadEvent::NAME, $event);
             }
 
             $entityManager->persist($trick);

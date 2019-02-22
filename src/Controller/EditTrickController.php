@@ -11,6 +11,7 @@ namespace App\Controller;
 use App\Entity\Trick;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
+use App\Event\VideoUploadEvent;
 use App\Form\TrickFormType;
 use App\Service\SlugService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -74,6 +75,11 @@ class EditTrickController extends AbstractController
                     $event = new ImageRemoveEvent($image);
                     $dispatcher->dispatch(ImageRemoveEvent::NAME, $event);
                 }
+            }
+
+            foreach ($trick->getVideos() as $video) {
+                $event = new VideoUploadEvent($video);
+                $dispatcher->dispatch(VideoUploadEvent::NAME, $event);
             }
 
             $em->persist($trick);
