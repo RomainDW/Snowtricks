@@ -25,6 +25,7 @@ class UserPictureFormType extends AbstractType implements DataMapperInterface
                 'label' => false,
                 'required' => false,
                 'attr' => ['placeholder' => 'Photo de profil'],
+                'error_bubbling' => true,
             ])
             ->setDataMapper($this);
     }
