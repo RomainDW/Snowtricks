@@ -11,7 +11,7 @@ namespace App\Event;
 use App\Entity\Image;
 use Symfony\Component\EventDispatcher\Event;
 
-class ImageUploadEvent extends Event implements \ImageUploadInterface
+class ImageUploadEvent extends Event implements ImageUploadInterface
 {
     public const NAME = 'image.upload';
 

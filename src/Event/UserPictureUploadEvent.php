@@ -11,7 +11,7 @@ namespace App\Event;
 use App\DTO\PictureDTO;
 use Symfony\Component\EventDispatcher\Event;
 
-class UserPictureUploadEvent extends Event implements \ImageUploadInterface
+class UserPictureUploadEvent extends Event implements ImageUploadInterface
 {
     public const NAME = 'user_picture.upload';
 
