@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\DTO\CreateTrickDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrickRepository")
@@ -73,10 +75,27 @@ class Trick
      */
     private $comments;
 
-    public function __construct()
+    /**
+     * Trick constructor.
+     *
+     * @param CreateTrickDTO $createTrickDTO
+     *
+     * @throws \Exception
+     */
+    public function __construct(CreateTrickDTO $createTrickDTO)
     {
-        $this->images = new ArrayCollection();
-        $this->videos = new ArrayCollection();
+        $this->id = Uuid::uuid4();
+        $this->title = $createTrickDTO->title;
+        $this->description = $createTrickDTO->description;
+        $this->slug = $createTrickDTO->slug;
+        $this->createdAt = $createTrickDTO->createdAt;
+        $this->updatedAt = $createTrickDTO->updatedAt;
+
+        $this->category = $createTrickDTO->category;
+        $this->user = $createTrickDTO->user;
+
+        $this->images = new ArrayCollection($createTrickDTO->images);
+        $this->videos = new ArrayCollection($createTrickDTO->videos);
         $this->comments = new ArrayCollection();
     }
 
@@ -90,35 +109,14 @@ class Trick
         return $this->title;
     }
 
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     public function getSlug(): ?string
     {
         return $this->slug;
-    }
-
-    public function setSlug(?string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface
@@ -148,13 +146,6 @@ class Trick
     public function getCategory(): ?Category
     {
         return $this->category;
-    }
-
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
-
-        return $this;
     }
 
     /**
