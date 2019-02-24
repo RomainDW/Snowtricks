@@ -99,6 +99,24 @@ class Trick
         $this->comments = new ArrayCollection();
     }
 
+    public function updateFromDTO(CreateTrickDTO $trickDTO)
+    {
+        $this->title = $trickDTO->title;
+        $this->description = $trickDTO->description;
+        $this->slug = $trickDTO->slug;
+        $this->updatedAt = $trickDTO->updatedAt;
+
+        $this->category = $trickDTO->category;
+
+        foreach ($trickDTO->images as $image) {
+            $this->images->add($image);
+        }
+
+        foreach ($trickDTO->videos as $video) {
+            $this->videos->add($video);
+        }
+    }
+
     public function getId()
     {
         return $this->id;

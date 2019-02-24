@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Entity\Category;
+use App\Entity\Trick;
 
 class CreateTrickDTO
 {
@@ -31,6 +32,23 @@ class CreateTrickDTO
         $this->category = $category;
         $this->images = $images;
         $this->videos = $videos;
+    }
+
+    public static function createFromTrick(Trick $trick)
+    {
+        $trickRequest = new self(
+            $trick->getTitle(),
+            $trick->getDescription(),
+            $trick->getCategory(),
+            $trick->getImages()->toArray(),
+            $trick->getVideos()->toArray()
+        );
+
+        $trickRequest->user = $trick->getUser();
+        $trickRequest->createdAt = $trick->getCreatedAt();
+        $trickRequest->updatedAt = $trick->getUpdatedAt();
+
+        return $trickRequest;
     }
 
 
