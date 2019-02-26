@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: romain
- * Date: 2/8/19
- * Time: 3:21 PM.
+ * Date: 2/24/19
+ * Time: 4:27 PM.
  */
 
 namespace App\Event;
@@ -11,9 +11,9 @@ namespace App\Event;
 use App\Entity\ImageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class ImageRemoveEvent extends Event implements ImageEventInterface
+class UserPictureRemoveEvent extends Event implements ImageEventInterface
 {
-    public const NAME = 'image.remove';
+    public const NAME = 'picture.remove';
 
     protected $image;
 

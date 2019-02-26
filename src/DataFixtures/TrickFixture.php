@@ -2,10 +2,12 @@
 
 namespace App\DataFixtures;
 
+use App\DTO\CreateTrickDTO;
 use App\DTO\UserRegistrationDTO;
 use App\Entity\Category;
 use App\Entity\Trick;
 use App\Entity\User;
+use App\Service\SlugService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -21,6 +23,7 @@ class TrickFixture extends Fixture
 
     /**
      * @param ObjectManager $manager
+     *
      * @throws \Exception
      */
     public function load(ObjectManager $manager)
@@ -38,23 +41,39 @@ class TrickFixture extends Fixture
         $category1 = $category1->setName('Catégorie 1');
         $category2 = new Category();
         $category2 = $category2->setName('Catégorie 2');
+        $category3 = new Category();
+        $category3 = $category3->setName('Catégorie 3');
+
+        $categories = [
+            1 => $category1,
+            2 => $category2,
+            3 => $category3,
+        ];
 
         for ($i = 0; $i < 20; ++$i) {
-            $trick = new Trick();
-            $trick->setTitle('Trick n°'.$i);
-            $trick->setSlug('trick-'.$i);
-            $trick->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-			tempor incididunt ut labore et dolore magna aliqua. Sit amet cursus sit amet dictum sit amet justo.');
-            $trick->setCreatedAt(new \DateTime());
+            $category = $categories[rand(1, 3)];
+            $title = 'Trick n°'.$i;
+            $slug = SlugService::slugify($title);
 
-            rand(0, 1) ? $category = $category1 : $category = $category2;
+            $trickDTO = new CreateTrickDTO(
+                $title,
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
+                labore et dolore magna aliqua. Sit amet cursus sit amet dictum sit amet justo.',
+                $category,
+                [],
+                []
+            );
 
-            $trick->setCategory($category);
-            $trick->setUser($user);
+            $trickDTO->createdAt = new \DateTime();
+            $trickDTO->user = $user;
+            $trickDTO->slug = $slug;
+
+            $trick = new Trick($trickDTO);
 
             $manager->persist($user);
             $manager->persist($category1);
             $manager->persist($category2);
+            $manager->persist($category3);
             $manager->persist($trick);
         }
 

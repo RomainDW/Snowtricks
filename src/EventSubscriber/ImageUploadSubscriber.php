@@ -8,10 +8,11 @@
 
 namespace App\EventSubscriber;
 
-use App\DTO\PictureDTO;
-use App\Entity\Image;
+use App\Entity\ImageInterface;
+use App\Event\ImageEventInterface;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
+use App\Event\UserPictureRemoveEvent;
 use App\Event\UserPictureUploadEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -49,42 +50,34 @@ class ImageUploadSubscriber implements EventSubscriberInterface
         return [
             ImageUploadEvent::NAME => 'onImageUpload',
             ImageRemoveEvent::NAME => 'onImageRemove',
-            UserPictureUploadEvent::NAME => 'onUserPictureUpload',
+            UserPictureUploadEvent::NAME => 'onImageUpload',
+            UserPictureRemoveEvent::NAME => 'onImageRemove',
         ];
     }
 
-    public function onImageUpload(ImageUploadEvent $event)
+    public function onImageUpload(ImageEventInterface $event)
     {
         $image = $event->getImage();
-        $fileName = $this->upload($image);
 
-        if (null === $fileName) {
-            return;
+        if ($image instanceof ImageInterface) {
+            $fileName = $this->upload($image);
+
+            if (null === $fileName) {
+                return;
+            }
+
+            $image->setFileName($fileName);
         }
-
-        $image->setFileName($fileName);
     }
 
-    public function onImageRemove(ImageRemoveEvent $event)
+    public function onImageRemove(ImageEventInterface $event)
     {
         $image = $event->getImage();
 
         $this->remove($image);
     }
 
-    public function onUserPictureUpload(UserPictureUploadEvent $event)
-    {
-        $picture = $event->getImage();
-        $fileName = $this->uploadUserPicture($picture);
-
-        if (null === $fileName) {
-            return;
-        }
-
-        $picture->file_name = $fileName;
-    }
-
-    private function upload(Image $file)
+    private function upload(ImageInterface $file)
     {
         if (!$file->getFile() instanceof UploadedFile) {
             return null;
@@ -101,28 +94,11 @@ class ImageUploadSubscriber implements EventSubscriberInterface
         return $fileName;
     }
 
-    private function remove(Image $image)
+    private function remove(ImageInterface $image)
     {
         if (file_exists($this->getTargetDirectory().$image->getFileName())) {
             unlink($this->getTargetDirectory().$image->getFileName());
         }
-    }
-
-    private function uploadUserPicture(PictureDTO $picture)
-    {
-        if (!$picture->file instanceof UploadedFile) {
-            return null;
-        }
-
-        $fileName = md5(uniqid()).'.'.$picture->file->guessClientExtension();
-
-        try {
-            $picture->file->move($this->getTargetDirectory(), $fileName);
-        } catch (FileException $e) {
-            // ... handle exception if something happens during file upload
-        }
-
-        return $fileName;
     }
 
     public function getTargetDirectory()

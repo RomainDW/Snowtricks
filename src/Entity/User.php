@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\DTO\UpdateUserDTO;
 use App\DTO\UserRegistrationDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -165,8 +166,15 @@ class User implements UserInterface
         $this->username = $registrationDTO->username;
         $this->vkey = $registrationDTO->vkey;
         $this->roles = $registrationDTO->roles;
+        $this->picture = $registrationDTO->picture;
 
         return $this;
+    }
+
+    public function updateFromDTO(UpdateUserDTO $userDTO)
+    {
+        $this->username = $userDTO->username;
+        $this->picture = $userDTO->picture;
     }
 
     /**

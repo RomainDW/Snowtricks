@@ -1,10 +1,5 @@
-App\DTO\UserRegistrationDTO:
+App\DTO\UpdateUserDTO:
     properties:
-        email:
-            - NotBlank:
-                  message: L'adresse email ne doit pas être vide.
-            - Email:
-                  message: L'adresse email {{ value }} n'est pas valide.
         username:
             - NotBlank:
                   message: Le pseudo ne doit pas être vide.
@@ -13,12 +8,6 @@ App\DTO\UserRegistrationDTO:
                   max: 10
                   minMessage: 'Votre pseudo doit au minimum avoir {{ limit }} caractères'
                   maxMessage: 'Votre pseudo ne doit pas dépasser {{ limit }} caractères'
-            - Type:
-                  type: string
-                  message: La valeur {{ value }} n'est pas valide.
-        password:
-            - NotBlank:
-                  message: Le mot de passe ne doit pas être vide.
             - Type:
                   type: string
                   message: La valeur {{ value }} n'est pas valide.

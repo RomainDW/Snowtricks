@@ -1,0 +1,5 @@
+App\Entity\Category:
+    properties:
+        name:
+            - NotBlank:
+                  message: le nom de la catégorie ne doit pas être vide

@@ -72,6 +72,7 @@ class ForgotPasswordController extends AbstractController
                 $em->flush();
 
                 $this->addFlash('success', 'Un email vous a été envoyé avec un lien de réinitialisation de mot de passe.');
+
                 return $this->redirectToRoute('app_forgot_password');
             }
         }
@@ -99,13 +100,18 @@ class ForgotPasswordController extends AbstractController
         if ($form->isSubmitted() && $form->isValid() && $user->exist($form->get('email')->getData())) {
             $password = $passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());
             $user->newPassword($password);
+            $user->eraseCredentials();
 
             $em->persist($user);
             $em->flush();
 
             $this->addFlash('success', 'Votre mot de passe a été réinitialisé, vous pouvez maintenant vous connecter');
 
-            return $this->redirectToRoute('app_login');
+            if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+                return $this->redirectToRoute('app_account');
+            } else {
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->render('security/reset-password.html.twig', [

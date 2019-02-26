@@ -8,58 +8,39 @@
 
 namespace App\Controller;
 
-use App\Entity\Trick;
-use App\Event\ImageUploadEvent;
-use App\Event\VideoUploadEvent;
 use App\Form\TrickFormType;
-use App\Service\SlugService;
+use App\Service\TrickService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CreateTrickController extends AbstractController
 {
     /**
-     * @param Request                  $request
-     * @param EntityManagerInterface   $entityManager
-     * @param EventDispatcherInterface $dispatcher
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TrickService           $trickService
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Exception
      * @Route("/trick/add", name="app_create_trick")
      */
-    public function index(Request $request, EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher)
+    public function index(Request $request, EntityManagerInterface $entityManager, TrickService $trickService)
     {
-        $trick = new Trick();
-        $form = $this->createForm(TrickFormType::class, $trick);
+        $form = $this->createForm(TrickFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $trick->setCreatedAt(new \DateTime());
-            $trick->setUser($this->getUser());
-            $slug = SlugService::slugify($form->get('title')->getData());
-            $trick->setSlug($slug);
-
-            foreach ($trick->getImages() as $image) {
-                $event = new ImageUploadEvent($image);
-                $dispatcher->dispatch(ImageUploadEvent::NAME, $event);
-            }
-
-            foreach ($trick->getVideos() as $video) {
-                $event = new VideoUploadEvent($video);
-                $dispatcher->dispatch(VideoUploadEvent::NAME, $event);
-            }
+            $trick = $trickService->InitTrick($form->getData(), $this->getUser());
 
             $entityManager->persist($trick);
             $entityManager->flush();
 
             $this->addFlash('success', 'La figure a bien été ajoutée !');
 
-            //TODO: redirect to the trick
-            return $this->redirectToRoute('app_create_trick');
+            return $this->redirectToRoute('app_show_trick', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render('trick/tricks-form.html.twig', [

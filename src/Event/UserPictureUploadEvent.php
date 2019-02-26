@@ -8,16 +8,16 @@
 
 namespace App\Event;
 
-use App\DTO\PictureDTO;
+use App\Entity\ImageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class UserPictureUploadEvent extends Event implements ImageUploadInterface
+class UserPictureUploadEvent extends Event implements ImageEventInterface
 {
-    public const NAME = 'user_picture.upload';
+    public const NAME = 'picture.upload';
 
     protected $picture;
 
-    public function __construct(PictureDTO $picture)
+    public function __construct(ImageInterface $picture)
     {
         $this->picture = $picture;
     }
