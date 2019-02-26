@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    SnowTricks - Mon compte
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('tricks_form') }}
+{% endblock %}
+
+{% block flashMessages %}{% endblock %}
+
+{% block body %}
+
+    {% for label, flashes in app.session.flashbag.all %}
+        {% for flash in flashes %}
+            {% if ( label == 'success' ) %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ flash }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elseif ( label == 'error' ) %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ flash }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+
+    <h1 class="trick-form-title">Mon compte</h1>
+
+    {% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}} ) }}
+
+    {{ form_row(form.username) }}
+    {{ form_row(form.picture) }}
+
+    {% if app.user.picture %}
+        <img class="img-fluid img-thumbnail mb-5" src="{{ asset('uploads/images/' ~ app.user.picture.filename) }}" alt="{{ app.user.picture.alt }}">
+    {% endif %}
+    <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('tricks_form') }}
+{% endblock %}
