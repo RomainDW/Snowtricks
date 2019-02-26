@@ -10,7 +10,6 @@ namespace App\Form;
 
 use App\DTO\UserRegistrationDTO;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -21,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class RegistrationFormType extends AbstractType implements DataMapperInterface
+class RegistrationFormType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -30,7 +29,7 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
     public function buildForm(FormBuilderInterface $builder, array $option): void
     {
         $builder
-            ->add('picture', UserPictureFormType::class, [
+            ->add('picture', PictureFormType::class, [
                 'label' => false,
                 'attr' => ['placeholder' => 'Photo de profil'],
                 'required' => false,
@@ -69,50 +68,22 @@ class RegistrationFormType extends AbstractType implements DataMapperInterface
                         'max' => 4096,
                     ]),
                 ],
-            ])
-            ->setDataMapper($this);
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => UserRegistrationDTO::class,
-            'empty_data' => null,
+            'empty_data' => function (FormInterface $form) {
+                return new UserRegistrationDTO(
+                    $form->get('username')->getData(),
+                    $form->get('email')->getData(),
+                    $form->get('plainPassword')->getData(),
+                    md5(random_bytes(10)),
+                    $form->get('picture')->getData()
+                );
+            },
         ]);
-    }
-
-    /**
-     * Maps properties of some data to a list of forms.
-     *
-     * @param $userDTO
-     * @param FormInterface[]|\Traversable $forms A list of {@link FormInterface} instances
-     */
-    public function mapDataToForms($userDTO, $forms)
-    {
-        $forms = iterator_to_array($forms);
-        $forms['email']->setData($userDTO ? $userDTO->email : '');
-        $forms['plainPassword']->setData($userDTO ? $userDTO->password : '');
-        $forms['username']->setData($userDTO ? $userDTO->username : '');
-        $forms['picture']->setData($userDTO ? $userDTO->picture : '');
-    }
-
-    /**
-     * Maps the data of a list of forms into the properties of some data.
-     *
-     * @param FormInterface[]|\Traversable $forms A list of {@link FormInterface} instances
-     * @param $userDTO
-     *
-     * @throws \Exception
-     */
-    public function mapFormsToData($forms, &$userDTO)
-    {
-        $forms = iterator_to_array($forms);
-        $userDTO = new UserRegistrationDTO(
-            $forms['username']->getData(),
-            $forms['email']->getData(),
-            $forms['plainPassword']->getData(),
-            md5(random_bytes(10)),
-            $forms['picture']->getData()
-        );
     }
 }
