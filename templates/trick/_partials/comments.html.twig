@@ -39,6 +39,13 @@
                     {{ form_end(form) }}
                 </div>
             </div>
+        {% elseif is_granted('ROLE_USER_NOT_VERIFIED') %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> Vous devez vérifier votre compte pour envoyer des commentaires
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         {% else %}
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-triangle"></i> Vour devez être connecté pour envoyer des commentaires
