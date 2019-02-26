@@ -11,7 +11,7 @@ namespace App\Event;
 use App\Entity\ImageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class UserPictureRemoveEvent extends Event implements ImageUploadInterface
+class UserPictureRemoveEvent extends Event implements ImageEventInterface
 {
     public const NAME = 'picture.remove';
 

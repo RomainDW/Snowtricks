@@ -8,16 +8,16 @@
 
 namespace App\Event;
 
-use App\Entity\Image;
+use App\Entity\ImageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class ImageRemoveEvent extends Event
+class ImageRemoveEvent extends Event implements ImageEventInterface
 {
     public const NAME = 'image.remove';
 
     protected $image;
 
-    public function __construct(Image $image)
+    public function __construct(ImageInterface $image)
     {
         $this->image = $image;
     }
