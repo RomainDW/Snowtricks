@@ -48,21 +48,18 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = new User();
             $userDTO = $form->getData();
+
             // encode the plain password
             $userDTO->password = $passwordEncoder->encodePassword($user, $userDTO->password);
-            $pictureDTO = $userDTO->picture;
+
+            if (null !== $userDTO->picture) {
+                $event = new UserPictureUploadEvent($userDTO->picture);
+                $dispatcher->dispatch(UserPictureUploadEvent::NAME, $event);
+                $userDTO->picture->setUser($user);
+                $userDTO->picture->setAlt('Photo de profil de '.$userDTO->username);
+            }
 
             $user->createFromRegistration($userDTO);
-
-            if (null !== $pictureDTO) {
-                $event = new UserPictureUploadEvent($pictureDTO);
-                $dispatcher->dispatch(UserPictureUploadEvent::NAME, $event);
-                $pictureDTO->user = $user;
-
-                $userPicture = new Picture();
-                $userPicture->createFromRegistration($pictureDTO);
-                $user->setPicture($userPicture);
-            }
 
             $violations = $this->validator->validate($user);
 
