@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ImageRepository")
  */
-class Image
+class Image implements ImageInterface
 {
     /**
      * @var \Ramsey\Uuid\UuidInterface

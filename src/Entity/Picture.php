@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use App\DTO\PictureDTO;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PictureRepository")
  */
-class Picture
+class Picture implements ImageInterface
 {
     /**
      * @ORM\Id()
@@ -98,13 +97,5 @@ class Picture
         $this->file = $file;
 
         return $this;
-    }
-
-    public function createFromRegistration(PictureDTO $pictureDTO)
-    {
-        $this->user = $pictureDTO->user;
-        $this->file_name = $pictureDTO->file_name;
-        $this->file = $pictureDTO->file;
-        $this->alt = $pictureDTO->user->getUsername();
     }
 }
