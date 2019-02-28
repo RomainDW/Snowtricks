@@ -4,9 +4,10 @@ $(function () {
     initForm($('#trick_form_images'), '<i class="fas fa-plus"></i> Image');
     initForm($('#trick_form_videos'), '<i class="fas fa-plus"></i> Vidéo');
     $("div[id^='trick_form_images_'], div[id^='trick_form_videos_']").each(function () {
-        $(this).addClass('sub-form');
-        initDelete($(this));
-        console.log($(this));
+        if ($(this).attr('id').indexOf('errors') === -1) {
+            $(this).addClass('sub-form');
+            initDelete($(this));
+        }
     });
 
     inputFilePlaceholder();
@@ -32,7 +33,7 @@ function addForm(collectionHolder, newAddFormLink) {
 
     collectionHolder.data('index', index + 1);
 
-    newAddFormLink.before(newFormWrapper);
+    newAddFormLink.find('.add-content').before(newFormWrapper);
     initDelete(newFormWrapper);
     inputFilePlaceholder();
 }
@@ -41,7 +42,6 @@ function initDelete(form) {
     form.append(removeFormLink);
     removeFormLink.on('click', function(e) {
         e.preventDefault();
-        console.log(form);
         form.remove();
     });
 }
