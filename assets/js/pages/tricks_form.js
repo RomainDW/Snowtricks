@@ -8,6 +8,8 @@ $(function () {
         initDelete($(this));
         console.log($(this));
     });
+
+    inputFilePlaceholder();
 });
 
 
@@ -32,6 +34,7 @@ function addForm(collectionHolder, newAddFormLink) {
 
     newAddFormLink.before(newFormWrapper);
     initDelete(newFormWrapper);
+    inputFilePlaceholder();
 }
 function initDelete(form) {
     let removeFormLink = $('<button class="remove-content btn btn-danger"><i class="far fa-trash-alt"></i>Supprimer</a>');
@@ -40,5 +43,14 @@ function initDelete(form) {
         e.preventDefault();
         console.log(form);
         form.remove();
+    });
+}
+
+function inputFilePlaceholder() {
+    // Input file
+    $('input[type="file"]').on('change', function(){
+        var that = $(this);
+        var file_name = that[0].files[0].name;
+        that.siblings('label').text(file_name);
     });
 }
