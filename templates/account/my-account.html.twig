@@ -44,7 +44,7 @@
     {{ form_row(form.picture) }}
 
     {% if app.user.picture %}
-        <img class="img-fluid img-thumbnail mb-5" src="{{ asset('uploads/images/' ~ app.user.picture.filename) }}" alt="{{ app.user.picture.alt }}">
+        <img style="max-width:200px;" class="img-fluid img-thumbnail mb-5" src="{{ asset('uploads/images/' ~ app.user.picture.filename) }}" alt="{{ app.user.picture.alt }}">
     {% endif %}
     <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
     {{ form_end(form) }}
