@@ -34,4 +34,16 @@ class TrickRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getNumberOfTotalTricks()
+    {
+        return $this->createQueryBuilder('t')
+            ->select('COUNT(t)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

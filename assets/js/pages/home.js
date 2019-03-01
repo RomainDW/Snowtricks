@@ -39,13 +39,17 @@ $(function () {
 
 function loadPagination(){
 
-    let cardDeck = $('.wrapper');
+    const cardDeck = $('.wrapper');
     let loader = cardDeck.find('#loader');
 
     // cette variable contient notre offset
     // par défaut à 6 puisqu'on a d'office les 6 premiers éléments au chargement de la page
     let offset = cardDeck.data('number-of-results');
-    let url = cardDeck.data('url');
+    let counter = offset;
+    const url = cardDeck.data('url');
+    const totalEntities = cardDeck.data('total-entities');
+    const totalPages = Math.ceil(totalEntities / offset);
+    let currentPage = 1;
 
     // on initialise ajaxready à true au premier chargement de la fonction
     $(window).data('ajaxready', true);
@@ -63,14 +67,15 @@ function loadPagination(){
         // puis on fait la requête pour demander les nouveaux éléments
         setTimeout(function () {
 
-            $.post(url + offset, function(data){
+            $.post(url + counter, function(data){
                 // s'il y a des données
                 if (data !== '') {
                     // on les insère juste avant le loader.gif;
                     cardDeck.find($('#loader')).before(data);
 
                     // enfin on incrémente notre offset de 6 afin que la fois d'après il corresponde toujours
-                    offset+= offset;
+                    counter+= offset;
+                    currentPage++;
 
                     /* une fois tous les traitements effectués,
                      * on remet ajaxready à true
@@ -82,9 +87,12 @@ function loadPagination(){
                 }
 
                 loader.find('.loader-gif').hide();
-                setTimeout(function () {
-                    loader.find('.loader-btn').show();
-                }, 300);
+
+                if (totalPages !== currentPage) {
+                    setTimeout(function () {
+                        loader.find('.loader-btn').show();
+                    }, 300);
+                }
 
                 $("html, body").animate({
                     scrollTop: $('.page-footer').offset().top

@@ -10,7 +10,7 @@
 {% block body %}
     <!-- Content -->
     <div class="row">
-        <div class="card-deck wrapper" data-number-of-results="{{ number_of_results }}" data-url="/more/">
+        <div class="card-deck wrapper" data-number-of-results="{{ number_of_results }}" data-url="/more/" data-total-entities="{{ total_tricks }}">
 
             {% include 'homepage/_partials/ajax-content.html.twig' %}
 

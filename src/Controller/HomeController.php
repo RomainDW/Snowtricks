@@ -20,6 +20,7 @@ class HomeController extends AbstractController
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/", name="homepage")
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function index()
     {
@@ -27,9 +28,12 @@ class HomeController extends AbstractController
 
         $tricks = $manager->getTricksPagination(0, $this->number_of_results);
 
+        $totalTricks = $manager->getNumberOfTotalTricks();
+
         return $this->render('homepage/index.html.twig', [
             'tricks' => $tricks,
             'number_of_results' => $this->number_of_results,
+            'total_tricks' => $totalTricks,
         ]);
     }
 
