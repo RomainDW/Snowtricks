@@ -61,7 +61,7 @@
 }
 
 /* The Close Button */
-.close {
+.close-modal {
   position: absolute;
   top: 15px;
   right: 35px;
@@ -71,8 +71,8 @@
   transition: 0.3s;
 }
 
-.close:hover,
-.close:focus {
+.close-modal:hover,
+.close-modal:focus {
   color: #bbb;
   text-decoration: none;
   cursor: pointer;
