@@ -2,26 +2,6 @@
 
     <div class="comments">
 
-        {% for label, flashes in app.session.flashbag.all %}
-            {% for flash in flashes %}
-                {% if ( label == 'comment-success' ) %}
-                    <div class="alert alert-success alert-dismissible fade show page-alert" role="alert">
-                        {{ flash }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% elseif ( label == 'comment-error' ) %}
-                    <div class="alert alert-danger alert-dismissible fade show page-alert" role="alert">
-                        {{ flash }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-
         {% if is_granted('ROLE_USER') %}
             {% if form.vars.errors|length %}
                 <div class="comment-errors">

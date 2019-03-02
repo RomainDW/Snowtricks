@@ -50,7 +50,7 @@ class ShowTrickController extends AbstractController
             $em->persist($comment);
             $em->flush();
 
-            $this->addFlash('comment-success', 'Le commentaire a bien été ajouté !');
+            $this->addFlash('success', 'Le commentaire a bien été ajouté !');
 
             return $this->redirectToRoute('app_show_trick', ['slug' => $slug, '_fragment' => 'comments']);
         }
