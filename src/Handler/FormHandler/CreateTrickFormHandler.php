@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateTrickFormHandler
 {
@@ -22,6 +23,7 @@ class CreateTrickFormHandler
     private $trickRepository;
     private $flashBag;
     private $url_generator;
+    private $validator;
 
     /**
      * CreateTrickFormHandler constructor.
@@ -30,13 +32,15 @@ class CreateTrickFormHandler
      * @param TrickRepository       $trickRepository
      * @param FlashBagInterface     $flashBag
      * @param UrlGeneratorInterface $url_generator
+     * @param ValidatorInterface    $validator
      */
-    public function __construct(TrickService $trickService, TrickRepository $trickRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator)
+    public function __construct(TrickService $trickService, TrickRepository $trickRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, ValidatorInterface $validator)
     {
         $this->trickService = $trickService;
         $this->trickRepository = $trickRepository;
         $this->flashBag = $flashBag;
         $this->url_generator = $url_generator;
+        $this->validator = $validator;
     }
 
     /**
@@ -54,11 +58,20 @@ class CreateTrickFormHandler
         if ($form->isSubmitted() && $form->isValid()) {
             $trick = $this->trickService->InitTrick($form->getData(), $user);
 
-            $this->trickRepository->save($trick);
+            $violations = $this->validator->validate($trick);
 
-            $this->flashBag->add('success', 'La figure a bien été ajoutée !');
+            if (0 !== count($violations)) {
+                foreach ($violations as $violation) {
+                    $this->flashBag->add('error', $violation->getMessage());
+                }
+                return false;
+            } else {
+                $this->trickRepository->save($trick);
 
-            return new RedirectResponse($this->url_generator->generate('app_show_trick', ['slug' => $trick->getSlug()]));
+                $this->flashBag->add('success', 'La figure a bien été ajoutée !');
+
+                return new RedirectResponse($this->url_generator->generate('app_show_trick', ['slug' => $trick->getSlug()]));
+            }
         } else {
             return false;
         }
