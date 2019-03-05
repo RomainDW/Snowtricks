@@ -10,7 +10,6 @@ namespace App\Handler\FormHandler;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Swift_Mailer;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -21,7 +20,6 @@ use Symfony\Component\Security\Core\Security;
 class ResetPasswordFormHandler
 {
     private $userRepository;
-    private $mailer;
     private $flashBag;
     private $url_generator;
     private $passwordEncoder;
@@ -31,16 +29,14 @@ class ResetPasswordFormHandler
      * ResetPasswordFormHandler constructor.
      *
      * @param UserRepository               $userRepository
-     * @param Swift_Mailer                 $mailer
      * @param FlashBagInterface            $flashBag
      * @param UrlGeneratorInterface        $url_generator
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param Security                     $security
      */
-    public function __construct(UserRepository $userRepository, Swift_Mailer $mailer, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, UserPasswordEncoderInterface $passwordEncoder, Security $security)
+    public function __construct(UserRepository $userRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, UserPasswordEncoderInterface $passwordEncoder, Security $security)
     {
         $this->userRepository = $userRepository;
-        $this->mailer = $mailer;
         $this->flashBag = $flashBag;
         $this->url_generator = $url_generator;
         $this->passwordEncoder = $passwordEncoder;
