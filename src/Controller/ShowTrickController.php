@@ -11,8 +11,10 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Trick;
 use App\Form\CommentFormType;
+use App\Handler\FormHandler\CommentFormHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,34 +27,27 @@ class ShowTrickController extends AbstractController
      * @param $slug
      * @param EntityManagerInterface $em
      * @param Request                $request
+     * @param CommentFormHandler     $formHandler
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/trick/show/{slug}", name="app_show_trick")
-     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Exception
+     * @Route("/trick/show/{slug}", name="app_show_trick")
      */
-    public function index($slug, EntityManagerInterface $em, Request $request)
+    public function index($slug, EntityManagerInterface $em, Request $request, CommentFormHandler $formHandler)
     {
         if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
             throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
         }
 
         $comment = new Comment();
+        $user = $this->getUser();
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $this->isGranted('ROLE_USER')) {
-            $comment->setCreatedAt(new \DateTime());
-            $comment->setUser($this->getUser());
-            $comment->setTrick($trick);
-
-            $em->persist($comment);
-            $em->flush();
-
-            $this->addFlash('success', 'Le commentaire a bien été ajouté !');
-
-            return $this->redirectToRoute('app_show_trick', ['slug' => $slug, '_fragment' => 'comments']);
+        if (($response = $formHandler->handle($form, $comment, $user, $trick, $slug)) instanceof RedirectResponse) {
+            return $response;
         }
 
         $repo = $em->getRepository(Comment::class);
@@ -73,8 +68,8 @@ class ShowTrickController extends AbstractController
     /**
      * @param $slug
      * @param $offset
-     *
      * @param EntityManagerInterface $em
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/load-comments/{slug}/{offset}", name="loadComments", methods={"POST"})
      */
