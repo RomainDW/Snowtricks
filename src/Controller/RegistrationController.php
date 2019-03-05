@@ -2,18 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Picture;
 use App\Entity\User;
-use App\Event\UserPictureUploadEvent;
 use App\Form\RegistrationFormType;
+use App\Handler\FormHandler\RegistrationFormHandler;
 use App\Service\AccountVerification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationController extends AbstractController
@@ -28,14 +26,18 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/register", name="app_register")
      *
-     * @param Request                      $request
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param \Swift_Mailer                $mailer
-     * @param EventDispatcherInterface     $dispatcher
+     * @param Request                 $request
+     * @param RegistrationFormHandler $formHandler
      *
      * @return Response
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer, EventDispatcherInterface $dispatcher): Response
+    public function register(Request $request, RegistrationFormHandler $formHandler): Response
     {
         if ($this->isGranted('ROLE_USER')) {
             $this->addFlash('error', 'Vous êtes déjà connecté(e)');
@@ -45,59 +47,8 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = new User();
-            $userDTO = $form->getData();
-
-            // encode the plain password
-            $userDTO->password = $passwordEncoder->encodePassword($user, $userDTO->password);
-
-            if (null !== $userDTO->picture) {
-                $event = new UserPictureUploadEvent($userDTO->picture);
-                $dispatcher->dispatch(UserPictureUploadEvent::NAME, $event);
-                $userDTO->picture->setUser($user);
-                $userDTO->picture->setAlt('Photo de profil de '.$userDTO->username);
-            }
-
-            $user->createFromRegistration($userDTO);
-
-            $violations = $this->validator->validate($user);
-
-            if (0 !== count($violations)) {
-                foreach ($violations as $violation) {
-                    $this->addFlash('error', $violation->getMessage());
-                }
-            } else {
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($user);
-                $entityManager->flush();
-
-                $message = (new \Swift_Message('Confirmation de création de compte'))
-                    ->setFrom('noreply@snowtricks.com')
-                    ->setTo('romain.ollier34@gmail.com')
-                    ->setBody(
-                        $this->renderView(
-                            'emails/registration.html.twig',
-                            ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->vkey]
-                        ),
-                        'text/html'
-                    )
-                    /*
-                     * plaintext version
-                    ->addPart(
-                        $this->renderView(
-                            'emails/registration.txt.twig',
-                            ['name' => $name]
-                        ),
-                        'text/plain'
-                    )
-                    */
-                ;
-
-                $mailer->send($message);
-
-                return $this->redirectToRoute('app_mail_sent', ['id' => $user->getId()]);
-            }
+        if (($response = $formHandler->handle($form)) instanceof RedirectResponse) {
+            return $response;
         }
 
         return $this->render('registration/register.html.twig', [
