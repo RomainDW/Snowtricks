@@ -49,6 +49,17 @@ class CommentRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @param Comment $comment
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function save(Comment $comment)
+    {
+        $this->_em->persist($comment);
+        $this->_em->flush();
+    }
+
     // /**
     //  * @return Comment[] Returns an array of Comment objects
     //  */
