@@ -21,6 +21,7 @@ class ForgotPasswordFormHandler
     private $mailer;
     private $flashBag;
     private $url_generator;
+    private $templating;
 
     /**
      * ForgotPasswordFormHandler constructor.
@@ -29,20 +30,27 @@ class ForgotPasswordFormHandler
      * @param Swift_Mailer          $mailer
      * @param FlashBagInterface     $flashBag
      * @param UrlGeneratorInterface $url_generator
+     * @param \Twig_Environment     $templating
      */
-    public function __construct(UserRepository $userRepository, Swift_Mailer $mailer, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator)
+    public function __construct(UserRepository $userRepository, Swift_Mailer $mailer, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, \Twig_Environment $templating)
     {
         $this->userRepository = $userRepository;
         $this->mailer = $mailer;
         $this->flashBag = $flashBag;
         $this->url_generator = $url_generator;
+        $this->templating = $templating;
     }
 
     /**
      * @param FormInterface $form
+     *
      * @return bool|RedirectResponse
+     *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function handle(FormInterface $form)
     {
@@ -57,7 +65,7 @@ class ForgotPasswordFormHandler
                     ->setFrom('noreply@snowtricks.com')
                     ->setTo('romain.ollier34@gmail.com')
                     ->setBody(
-                        $this->renderView(
+                        $this->templating->render(
                             'emails/reset-password.html.twig',
                             ['vkey' => $vkey]
                         ),
