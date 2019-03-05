@@ -9,9 +9,9 @@
 namespace App\Controller;
 
 use App\Form\TrickFormType;
-use App\Service\TrickService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Handler\FormHandler\CreateTrickFormHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,28 +19,21 @@ class CreateTrickController extends AbstractController
 {
     /**
      * @param Request                $request
-     * @param EntityManagerInterface $entityManager
-     * @param TrickService           $trickService
+     * @param CreateTrickFormHandler $formHandler
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Exception
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      * @Route("/trick/add", name="app_create_trick")
      */
-    public function index(Request $request, EntityManagerInterface $entityManager, TrickService $trickService)
+    public function index(Request $request, CreateTrickFormHandler $formHandler)
     {
         $form = $this->createForm(TrickFormType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $trick = $trickService->InitTrick($form->getData(), $this->getUser());
-
-            $entityManager->persist($trick);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'La figure a bien été ajoutée !');
-
-            return $this->redirectToRoute('app_show_trick', ['slug' => $trick->getSlug()]);
+        if (($response = $formHandler->handle($form, $this->getUser())) instanceof RedirectResponse) {
+            return $response;
         }
 
         return $this->render('trick/tricks-form.html.twig', [

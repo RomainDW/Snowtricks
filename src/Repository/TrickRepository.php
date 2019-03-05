@@ -46,4 +46,15 @@ class TrickRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @param Trick $trick
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function save(Trick $trick)
+    {
+        $this->_em->persist($trick);
+        $this->_em->flush();
+    }
 }
