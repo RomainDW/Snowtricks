@@ -1,6 +1,0 @@
-App\DTO\PictureDTO:
-    properties:
-        file:
-            - Image:
-                  mimeTypesMessage: L'image n'est pas au bon format ({{ type }}). Les formats autorisés sont {{ types }}.
-                  disallowEmptyMessage: Le fichier est vide.
