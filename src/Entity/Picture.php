@@ -38,6 +38,11 @@ class Picture implements ImageInterface
      */
     private $file;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,10 +96,17 @@ class Picture implements ImageInterface
      * @param UploadedFile $file
      *
      * @return Picture
+     * @throws \Exception
      */
-    public function setFile($file)
+    public function setFile($file = null)
     {
         $this->file = $file;
+
+        if ($file) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }
