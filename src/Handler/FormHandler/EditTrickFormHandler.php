@@ -56,25 +56,53 @@ class EditTrickFormHandler
     public function handle(FormInterface $form, Trick $trick)
     {
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($form->get('images')->getData()) {
+                foreach ($form->get('images')->getData() as $image) {
+                    $imageViolations = $this->validator->validate($image, null, ['edit_trick']);
+
+                    if (0 !== count($imageViolations)) {
+                        foreach ($imageViolations as $violation) {
+                            $this->flashBag->add('error', $violation->getMessage());
+                        }
+
+                        $image->setFile(null);
+
+                        return false;
+                    }
+                }
+            }
+
             $updatedTrickDTO = $this->trickService->UpdateTrick($trick, $form->getData());
+
+            $TrickDTOViolations = $this->validator->validate($updatedTrickDTO);
+
+            if (0 !== count($TrickDTOViolations)) {
+                foreach ($TrickDTOViolations as $violation) {
+                    $this->flashBag->add('error', $violation->getMessage());
+                }
+
+                return false;
+            }
 
             $trick->updateFromDTO($updatedTrickDTO);
 
-            $violations = $this->validator->validate($trick);
+            $TrickViolations = $this->validator->validate($trick, null, ['edit_trick']);
 
-            if (0 !== count($violations)) {
-                foreach ($violations as $violation) {
+            if (0 !== count($TrickViolations)) {
+                foreach ($TrickViolations as $violation) {
                     $this->flashBag->add('error', $violation->getMessage());
                 }
-                return false;
-            } else {
-                $this->trickRepository->save($trick);
-                $this->flashBag->add('success', 'La figure a bien été modifiée !');
 
-                return new RedirectResponse($this->url_generator->generate('app_edit_trick', ['slug' => $trick->getSlug()]));
+                return false;
             }
-        } else {
-            return false;
+
+            $this->trickRepository->save($trick);
+            $this->flashBag->add('success', 'La figure a bien été modifiée !');
+
+            return new RedirectResponse($this->url_generator->generate('app_edit_trick', ['slug' => $trick->getSlug()]));
         }
+
+        return false;
     }
 }
