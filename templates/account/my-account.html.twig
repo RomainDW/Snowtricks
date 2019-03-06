@@ -48,6 +48,7 @@
     {% endif %}
     <input type="submit" class="form-submit btn btn-success" value="Enregistrer">
     {{ form_end(form) }}
+    <a href="{{ path('app_forgot_password') }}" class="btn btn-primary">Changer de mot de passe</a>
 {% endblock %}
 
 {% block javascripts %}

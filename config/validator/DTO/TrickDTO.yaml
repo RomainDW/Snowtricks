@@ -22,8 +22,6 @@ App\DTO\CreateTrickDTO:
             - Type:
                   type: string
                   message: La valeur {{ value }} n'est pas valide.
-        images:
-            - Valid: ~
         videos:
             - Valid: ~
         user:

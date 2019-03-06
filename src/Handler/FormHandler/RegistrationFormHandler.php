@@ -13,6 +13,7 @@ use App\Event\UserPictureUploadEvent;
 use App\Repository\UserRepository;
 use Swift_Mailer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -70,6 +71,20 @@ class RegistrationFormHandler
             $user = new User();
             $userDTO = $form->getData();
 
+            if ($userDTO->picture) {
+                $pictureViolations = $this->validator->validate($userDTO->picture, null, ['registration']);
+
+                if (0 !== count($pictureViolations)) {
+                    foreach ($pictureViolations as $violation) {
+                        $form->get('picture')->addError(new FormError($violation->getMessage()));
+                    }
+
+                    $userDTO->picture->setFile(null);
+
+                    return false;
+                }
+            }
+
             // encode the plain password
             $userDTO->password = $this->passwordEncoder->encodePassword($user, $userDTO->password);
 
@@ -80,47 +95,46 @@ class RegistrationFormHandler
                 $userDTO->picture->setAlt('Photo de profil de '.$userDTO->username);
             }
 
-            $user->createFromRegistration($userDTO);
-
-            $violations = $this->validator->validate($user);
+            $violations = $this->validator->validate($userDTO, null, ['registration']);
 
             if (0 !== count($violations)) {
                 foreach ($violations as $violation) {
-                    $this->flashBag->add('error', $violation->getMessage());
+                    $form->addError(new FormError($violation->getMessage()));
                 }
 
                 return false;
-            } else {
-                $this->userRepository->save($user);
-
-                $message = (new \Swift_Message('Confirmation de création de compte'))
-                    ->setFrom('noreply@snowtricks.com')
-                    ->setTo('romain.ollier34@gmail.com')
-                    ->setBody(
-                        $this->templating->render(
-                            'emails/registration.html.twig',
-                            ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->vkey]
-                        ),
-                        'text/html'
-                    )
-                    /*
-                     * plaintext version
-                    ->addPart(
-                        $this->renderView(
-                            'emails/registration.txt.twig',
-                            ['name' => $name]
-                        ),
-                        'text/plain'
-                    )
-                    */
-                ;
-
-                $this->mailer->send($message);
-
-                return new RedirectResponse($this->url_generator->generate('app_mail_sent', ['id' => $user->getId()]));
             }
-        } else {
-            return false;
+
+            $user->createFromRegistration($userDTO);
+            $this->userRepository->save($user);
+
+            $message = (new \Swift_Message('Confirmation de création de compte'))
+                ->setFrom('noreply@snowtricks.com')
+                ->setTo('romain.ollier34@gmail.com')
+                ->setBody(
+                    $this->templating->render(
+                        'emails/registration.html.twig',
+                        ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->vkey]
+                    ),
+                    'text/html'
+                )
+                /*
+                 * plaintext version
+                ->addPart(
+                    $this->renderView(
+                        'emails/registration.txt.twig',
+                        ['name' => $name]
+                    ),
+                    'text/plain'
+                )
+                */
+            ;
+
+            $this->mailer->send($message);
+
+            return new RedirectResponse($this->url_generator->generate('app_mail_sent', ['id' => $user->getId()]));
         }
+
+        return false;
     }
 }

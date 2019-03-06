@@ -3,13 +3,14 @@ App\DTO\UpdateUserDTO:
         username:
             - NotBlank:
                   message: Le pseudo ne doit pas être vide.
+                  groups: [update_account]
             - Length:
                   min: 2
                   max: 10
                   minMessage: 'Votre pseudo doit au minimum avoir {{ limit }} caractères'
                   maxMessage: 'Votre pseudo ne doit pas dépasser {{ limit }} caractères'
+                  groups: [update_account]
             - Type:
                   type: string
                   message: La valeur {{ value }} n'est pas valide.
-        picture:
-            - Valid: ~
+                  groups: [update_account]
