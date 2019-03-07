@@ -24,4 +24,15 @@ class ForgotPasswordControllerTest extends WebTestCase
         // Test if there is a form
         $this->assertEquals(1, $crawler->filter('form')->count());
     }
+
+    public function testResetPasswordAccess()
+    {
+        $client = self::createClient();
+
+        // Invalid token
+        $crawler = $client->request('GET', '/reset-password/488');
+
+        // Test 404 error
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
 }
