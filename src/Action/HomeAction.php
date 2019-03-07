@@ -6,13 +6,13 @@
  * Time: 08:31.
  */
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\Entity\Trick;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+class HomeAction extends AbstractController
 {
     // define how many results you want per page
     private $number_of_results = 6;

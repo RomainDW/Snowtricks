@@ -6,7 +6,7 @@
  * Time: 10:00 PM.
  */
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\Entity\User;
 use App\Form\ForgotPasswordFormType;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ForgotPasswordController extends AbstractController
+class ForgotPasswordAction extends AbstractController
 {
     /**
      * @Route("/forgot-password", name="app_forgot_password")

@@ -6,7 +6,7 @@
  * Time: 2:54 PM.
  */
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\DTO\UpdateUserDTO;
 use App\Form\UserUpdateFormType;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AccountController extends AbstractController
+class AccountAction extends AbstractController
 {
     /**
      * @Route("/my-account", name="app_account")
