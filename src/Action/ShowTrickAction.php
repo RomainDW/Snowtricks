@@ -6,7 +6,7 @@
  * Time: 12:51 PM.
  */
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\Entity\Comment;
 use App\Entity\Trick;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ShowTrickController extends AbstractController
+class ShowTrickAction extends AbstractController
 {
     // define how many comments you want per page
     private $number_of_results = 3;

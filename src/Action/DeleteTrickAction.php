@@ -6,7 +6,7 @@
  * Time: 7:14 PM.
  */
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\Entity\Trick;
 use App\Event\ImageRemoveEvent;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DeleteTrickController extends AbstractController
+class DeleteTrickAction extends AbstractController
 {
     /**
      * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")

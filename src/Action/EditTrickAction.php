@@ -6,7 +6,7 @@
  * Time: 7:26 PM.
  */
 
-namespace App\Controller;
+namespace App\Action;
 
 use App\DTO\CreateTrickDTO;
 use App\Entity\Trick;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EditTrickController extends AbstractController
+class EditTrickAction extends AbstractController
 {
     /**
      * @param $slug
