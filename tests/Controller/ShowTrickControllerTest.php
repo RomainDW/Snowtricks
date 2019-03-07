@@ -31,4 +31,14 @@ class ShowTrickControllerTest extends WebTestCase
         // Test 404 error with invalid slug
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
+
+    public function testFormExist()
+    {
+        $client = self::createClient();
+
+        $crawler = $client->request('GET', '/trick/show/trick-n-1');
+
+        // No forms when the user is not connected
+        $this->assertEquals(0, $crawler->filter('form')->count());
+    }
 }
