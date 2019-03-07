@@ -18,6 +18,7 @@ use App\Event\ImageUploadEvent;
 use App\Event\VideoUploadEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class TrickService
 {
@@ -30,13 +31,13 @@ class TrickService
 
     /**
      * @param CreateTrickDTO $createTrickDTO
-     * @param User           $user
+     * @param UserInterface  $user
      *
      * @return Trick
      *
      * @throws \Exception
      */
-    public function InitTrick(CreateTrickDTO $createTrickDTO, User $user)
+    public function InitTrick(CreateTrickDTO $createTrickDTO, UserInterface $user)
     {
         $createTrickDTO->createdAt = new \DateTime();
 

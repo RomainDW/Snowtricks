@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateTrickFormHandler
@@ -45,7 +46,7 @@ class CreateTrickFormHandler
 
     /**
      * @param FormInterface $form
-     * @param User          $user
+     * @param UserInterface $user
      *
      * @return bool|RedirectResponse
      *
@@ -53,7 +54,7 @@ class CreateTrickFormHandler
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Exception
      */
-    public function handle(FormInterface $form, User $user)
+    public function handle(FormInterface $form, UserInterface $user)
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $trick = $this->trickService->InitTrick($form->getData(), $user);
