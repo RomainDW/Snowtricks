@@ -55,7 +55,7 @@ class AccountFormHandler
 
             if (0 !== count($pictureViolations)) {
                 foreach ($pictureViolations as $violation) {
-                    $form->get('picture')->addError(new FormError($violation->getMessage()));
+                    $this->flashBag->add('error', $violation->getMessage());
                 }
 
                 $updatedUserDTO->picture->setFile(null);
