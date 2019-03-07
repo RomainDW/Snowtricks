@@ -20,36 +20,30 @@ use Symfony\Component\Routing\Annotation\Route;
 class DeleteTrickController extends AbstractController
 {
     /**
-     * @Route("/trick/delete/{slug}", name="app_delete_trick")
+     * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")
      *
-     * @param Request $request
      * @param $slug
      * @param EntityManagerInterface   $em
      * @param EventDispatcherInterface $dispatcher
      *
      * @return RedirectResponse
      */
-    public function delete(Request $request, $slug, EntityManagerInterface $em, EventDispatcherInterface $dispatcher)
+    public function delete($slug, EntityManagerInterface $em, EventDispatcherInterface $dispatcher)
     {
-        if ($request->isMethod('POST')) {
-            if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
-                throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
-            }
-
-            foreach ($trick->getImages() as $image) {
-                $imageRemoveEvent = new ImageRemoveEvent($image);
-                $dispatcher->dispatch(ImageRemoveEvent::NAME, $imageRemoveEvent);
-            }
-
-            $em->remove($trick);
-            $em->flush();
-
-            $this->addFlash('success', 'la figure '.$trick->getTitle().' a bien été supprimée.');
-            $referer = $request->headers->get('referer');
-
-            return new RedirectResponse($referer);
-        } else {
-            throw $this->createNotFoundException("Cette page n'existe pas.");
+        if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
+            throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
         }
+
+        foreach ($trick->getImages() as $image) {
+            $imageRemoveEvent = new ImageRemoveEvent($image);
+            $dispatcher->dispatch(ImageRemoveEvent::NAME, $imageRemoveEvent);
+        }
+
+        $em->remove($trick);
+        $em->flush();
+
+        $this->addFlash('success', 'la figure '.$trick->getTitle().' a bien été supprimée.');
+
+        return $this->redirectToRoute('homepage');
     }
 }

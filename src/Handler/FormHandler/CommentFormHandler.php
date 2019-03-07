@@ -16,11 +16,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
 
 class CommentFormHandler
 {
-    private $security;
     private $commentRepository;
     private $url_generator;
     private $flashBag;
@@ -28,14 +26,12 @@ class CommentFormHandler
     /**
      * CommentFormhandler constructor.
      *
-     * @param Security              $security
      * @param CommentRepository     $commentRepository
      * @param UrlGeneratorInterface $url_generator
      * @param FlashBagInterface     $flashBag
      */
-    public function __construct(Security $security, CommentRepository $commentRepository, UrlGeneratorInterface $url_generator, FlashBagInterface $flashBag)
+    public function __construct(CommentRepository $commentRepository, UrlGeneratorInterface $url_generator, FlashBagInterface $flashBag)
     {
-        $this->security = $security;
         $this->commentRepository = $commentRepository;
         $this->url_generator = $url_generator;
         $this->flashBag = $flashBag;
@@ -54,7 +50,7 @@ class CommentFormHandler
      */
     public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick, $slug)
     {
-        if ($form->isSubmitted() && $form->isValid() && $this->security->isGranted('ROLE_USER')) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $comment->setCreatedAt(new \DateTime());
             $comment->setUser($user);
             $comment->setTrick($trick);
