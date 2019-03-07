@@ -21,4 +21,14 @@ class ShowTrickControllerTest extends WebTestCase
         // Test of the success of the request
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
+
+    public function testInvalidSlug()
+    {
+        $client = self::createClient();
+
+        $client->request('GET', '/trick/show/741');
+
+        // Test 404 error with invalid slug
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
 }
