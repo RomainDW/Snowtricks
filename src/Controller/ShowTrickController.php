@@ -46,7 +46,7 @@ class ShowTrickController extends AbstractController
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
 
-        if (($response = $formHandler->handle($form, $comment, $user, $trick, $slug)) instanceof RedirectResponse) {
+        if ($user && $this->isGranted('ROLE_USER') && ($response = $formHandler->handle($form, $comment, $user, $trick, $slug)) instanceof RedirectResponse) {
             return $response;
         }
 
