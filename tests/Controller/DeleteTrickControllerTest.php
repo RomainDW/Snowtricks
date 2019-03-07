@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DeleteTrickControllerTest extends WebTestCase
 {
-    public function testDelete()
+    public function testDeleteWithGET()
     {
         $client = self::createClient();
 
@@ -21,6 +21,11 @@ class DeleteTrickControllerTest extends WebTestCase
 
         // Test if the user get a "Method Not Allowed" error
         $this->assertEquals(405, $client->getResponse()->getStatusCode());
+    }
+
+    public function testDeleteWithPOST()
+    {
+        $client = self::createClient();
 
         // Test delete a trick with POST method
         $client->request('POST', '/trick/delete/trick-n-1');
