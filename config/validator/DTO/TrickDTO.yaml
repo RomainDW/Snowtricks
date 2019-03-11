@@ -3,25 +3,33 @@ App\DTO\CreateTrickDTO:
         title:
             - NotBlank:
                   message: Le titre de la figure ne doit pas être vide.
+                  groups: [edit_trick, add_trick]
             - Length:
                   min: 3
                   max: 30
                   minMessage: 'Le titre doit avoir au minimum {{ limit }} caractères.'
                   maxMessage: 'Le titre doit avoir au maxiumum {{ limit }} caractères.'
+                  groups: [edit_trick, add_trick]
             - Type:
                   type: string
                   message: La valeur {{ value }} n'est pas valide.
+                  groups: [edit_trick, add_trick]
         description:
             - NotBlank:
                   message: La description de la figure ne doit pas être vide.
+                  groups: [edit_trick, add_trick]
             - Length:
                   min: 3
                   max: 255
                   minMessage: 'La description doit avoir au minimum {{ limit }} caractères.'
                   maxMessage: 'La description doit avoir au maxiumum {{ limit }} caractères.'
+                  groups: [edit_trick, add_trick]
             - Type:
                   type: string
                   message: La valeur {{ value }} n'est pas valide.
+                  groups: [edit_trick, add_trick]
+        images:
+            - Valid: ~
         videos:
             - Valid: ~
         user:

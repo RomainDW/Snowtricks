@@ -29,3 +29,5 @@ App\DTO\UserRegistrationDTO:
                     type: string
                     message: La valeur {{ value }} n'est pas valide.
                     groups: [registration]
+        picture:
+            -   Valid: ~
