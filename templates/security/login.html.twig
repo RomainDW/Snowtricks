@@ -11,14 +11,14 @@
     <div class="wrapper fadeInDown">
         <div id="formContent">
 
-            {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
-
             <!-- Icon -->
             <div class="fadeIn first">
                 <img src="{{ asset('build/images/user_icon.svg') }}" id="icon" alt="User Icon" />
             </div>
+
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
 
             <!-- Login Form -->
             <form method="post">
