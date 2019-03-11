@@ -2,8 +2,8 @@
 
 namespace App\Repository;
 
-use App\Entity\Comment;
-use App\Entity\Trick;
+use App\Domain\Entity\Comment;
+use App\Domain\Entity\Trick;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

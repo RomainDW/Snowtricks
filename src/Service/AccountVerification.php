@@ -8,7 +8,7 @@
 
 namespace App\Service;
 
-use App\Entity\User;
+use App\Domain\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
 
 class AccountVerification

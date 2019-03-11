@@ -1,4 +1,4 @@
-App\Entity\Picture:
+App\Domain\Entity\Picture:
     properties:
         file:
             - Image:

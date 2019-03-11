@@ -2,8 +2,8 @@
 
 namespace App\DTO;
 
-use App\Entity\Category;
-use App\Entity\Trick;
+use App\Domain\Entity\Category;
+use App\Domain\Entity\Trick;
 
 class CreateTrickDTO
 {

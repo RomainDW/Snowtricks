@@ -1,7 +1,8 @@
-App\Entity\Video:
+App\Domain\Entity\Video:
     properties:
         embed:
             - Regex:
                   pattern: '#^(http|https)://(www.youtube.com|www.dailymotion.com|vimeo.com)/#'
                   match: true,
                   message: "L'url doit correspondre à l'url d'une vidéo Youtube, DailyMotion ou Vimeo"
+                  groups: [edit_trick, add_trick]

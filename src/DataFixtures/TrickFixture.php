@@ -4,9 +4,9 @@ namespace App\DataFixtures;
 
 use App\DTO\CreateTrickDTO;
 use App\DTO\UserRegistrationDTO;
-use App\Entity\Category;
-use App\Entity\Trick;
-use App\Entity\User;
+use App\Domain\Entity\Category;
+use App\Domain\Entity\Trick;
+use App\Domain\Entity\User;
 use App\Service\SlugService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;

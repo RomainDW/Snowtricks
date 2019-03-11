@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Entity\Trick;
+use App\Domain\Entity\Trick;
 use Symfony\Component\EventDispatcher\Event;
 
 class CreateTrickEvent extends Event

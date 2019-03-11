@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Category;
+use App\Domain\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

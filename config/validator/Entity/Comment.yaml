@@ -1,4 +1,4 @@
-App\Entity\Comment:
+App\Domain\Entity\Comment:
     properties:
         content:
             - NotBlank:

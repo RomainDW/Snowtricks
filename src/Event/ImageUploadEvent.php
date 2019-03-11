@@ -8,7 +8,7 @@
 
 namespace App\Event;
 
-use App\Entity\ImageInterface;
+use App\Domain\Entity\ImageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class ImageUploadEvent extends Event implements ImageEventInterface

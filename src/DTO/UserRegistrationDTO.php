@@ -8,7 +8,7 @@
 
 namespace App\DTO;
 
-use App\Entity\ImageInterface;
+use App\Domain\Entity\ImageInterface;
 
 class UserRegistrationDTO
 {

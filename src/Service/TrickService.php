@@ -9,10 +9,9 @@
 namespace App\Service;
 
 use App\DTO\CreateTrickDTO;
-use App\Entity\Image;
-use App\Entity\Trick;
-use App\Entity\User;
-use App\Entity\Video;
+use App\Domain\Entity\Image;
+use App\Domain\Entity\Trick;
+use App\Domain\Entity\Video;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
 use App\Event\VideoUploadEvent;
@@ -50,6 +49,7 @@ class TrickService
             $image->setTrick($trick);
             $event = new ImageUploadEvent($image);
             $this->dispatcher->dispatch(ImageUploadEvent::NAME, $event);
+            $image->setFile(null);
         }
 
         foreach ($trick->getVideos() as $video) {
@@ -96,6 +96,7 @@ class TrickService
                     $image->setTrick($trick);
                     $imageUploadEvent = new ImageUploadEvent($image);
                     $this->dispatcher->dispatch(ImageUploadEvent::NAME, $imageUploadEvent);
+                    $image->setFile(null);
                 }
             }
         }
