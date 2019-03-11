@@ -8,8 +8,9 @@
 
 namespace App\Responder;
 
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 class CreateTrickResponder
@@ -20,19 +21,38 @@ class CreateTrickResponder
     private $twig;
 
     /**
+     * @var UrlGeneratorInterface
+     */
+    private $urlGenerator;
+
+    /**
      * CreateTrickResponder constructor.
      *
-     * @param Environment $twig
+     * @param Environment           $twig
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(Environment $twig)
+    public function __construct(Environment $twig, UrlGeneratorInterface $urlGenerator)
     {
         $this->twig = $twig;
+        $this->urlGenerator = $urlGenerator;
     }
 
-    public function __invoke(FormInterface $form)
+    /**
+     * @param array  $args
+     * @param string $type
+     *
+     * @return Response
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function __invoke(array $args, string $type = null)
     {
-        return new Response($this->twig->render('trick/tricks-form.html.twig', [
-            'form' => $form->createView(),
-        ]));
+        if ('redirect' === $type) {
+            return new RedirectResponse($this->urlGenerator->generate('app_show_trick', $args));
+        }
+
+        return new Response($this->twig->render('trick/tricks-form.html.twig', $args));
     }
 }
