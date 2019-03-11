@@ -8,42 +8,50 @@
 
 namespace App\Action;
 
-use App\Entity\Trick;
-use App\Event\ImageRemoveEvent;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Domain\Entity\Trick;
+use App\Domain\Manager\TrickManager;
+use App\Responder\DeleteTrickResponder;
+use App\Service\DeleteService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DeleteTrickAction extends AbstractController
+class DeleteTrickAction
 {
+    /**
+     * @var DeleteTrickResponder
+     */
+    private $responder;
+
+    /**
+     * @var TrickManager
+     */
+    private $trickManager;
+
+    /**
+     * DeleteTrickAction constructor.
+     *
+     * @param DeleteTrickResponder $responder
+     * @param TrickManager         $trickManager
+     */
+    public function __construct(DeleteTrickResponder $responder, TrickManager $trickManager)
+    {
+        $this->responder = $responder;
+        $this->trickManager = $trickManager;
+    }
+
     /**
      * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")
      *
-     * @param $slug
-     * @param EntityManagerInterface   $em
-     * @param EventDispatcherInterface $dispatcher
+     * @param Trick $trick
      *
      * @return RedirectResponse
      */
-    public function delete($slug, EntityManagerInterface $em, EventDispatcherInterface $dispatcher)
+    public function __invoke(Trick $trick)
     {
-        if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
-            throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
-        }
+        $this->trickManager->deleteTrick($trick);
 
-        foreach ($trick->getImages() as $image) {
-            $imageRemoveEvent = new ImageRemoveEvent($image);
-            $dispatcher->dispatch(ImageRemoveEvent::NAME, $imageRemoveEvent);
-        }
+        $responder = $this->responder;
 
-        $em->remove($trick);
-        $em->flush();
-
-        $this->addFlash('success', 'la figure '.$trick->getTitle().' a bien été supprimée.');
-
-        return $this->redirectToRoute('homepage');
+        return $responder();
     }
 }

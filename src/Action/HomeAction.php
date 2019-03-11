@@ -8,49 +8,61 @@
 
 namespace App\Action;
 
-use App\Entity\Trick;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Domain\Entity\Trick;
+use App\Repository\TrickRepository;
+use App\Responder\HomeResponder;
+use App\Service\SnowtrickConfig;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeAction extends AbstractController
+class HomeAction
 {
-    // define how many results you want per page
-    private $number_of_results = 6;
+    /**
+     * @var TrickRepository
+     */
+    private $trickRepository;
+    /**
+     * @var HomeResponder
+     */
+    private $responder;
 
     /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/", name="homepage")
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * HomeAction constructor.
+     *
+     * @param TrickRepository $trickRepository
+     * @param HomeResponder   $responder
      */
-    public function index()
+    public function __construct(TrickRepository $trickRepository, HomeResponder $responder)
     {
-        $manager = $this->getDoctrine()->getRepository(Trick::class);
-
-        $tricks = $manager->getTricksPagination(0, $this->number_of_results);
-
-        $totalTricks = $manager->getNumberOfTotalTricks();
-
-        return $this->render('homepage/index.html.twig', [
-            'tricks' => $tricks,
-            'number_of_results' => $this->number_of_results,
-            'total_tricks' => $totalTricks,
-        ]);
+        $this->trickRepository = $trickRepository;
+        $this->responder = $responder;
     }
 
     /**
-     * @param $offset
+     * @Route("/", name="homepage")
      *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/more/{offset}", name="loadPagination", methods={"POST"})
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function loadPagination($offset)
+    public function __invoke()
     {
-        $manager = $this->getDoctrine()->getRepository(Trick::class);
+        $numberOfResults = SnowtrickConfig::getNumberOfResults();
 
-        $tricks = $manager->getTricksPagination($offset, $this->number_of_results);
+        //Todo: Utiliser le manager
 
-        return $this->render('homepage/_partials/ajax-content.html.twig', [
+        $tricks = $this->trickRepository->getTricksPagination(0, $numberOfResults);
+
+        $totalTricks = $this->trickRepository->getNumberOfTotalTricks();
+
+        $responder = $this->responder;
+
+        return $responder([
             'tricks' => $tricks,
+            'number_of_results' => $numberOfResults,
+            'total_tricks' => $totalTricks,
         ]);
     }
 }

@@ -2,25 +2,82 @@
 
 namespace App\Action;
 
-use App\Entity\User;
+use App\Domain\Entity\User;
+use App\Domain\Manager\UserManager;
 use App\Form\RegistrationFormType;
 use App\Handler\FormHandler\RegistrationFormHandler;
-use App\Service\AccountVerification;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Responder\HomeRedirectResponder;
+use App\Responder\MailSentRedirectResponder;
+use App\Responder\RegistrationResponder;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Core\Security;
 
-class RegistrationAction extends AbstractController
+class RegistrationAction
 {
-    private $validator;
+    /**
+     * @var RegistrationResponder
+     */
+    private $responder;
 
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
+
+    /**
+     * @var Security
+     */
+    private $security;
+
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
+
+    /**
+     * @var HomeRedirectResponder
+     */
+    private $homeRedirectResponder;
+    /**
+     * @var UserManager
+     */
+    private $userManager;
+    /**
+     * @var MailSentRedirectResponder
+     */
+    private $mailSentRedirectResponder;
+
+    /**
+     * RegistrationAction constructor.
+     *
+     * @param RegistrationResponder     $responder
+     * @param FormFactoryInterface      $formFactory
+     * @param Security                  $security
+     * @param FlashBagInterface         $flashBag
+     * @param HomeRedirectResponder     $homeRedirectResponder
+     * @param UserManager               $userManager
+     * @param MailSentRedirectResponder $mailSentRedirectResponder
+     */
+    public function __construct(
+        RegistrationResponder $responder,
+        FormFactoryInterface $formFactory,
+        Security $security,
+        FlashBagInterface $flashBag,
+        HomeRedirectResponder $homeRedirectResponder,
+        UserManager $userManager,
+        MailSentRedirectResponder $mailSentRedirectResponder
+    ) {
+        $this->responder = $responder;
+        $this->formFactory = $formFactory;
+        $this->security = $security;
+        $this->flashBag = $flashBag;
+        $this->homeRedirectResponder = $homeRedirectResponder;
+        $this->userManager = $userManager;
+        $this->mailSentRedirectResponder = $mailSentRedirectResponder;
     }
 
     /**
@@ -31,78 +88,33 @@ class RegistrationAction extends AbstractController
      *
      * @return Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \App\Domain\Exception\ValidationException
+     * @throws \Exception
      */
-    public function register(Request $request, RegistrationFormHandler $formHandler): Response
+    public function __invoke(Request $request, RegistrationFormHandler $formHandler)
     {
-        if ($this->isGranted('ROLE_USER')) {
-            $this->addFlash('error', 'Vous êtes déjà connecté(e)');
+        $homeRedirectResponder = $this->homeRedirectResponder;
+        $responder = $this->responder;
 
-            return $this->redirectToRoute('homepage');
+        if ($this->security->isGranted('ROLE_USER')) {
+            $this->flashBag->add('error', 'Vous êtes déjà connecté(e)');
+
+            return $homeRedirectResponder();
         }
-        $form = $this->createForm(RegistrationFormType::class);
+
+        $form = $this->formFactory->create(RegistrationFormType::class);
         $form->handleRequest($request);
 
-        if (($response = $formHandler->handle($form)) instanceof RedirectResponse) {
-            return $response;
+        if (($user = $formHandler->handle($form)) instanceof User) {
+            $this->userManager->register($user);
+            $responder = $this->mailSentRedirectResponder;
+
+            return $responder($user);
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/register/{id}", name="app_mail_sent")
-     *
-     * @param User $user
-     *
-     * @return Response
-     */
-    public function mailSent(User $user)
-    {
-        $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
-
-        if (!$hasAccess) {
-            $this->addFlash('error', 'Votre compte est déjà vérifié.');
-
-            return $this->redirectToRoute('homepage');
-        }
-
-        $userEmail = $user->getEmail();
-
-        return $this->render('registration/registration-pre-validation.html.twig', [
-            'userEmail' => $userEmail,
-        ]);
-    }
-
-    /**
-     * @Route("/verification/{vkey}", name="app_verification", methods={"GET"})
-     *
-     * @param User                $user
-     * @param AccountVerification $accountVerification
-     *
-     * @return Response
-     */
-    public function registerVerification(User $user, AccountVerification $accountVerification)
-    {
-        $verification = $accountVerification->verification($user);
-
-        if (false === $verification) {
-            $this->addFlash('error', 'Votre compte est déjà vérifié.');
-
-            return $this->redirectToRoute('homepage');
-        } else {
-            // Connexion à mettre dans service
-            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-            $this->get('security.token_storage')->setToken($token);
-            $this->get('session')->set('_security_secured_area', serialize($token));
-
-            return $this->render('registration/registration-confirmed.html.twig');
-        }
+        return $responder(['registrationForm' => $form->createView()]);
     }
 }

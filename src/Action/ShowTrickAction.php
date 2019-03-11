@@ -8,81 +8,133 @@
 
 namespace App\Action;
 
-use App\Entity\Comment;
-use App\Entity\Trick;
+use App\Domain\Entity\Comment;
+use App\Domain\Entity\Trick;
+use App\Domain\Entity\User;
+use App\Domain\Manager\CommentManager;
 use App\Form\CommentFormType;
 use App\Handler\FormHandler\CommentFormHandler;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\CommentRepository;
+use App\Responder\CommentRedirectResponder;
+use App\Responder\ShowTrickResponder;
+use App\Service\SnowtrickConfig;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
-class ShowTrickAction extends AbstractController
+class ShowTrickAction
 {
-    // define how many comments you want per page
-    private $number_of_results = 3;
+    /**
+     * @var Security
+     */
+    private $security;
 
     /**
-     * @param $slug
-     * @param EntityManagerInterface $em
-     * @param Request                $request
-     * @param CommentFormHandler     $formHandler
+     * @var CommentRepository
+     */
+    private $commentRepository;
+
+    /**
+     * @var ShowTrickResponder
+     */
+    private $responder;
+
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
+    /**
+     * @var CommentManager
+     */
+    private $commentManager;
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
+    /**
+     * @var CommentRedirectResponder
+     */
+    private $commentRedirectResponder;
+
+    /**
+     * ShowTrickAction constructor.
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Security                 $security
+     * @param CommentRepository        $commentRepository
+     * @param ShowTrickResponder       $responder
+     * @param FormFactoryInterface     $formFactory
+     * @param CommentManager           $commentManager
+     * @param FlashBagInterface        $flashBag
+     * @param CommentRedirectResponder $commentRedirectResponder
+     */
+    public function __construct(
+        Security $security,
+        CommentRepository $commentRepository,
+        ShowTrickResponder $responder,
+        FormFactoryInterface $formFactory,
+        CommentManager $commentManager,
+        FlashBagInterface $flashBag,
+        CommentRedirectResponder $commentRedirectResponder
+    ) {
+        $this->security = $security;
+        $this->commentRepository = $commentRepository;
+        $this->responder = $responder;
+        $this->formFactory = $formFactory;
+        $this->commentManager = $commentManager;
+        $this->flashBag = $flashBag;
+        $this->commentRedirectResponder = $commentRedirectResponder;
+    }
+
+    /**
+     * @Route("/trick/show/{slug}", name="app_show_trick")
+     *
+     * @param Trick              $trick
+     * @param Request            $request
+     * @param CommentFormHandler $formHandler
+     *
+     * @return bool|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      * @throws \Exception
-     * @Route("/trick/show/{slug}", name="app_show_trick")
      */
-    public function index($slug, EntityManagerInterface $em, Request $request, CommentFormHandler $formHandler)
+    public function __invoke(Trick $trick, Request $request, CommentFormHandler $formHandler)
     {
-        if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
-            throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
-        }
-
         $comment = new Comment();
-        $user = $this->getUser();
-        $form = $this->createForm(CommentFormType::class, $comment);
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $form = $this->formFactory->create(CommentFormType::class, $comment);
         $form->handleRequest($request);
 
-        if ($user && $this->isGranted('ROLE_USER') && ($response = $formHandler->handle($form, $comment, $user, $trick, $slug)) instanceof RedirectResponse) {
-            return $response;
+        if ($user && $this->security->isGranted('ROLE_USER') && ($formHandler->handle($form, $comment, $user, $trick))) {
+            $this->commentManager->save($comment);
+            $this->flashBag->add('success', 'Le commentaire a bien été ajouté !');
+
+            $responder = $this->commentRedirectResponder;
+
+            return $responder($trick);
         }
 
-        $repo = $em->getRepository(Comment::class);
+        $numberOfResults = SnowtrickConfig::getNumberOfCommentsDisplayed();
 
-        $comments = $repo->getCommentsPagination(0, $this->number_of_results, $trick);
+        $comments = $this->commentRepository->getCommentsPagination(0, $numberOfResults, $trick);
 
-        $totalComments = $repo->getNumberOfTotalComments($trick);
+        $totalComments = $this->commentRepository->getNumberOfTotalComments($trick);
 
-        return $this->render('trick/show.html.twig', [
+        $responder = $this->responder;
+
+        return $responder([
             'trick' => $trick,
             'form' => $form->createView(),
             'comments' => $comments,
             'totalComments' => $totalComments,
-            'number_of_results' => $this->number_of_results,
-        ]);
-    }
-
-    /**
-     * @param $slug
-     * @param $offset
-     * @param EntityManagerInterface $em
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/load-comments/{slug}/{offset}", name="loadComments", methods={"POST"})
-     */
-    public function loadComments($slug, $offset, EntityManagerInterface $em)
-    {
-        $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug]);
-
-        $repo = $this->getDoctrine()->getRepository(Comment::class);
-
-        $comments = $repo->getCommentsPagination($offset, $this->number_of_results, $trick);
-
-        return $this->render('trick/_partials/ajax-comments.html.twig', [
-            'comments' => $comments,
+            'number_of_results' => $numberOfResults,
         ]);
     }
 }

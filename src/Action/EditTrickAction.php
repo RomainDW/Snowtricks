@@ -8,48 +8,74 @@
 
 namespace App\Action;
 
+use App\Domain\Manager\TrickManager;
 use App\DTO\CreateTrickDTO;
-use App\Entity\Trick;
+use App\Domain\Entity\Trick;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\EditTrickFormHandler;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Responder\EditTrickResponder;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EditTrickAction extends AbstractController
+class EditTrickAction
 {
     /**
-     * @param $slug
-     * @param Request                $request
-     * @param EntityManagerInterface $em
-     * @param EditTrickFormHandler   $formHandler
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
+    /**
+     * @var EditTrickResponder
+     */
+    private $responder;
+    /**
+     * @var TrickManager
+     */
+    private $trickManager;
+
+    /**
+     * EditTrickAction constructor.
+     *
+     * @param FormFactoryInterface $formFactory
+     * @param EditTrickResponder   $responder
+     * @param TrickManager         $trickManager
+     */
+    public function __construct(FormFactoryInterface $formFactory, EditTrickResponder $responder, TrickManager $trickManager)
+    {
+        $this->formFactory = $formFactory;
+        $this->responder = $responder;
+        $this->trickManager = $trickManager;
+    }
+
+    /**
+     * @Route("/trick/edit/{slug}", name="app_edit_trick")
+     *
+     * @param Trick                $trick
+     * @param Request              $request
+     * @param EditTrickFormHandler $formHandler
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @Route("/trick/edit/{slug}", name="app_edit_trick")
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \App\Domain\Exception\ValidationException
+     * @throws \Exception
      */
-    public function index($slug, Request $request, EntityManagerInterface $em, EditTrickFormHandler $formHandler)
+    public function __invoke(Trick $trick, Request $request, EditTrickFormHandler $formHandler)
     {
-        if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
-            throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
-        }
-
+        $responder = $this->responder;
         $trickDTO = CreateTrickDTO::createFromTrick($trick);
 
-        $form = $this->createForm(TrickFormType::class, $trickDTO);
+        $form = $this->formFactory->create(TrickFormType::class, $trickDTO);
         $form->handleRequest($request);
 
-        if (($response = $formHandler->handle($form, $trick)) instanceof RedirectResponse) {
-            return $response;
+        if ($formHandler->handle($form, $trick)) {
+            $this->trickManager->save($trick, 'update');
+
+            $responder(['slug' => $trick->getSlug()], 'redirect');
         }
 
-        return $this->render('trick/tricks-form.html.twig', [
-            'trick' => $trick,
-            'form' => $form->createView(),
-        ]);
+        return $responder(['trick' => $trick, 'form' => $form->createView()]);
     }
 }
