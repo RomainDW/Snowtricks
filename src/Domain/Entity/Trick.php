@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Domain\Entity;
 
 use App\DTO\CreateTrickDTO;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -49,29 +49,29 @@ class Trick
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="tricks", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Domain\Entity\Category", inversedBy="tricks", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="trick", orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Domain\Entity\Image", mappedBy="trick", orphanRemoval=true, cascade={"persist", "remove"})
      */
     private $images;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Video", mappedBy="trick", orphanRemoval=true, cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Domain\Entity\Video", mappedBy="trick", orphanRemoval=true, cascade={"persist", "remove"})
      */
     private $videos;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tricks", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Domain\Entity\User", inversedBy="tricks", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="trick", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Domain\Entity\Comment", mappedBy="trick", orphanRemoval=true)
      */
     private $comments;
 

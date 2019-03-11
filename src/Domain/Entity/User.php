@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Domain\Entity;
 
 use App\DTO\UpdateUserDTO;
 use App\DTO\UserRegistrationDTO;
@@ -53,17 +53,17 @@ class User implements UserInterface
     private $username;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Trick", mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Domain\Entity\Trick", mappedBy="user", orphanRemoval=true)
      */
     private $tricks;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Domain\Entity\Comment", mappedBy="user", orphanRemoval=true)
      */
     private $comments;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Picture", mappedBy="user", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Domain\Entity\Picture", mappedBy="user", cascade={"persist", "remove"})
      */
     private $picture;
 
@@ -81,6 +81,11 @@ class User implements UserInterface
     public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    public function getVkey(): ?string
+    {
+        return $this->vkey;
     }
 
     /**
