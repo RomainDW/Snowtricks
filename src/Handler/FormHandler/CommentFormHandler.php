@@ -8,9 +8,9 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Entity\Comment;
-use App\Entity\Trick;
-use App\Entity\User;
+use App\Domain\Entity\Comment;
+use App\Domain\Entity\Trick;
+use App\Domain\Entity\User;
 use App\Repository\CommentRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -48,20 +48,16 @@ class CommentFormHandler
      *
      * @throws \Exception
      */
-    public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick, $slug)
+    public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick)
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setCreatedAt(new \DateTime());
             $comment->setUser($user);
             $comment->setTrick($trick);
 
-            $this->commentRepository->save($comment);
-
-            $this->flashBag->add('success', 'Le commentaire a bien été ajouté !');
-
-            return new RedirectResponse($this->url_generator->generate('app_show_trick', ['slug' => $slug, '_fragment' => 'comments']));
-        } else {
-            return false;
+            return true;
         }
+
+        return false;
     }
 }

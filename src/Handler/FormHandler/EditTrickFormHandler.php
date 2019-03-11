@@ -8,7 +8,8 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Entity\Trick;
+use App\Domain\Entity\Image;
+use App\Domain\Entity\Trick;
 use App\Repository\TrickRepository;
 use App\Service\TrickService;
 use Symfony\Component\Form\FormInterface;
@@ -49,45 +50,17 @@ class EditTrickFormHandler
      *
      * @return bool|RedirectResponse
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Exception
      */
     public function handle(FormInterface $form, Trick $trick)
     {
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if ($form->get('images')->getData()) {
-                foreach ($form->get('images')->getData() as $image) {
-                    $imageViolations = $this->validator->validate($image, null, ['edit_trick']);
-
-                    if (0 !== count($imageViolations)) {
-                        foreach ($imageViolations as $violation) {
-                            $this->flashBag->add('error', $violation->getMessage());
-                        }
-
-                        $image->setFile(null);
-
-                        return false;
-                    }
-                }
-            }
-
             $updatedTrickDTO = $this->trickService->UpdateTrick($trick, $form->getData());
-
-            $TrickDTOViolations = $this->validator->validate($updatedTrickDTO);
-
-            if (0 !== count($TrickDTOViolations)) {
-                foreach ($TrickDTOViolations as $violation) {
-                    $this->flashBag->add('error', $violation->getMessage());
-                }
-
-                return false;
-            }
 
             $trick->updateFromDTO($updatedTrickDTO);
 
-            $TrickViolations = $this->validator->validate($trick, null, ['edit_trick']);
+            $TrickViolations = $this->validator->validate($trick, null, ['Default', 'edit_trick']);
 
             if (0 !== count($TrickViolations)) {
                 foreach ($TrickViolations as $violation) {
@@ -97,10 +70,12 @@ class EditTrickFormHandler
                 return false;
             }
 
-            $this->trickRepository->save($trick);
-            $this->flashBag->add('success', 'La figure a bien été modifiée !');
+            return true;
+        }
 
-            return new RedirectResponse($this->url_generator->generate('app_edit_trick', ['slug' => $trick->getSlug()]));
+        foreach ($form->getData()->images as $image) {
+            /* @var Image $image */
+            $image->setFile(null);
         }
 
         return false;

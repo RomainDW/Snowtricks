@@ -8,7 +8,7 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Entity\User;
+use App\Domain\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -59,17 +59,9 @@ class ResetPasswordFormHandler
             $user->newPassword($password);
             $user->eraseCredentials();
 
-            $this->userRepository->save($user);
-
-            $this->flashBag->add('success', 'Votre mot de passe a été réinitialisé, vous pouvez maintenant vous connecter');
-
-            if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                return new RedirectResponse($this->url_generator->generate('app_account'));
-            } else {
-                return new RedirectResponse($this->url_generator->generate('app_login'));
-            }
-        } else {
-            return false;
+            return true;
         }
+
+        return false;
     }
 }

@@ -8,14 +8,12 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Entity\User;
+use App\Domain\Entity\User;
 use App\Event\UserPictureRemoveEvent;
 use App\Event\UserPictureUploadEvent;
 use App\Repository\UserRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -51,18 +49,6 @@ class AccountFormHandler
         if ($form->isSubmitted() && $form->isValid()) {
             $updatedUserDTO = $form->getData();
 
-            $pictureViolations = $this->validator->validate($updatedUserDTO->picture, null, ['update_account']);
-
-            if (0 !== count($pictureViolations)) {
-                foreach ($pictureViolations as $violation) {
-                    $this->flashBag->add('error', $violation->getMessage());
-                }
-
-                $updatedUserDTO->picture->setFile(null);
-
-                return false;
-            }
-
             if (null !== $updatedUserDTO->picture && null !== $updatedUserDTO->picture->getFile()) {
                 if (null !== $user->getPicture()) {
                     $removeEvent = new UserPictureRemoveEvent($user->getPicture());
@@ -76,7 +62,9 @@ class AccountFormHandler
                 $updatedUserDTO->picture->setFile(null);
             }
 
-            $violations = $this->validator->validate($updatedUserDTO, null, ['update_account']);
+            $user->updateFromDTO($updatedUserDTO);
+
+            $violations = $this->validator->validate($user, null, ['update_user']);
 
             if (0 !== count($violations)) {
                 foreach ($violations as $violation) {
@@ -86,13 +74,10 @@ class AccountFormHandler
                 return false;
             }
 
-            $user->updateFromDTO($updatedUserDTO);
-            $this->userRepository->save($user);
-            $this->flashBag->add('success', 'Votre compte a bien été modifié !');
-
-            return new RedirectResponse($this->url_generator->generate('app_account'));
-
+            return true;
         }
+
+        $form->getData()->picture->setFile(null);
 
         return false;
     }
