@@ -53,11 +53,12 @@ class CreateTrickAction
     /**
      * CreateTrickAction constructor.
      *
-     * @param CreateTrickResponder $responder
-     * @param FormFactoryInterface $formFactory
-     * @param Security             $security
-     * @param TrickManager         $trickManager
-     * @param TrickService         $trickService
+     * @param CreateTrickResponder   $responder
+     * @param FormFactoryInterface   $formFactory
+     * @param Security               $security
+     * @param TrickManager           $trickManager
+     * @param TrickService           $trickService
+     * @param CreateTrickFormHandler $formHandler
      */
     public function __construct(CreateTrickResponder $responder, FormFactoryInterface $formFactory, Security $security, TrickManager $trickManager, TrickService $trickService, CreateTrickFormHandler $formHandler)
     {
@@ -88,6 +89,7 @@ class CreateTrickAction
 
         if ($trick = $this->formHandler->handle($form, $this->security->getUser())) {
             $this->trickManager->save($trick);
+
             return $responder(['slug' => $trick->getSlug()], 'redirect');
         }
 
