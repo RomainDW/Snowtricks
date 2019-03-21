@@ -38,7 +38,8 @@ class SecurityResponder
     }
 
     /**
-     * @param array $args
+     * @param array       $args
+     * @param string|null $type
      *
      * @return RedirectResponse|Response
      *
@@ -46,8 +47,12 @@ class SecurityResponder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke(array $args = null)
+    public function __invoke(array $args, string $type = null)
     {
+        if ('redirect-homepage' == $type) {
+            return new RedirectResponse($this->urlGenerator->generate('homepage'));
+        }
+
         return new Response($this->twig->render('security/login.html.twig', $args));
     }
 }

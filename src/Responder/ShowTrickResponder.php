@@ -8,7 +8,9 @@
 
 namespace App\Responder;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
 class ShowTrickResponder
@@ -17,19 +19,26 @@ class ShowTrickResponder
      * @var Environment
      */
     private $twig;
+    /**
+     * @var UrlGeneratorInterface
+     */
+    private $urlGenerator;
 
     /**
      * AccountResponder constructor.
      *
-     * @param Environment $twig
+     * @param Environment           $twig
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(Environment $twig)
+    public function __construct(Environment $twig, UrlGeneratorInterface $urlGenerator)
     {
         $this->twig = $twig;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
-     * @param array $args
+     * @param array       $args
+     * @param string|null $type
      *
      * @return Response
      *
@@ -37,8 +46,12 @@ class ShowTrickResponder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke(array $args)
+    public function __invoke(array $args, string $type = null)
     {
+        if ('redirect-comment' == $type) {
+            return new RedirectResponse($this->urlGenerator->generate('app_show_trick', $args));
+        }
+
         return new Response($this->twig->render('trick/show.html.twig', $args));
     }
 }

@@ -37,13 +37,18 @@ class RegistrationVerificationResponder
     }
 
     /**
+     * @param string|null $type
      * @return RedirectResponse|Response
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke()
+    public function __invoke(string $type = null)
     {
+        if ('redirect-homepage' == $type) {
+            return new RedirectResponse($this->urlGenerator->generate('homepage'));
+        }
+
         return new Response($this->twig->render('registration/registration-confirmed.html.twig'));
     }
 }
