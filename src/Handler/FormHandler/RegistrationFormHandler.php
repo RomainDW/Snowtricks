@@ -10,50 +10,36 @@ namespace App\Handler\FormHandler;
 
 use App\Domain\Entity\Picture;
 use App\Domain\Entity\User;
+use App\Domain\Service\UserService;
 use App\Event\UserPictureUploadEvent;
-use App\Repository\UserRepository;
-use Swift_Mailer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationFormHandler
 {
-    private $userRepository;
     private $passwordEncoder;
     private $dispatcher;
     private $validator;
-    private $flashBag;
-    private $url_generator;
-    private $mailer;
-    private $templating;
+    private $userService;
+    private $userId;
 
     /**
      * RegistrationFormHandler constructor.
      *
-     * @param UserRepository               $userRepository
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param EventDispatcherInterface     $dispatcher
      * @param ValidatorInterface           $validator
-     * @param FlashBagInterface            $flashBag
-     * @param UrlGeneratorInterface        $url_generator
-     * @param Swift_Mailer                 $mailer
-     * @param \Twig_Environment            $templating
+     * @param UserService                  $userService
      */
-    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $dispatcher, ValidatorInterface $validator, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, Swift_Mailer $mailer, \Twig_Environment $templating)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $dispatcher, ValidatorInterface $validator, UserService $userService)
     {
-        $this->userRepository = $userRepository;
         $this->passwordEncoder = $passwordEncoder;
         $this->dispatcher = $dispatcher;
         $this->validator = $validator;
-        $this->flashBag = $flashBag;
-        $this->url_generator = $url_generator;
-        $this->mailer = $mailer;
-        $this->templating = $templating;
+        $this->userService = $userService;
     }
 
     /**
@@ -95,9 +81,17 @@ class RegistrationFormHandler
                 return false;
             }
 
-            return $user;
+            $this->userService->register($user);
+            $this->userId = $user->getId();
+
+            return true;
         }
 
         return false;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
     }
 }

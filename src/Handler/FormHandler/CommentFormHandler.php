@@ -11,30 +11,25 @@ namespace App\Handler\FormHandler;
 use App\Domain\Entity\Comment;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
-use App\Repository\CommentRepository;
+use App\Domain\Service\CommentService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CommentFormHandler
 {
-    private $commentRepository;
-    private $url_generator;
-    private $flashBag;
+    /**
+     * @var CommentService
+     */
+    private $commentService;
 
     /**
      * CommentFormhandler constructor.
      *
-     * @param CommentRepository     $commentRepository
-     * @param UrlGeneratorInterface $url_generator
-     * @param FlashBagInterface     $flashBag
+     * @param CommentService $commentService
      */
-    public function __construct(CommentRepository $commentRepository, UrlGeneratorInterface $url_generator, FlashBagInterface $flashBag)
+    public function __construct(CommentService $commentService)
     {
-        $this->commentRepository = $commentRepository;
-        $this->url_generator = $url_generator;
-        $this->flashBag = $flashBag;
+        $this->commentService = $commentService;
     }
 
     /**
@@ -54,6 +49,8 @@ class CommentFormHandler
             $comment->setCreatedAt(new \DateTime());
             $comment->setUser($user);
             $comment->setTrick($trick);
+
+            $this->commentService->save($comment);
 
             return true;
         }

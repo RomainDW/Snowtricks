@@ -9,38 +9,33 @@
 namespace App\Handler\FormHandler;
 
 use App\Domain\Entity\User;
+use App\Domain\Service\UserService;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Security;
 
 class ResetPasswordFormHandler
 {
     private $userRepository;
-    private $flashBag;
-    private $url_generator;
     private $passwordEncoder;
-    private $security;
+    /**
+     * @var UserService
+     */
+    private $userService;
 
     /**
      * ResetPasswordFormHandler constructor.
      *
      * @param UserRepository               $userRepository
-     * @param FlashBagInterface            $flashBag
-     * @param UrlGeneratorInterface        $url_generator
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param Security                     $security
+     * @param UserService                  $userService
      */
-    public function __construct(UserRepository $userRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, UserPasswordEncoderInterface $passwordEncoder, Security $security)
+    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, UserService $userService)
     {
         $this->userRepository = $userRepository;
-        $this->flashBag = $flashBag;
-        $this->url_generator = $url_generator;
         $this->passwordEncoder = $passwordEncoder;
-        $this->security = $security;
+        $this->userService = $userService;
     }
 
     /**
@@ -49,8 +44,7 @@ class ResetPasswordFormHandler
      *
      * @return bool|RedirectResponse
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \App\Domain\Exception\ValidationException
      */
     public function handle(FormInterface $form, User $user)
     {
@@ -58,6 +52,7 @@ class ResetPasswordFormHandler
             $password = $this->passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());
             $user->newPassword($password);
             $user->eraseCredentials();
+            $this->userService->save($user);
 
             return true;
         }

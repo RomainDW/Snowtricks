@@ -9,41 +9,44 @@
 namespace App\Handler\FormHandler;
 
 use App\Domain\Entity\User;
+use App\Domain\Service\UserService;
 use App\Event\UserPictureRemoveEvent;
 use App\Event\UserPictureUploadEvent;
-use App\Repository\UserRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AccountFormHandler
 {
     private $dispatcher;
-    private $userRepository;
     private $flashBag;
-    private $url_generator;
     private $validator;
+    private $userService;
 
     /**
      * AccountFormHandler constructor.
      *
      * @param EventDispatcherInterface $dispatcher
-     * @param UserRepository           $userRepository
      * @param FlashBagInterface        $flashBag
-     * @param UrlGeneratorInterface    $url_generator
      * @param ValidatorInterface       $validator
      */
-    public function __construct(EventDispatcherInterface $dispatcher, UserRepository $userRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, ValidatorInterface $validator)
+    public function __construct(EventDispatcherInterface $dispatcher, FlashBagInterface $flashBag, ValidatorInterface $validator, UserService $userService)
     {
         $this->dispatcher = $dispatcher;
-        $this->userRepository = $userRepository;
         $this->flashBag = $flashBag;
-        $this->url_generator = $url_generator;
         $this->validator = $validator;
+        $this->userService = $userService;
     }
 
+    /**
+     * @param FormInterface $form
+     * @param User          $user
+     *
+     * @return bool
+     *
+     * @throws \App\Domain\Exception\ValidationException
+     */
     public function handle(FormInterface $form, User $user)
     {
         if ($form->isSubmitted() && $form->isValid()) {
@@ -73,6 +76,8 @@ class AccountFormHandler
 
                 return false;
             }
+
+            $this->userService->update($user);
 
             return true;
         }

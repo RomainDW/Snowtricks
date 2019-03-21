@@ -11,7 +11,7 @@ namespace App\Handler\FormHandler;
 use App\Domain\Entity\Image;
 use App\Domain\Entity\Trick;
 use App\Repository\TrickRepository;
-use App\Service\TrickService;
+use App\Domain\Service\TrickService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -69,6 +69,8 @@ class EditTrickFormHandler
 
                 return false;
             }
+
+            $this->trickService->save($trick, 'update');
 
             return true;
         }

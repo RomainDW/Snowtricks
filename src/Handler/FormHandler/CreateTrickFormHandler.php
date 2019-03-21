@@ -8,10 +8,10 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Service\TrickService;
+use App\Domain\Service\TrickService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateTrickFormHandler
@@ -31,6 +31,11 @@ class CreateTrickFormHandler
     private $flashBag;
 
     /**
+     * @var string
+     */
+    private $slug;
+
+    /**
      * CreateTrickFormHandler constructor.
      *
      * @param TrickService       $trickService
@@ -46,17 +51,17 @@ class CreateTrickFormHandler
 
     /**
      * @param FormInterface $form
-     * @param UserInterface $user
+     * @param Security      $security
      *
      * @return \App\Domain\Entity\Trick|bool
      *
      * @throws \Exception
      */
-    public function handle(FormInterface $form, UserInterface $user)
+    public function handle(FormInterface $form, Security $security)
     {
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $trick = $this->trickService->InitTrick($form->getData(), $user);
+            $trick = $this->trickService->InitTrick($form->getData(), $security->getUser());
+            $this->slug = $trick->getSlug();
 
             if (count($errors = $this->validator->validate($trick, null, ['Default', 'add_trick']))) {
                 foreach ($errors as $error) {
@@ -66,9 +71,16 @@ class CreateTrickFormHandler
                 return false;
             }
 
-            return $trick;
+            $this->trickService->save($trick);
+
+            return true;
         }
 
         return false;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
