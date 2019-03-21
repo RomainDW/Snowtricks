@@ -30,9 +30,9 @@ services:
     # please note that last definitions always *replace* previous ones
 
     init_trick:
-        class: App\Service\TrickService
+        class: App\Domain\Service\TrickService
         arguments: ["@event_dispatcher"]
 
     account_verification:
-        class: App\Service\AccountVerification
+        class: App\Domain\Service\AccountVerification
         arguments: ["@doctrine.orm.entity_manager"]
