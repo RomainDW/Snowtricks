@@ -7,7 +7,7 @@ use App\DTO\UserRegistrationDTO;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
-use App\Service\SlugService;
+use App\Utils\Slugger;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -53,7 +53,7 @@ class TrickFixture extends Fixture
         for ($i = 0; $i < 20; ++$i) {
             $category = $categories[rand(1, 3)];
             $title = 'Trick n°'.$i;
-            $slug = SlugService::slugify($title);
+            $slug = Slugger::slugify($title);
 
             $trickDTO = new CreateTrickDTO(
                 $title,

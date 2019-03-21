@@ -6,9 +6,9 @@
  * Time: 6:09 PM.
  */
 
-namespace App\Service;
+namespace App\Utils;
 
-class SlugService
+class Slugger
 {
     public static function slugify(string $text)
     {

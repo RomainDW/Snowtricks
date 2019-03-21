@@ -6,7 +6,7 @@
  * Time: 7:43 PM.
  */
 
-namespace App\Service;
+namespace App\Utils;
 
 class SnowtrickConfig
 {
