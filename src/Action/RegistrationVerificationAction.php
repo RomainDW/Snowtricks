@@ -9,9 +9,8 @@
 namespace App\Action;
 
 use App\Domain\Entity\User;
-use App\Responder\HomeRedirectResponder;
 use App\Responder\RegistrationVerificationResponder;
-use App\Service\AccountVerification;
+use App\Domain\Service\UserService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -29,11 +28,6 @@ class RegistrationVerificationAction
     private $flashBag;
 
     /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
      * @var TokenStorageInterface
      */
     private $tokenStorage;
@@ -44,45 +38,35 @@ class RegistrationVerificationAction
     private $session;
 
     /**
-     * @var RegistrationVerificationResponder
+     * @var UserService
      */
-    private $responder;
-    /**
-     * @var HomeRedirectResponder
-     */
-    private $homeRedirectResponder;
+    private $userService;
 
     /**
      * RegistrationVerificationAction constructor.
      *
-     * @param FlashBagInterface                 $flashBag
-     * @param UrlGeneratorInterface             $urlGenerator
-     * @param TokenStorageInterface             $tokenStorage
-     * @param SessionInterface                  $session
-     * @param RegistrationVerificationResponder $responder
-     * @param HomeRedirectResponder             $homeRedirectResponder
+     * @param FlashBagInterface     $flashBag
+     * @param TokenStorageInterface $tokenStorage
+     * @param SessionInterface      $session
+     * @param UserService           $userService
      */
     public function __construct(
         FlashBagInterface $flashBag,
-        UrlGeneratorInterface $urlGenerator,
         TokenStorageInterface $tokenStorage,
         SessionInterface $session,
-        RegistrationVerificationResponder $responder,
-        HomeRedirectResponder $homeRedirectResponder
+        UserService $userService
     ) {
         $this->flashBag = $flashBag;
-        $this->urlGenerator = $urlGenerator;
         $this->tokenStorage = $tokenStorage;
         $this->session = $session;
-        $this->responder = $responder;
-        $this->homeRedirectResponder = $homeRedirectResponder;
+        $this->userService = $userService;
     }
 
     /**
      * @Route("/verification/{vkey}", name="app_verification", methods={"GET"})
      *
-     * @param User                $user
-     * @param AccountVerification $accountVerification
+     * @param User                              $user
+     * @param RegistrationVerificationResponder $responder
      *
      * @return RedirectResponse|Response
      *
@@ -90,22 +74,18 @@ class RegistrationVerificationAction
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke(User $user, AccountVerification $accountVerification)
+    public function __invoke(User $user, RegistrationVerificationResponder $responder)
     {
-        $verification = $accountVerification->verification($user);
+        $verification = $this->userService->verification($user);
 
         if (false === $verification) {
             $this->flashBag->add('error', 'Votre compte est déjà vérifié.');
-            $responder = $this->homeRedirectResponder;
 
-            return $responder();
-
+            return $responder('redirect-homepage');
         } else {
             $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
             $this->tokenStorage->setToken($token);
             $this->session->set('_security_secured_area', serialize($token));
-
-            $responder = $this->responder;
 
             return $responder();
         }

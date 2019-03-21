@@ -8,11 +8,9 @@
 
 namespace App\Action;
 
-use App\Domain\Manager\TrickManager;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\CreateTrickFormHandler;
 use App\Responder\CreateTrickResponder;
-use App\Service\TrickService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,11 +18,6 @@ use Symfony\Component\Security\Core\Security;
 
 class CreateTrickAction
 {
-    /**
-     * @var CreateTrickResponder
-     */
-    private $responder;
-
     /**
      * @var FormFactoryInterface
      */
@@ -36,16 +29,6 @@ class CreateTrickAction
     private $security;
 
     /**
-     * @var TrickService
-     */
-    private $trickService;
-
-    /**
-     * @var TrickManager
-     */
-    private $trickManager;
-
-    /**
      * @var CreateTrickFormHandler
      */
     private $formHandler;
@@ -53,25 +36,20 @@ class CreateTrickAction
     /**
      * CreateTrickAction constructor.
      *
-     * @param CreateTrickResponder   $responder
      * @param FormFactoryInterface   $formFactory
      * @param Security               $security
-     * @param TrickManager           $trickManager
-     * @param TrickService           $trickService
      * @param CreateTrickFormHandler $formHandler
      */
-    public function __construct(CreateTrickResponder $responder, FormFactoryInterface $formFactory, Security $security, TrickManager $trickManager, TrickService $trickService, CreateTrickFormHandler $formHandler)
+    public function __construct(FormFactoryInterface $formFactory, Security $security, CreateTrickFormHandler $formHandler)
     {
-        $this->responder = $responder;
         $this->formFactory = $formFactory;
         $this->security = $security;
-        $this->trickService = $trickService;
-        $this->trickManager = $trickManager;
         $this->formHandler = $formHandler;
     }
 
     /**
-     * @param Request $request
+     * @param Request              $request
+     * @param CreateTrickResponder $responder
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
@@ -81,16 +59,13 @@ class CreateTrickAction
      * @throws \Exception
      * @Route("/trick/add", name="app_create_trick")
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, CreateTrickResponder $responder)
     {
-        $responder = $this->responder;
         $form = $this->formFactory->create(TrickFormType::class);
         $form->handleRequest($request);
 
-        if ($trick = $this->formHandler->handle($form, $this->security->getUser())) {
-            $this->trickManager->save($trick);
-
-            return $responder(['slug' => $trick->getSlug()], 'redirect');
+        if ($this->formHandler->handle($form, $this->security)) {
+            return $responder(['slug' => $this->formHandler->getSlug()], 'redirect');
         }
 
         return $responder(['form' => $form->createView()]);

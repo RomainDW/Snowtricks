@@ -8,12 +8,12 @@
 
 namespace App\Action;
 
-use App\Domain\Manager\TrickManager;
 use App\DTO\CreateTrickDTO;
 use App\Domain\Entity\Trick;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\EditTrickFormHandler;
 use App\Responder\EditTrickResponder;
+use App\Domain\Service\TrickService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,53 +25,50 @@ class EditTrickAction
      */
     private $formFactory;
     /**
-     * @var EditTrickResponder
+     * @var TrickService
      */
-    private $responder;
+    private $trickService;
     /**
-     * @var TrickManager
+     * @var EditTrickFormHandler
      */
-    private $trickManager;
+    private $formHandler;
 
     /**
      * EditTrickAction constructor.
      *
      * @param FormFactoryInterface $formFactory
-     * @param EditTrickResponder   $responder
-     * @param TrickManager         $trickManager
+     * @param TrickService         $trickService
+     * @param EditTrickFormHandler $formHandler
      */
-    public function __construct(FormFactoryInterface $formFactory, EditTrickResponder $responder, TrickManager $trickManager)
+    public function __construct(FormFactoryInterface $formFactory, TrickService $trickService, EditTrickFormHandler $formHandler)
     {
         $this->formFactory = $formFactory;
-        $this->responder = $responder;
-        $this->trickManager = $trickManager;
+        $this->trickService = $trickService;
+        $this->formHandler = $formHandler;
     }
 
     /**
      * @Route("/trick/edit/{slug}", name="app_edit_trick")
      *
-     * @param Trick                $trick
-     * @param Request              $request
-     * @param EditTrickFormHandler $formHandler
+     * @param Trick              $trick
+     * @param Request            $request
+     * @param EditTrickResponder $responder
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \App\Domain\Exception\ValidationException
+     * @throws \Twig_Error_Loader
      * @throws \Exception
      */
-    public function __invoke(Trick $trick, Request $request, EditTrickFormHandler $formHandler)
+    public function __invoke(Trick $trick, Request $request, EditTrickResponder $responder)
     {
-        $responder = $this->responder;
         $trickDTO = CreateTrickDTO::createFromTrick($trick);
 
         $form = $this->formFactory->create(TrickFormType::class, $trickDTO);
         $form->handleRequest($request);
 
-        if ($formHandler->handle($form, $trick)) {
-            $this->trickManager->save($trick, 'update');
+        if ($this->formHandler->handle($form, $trick)) {
 
             $responder(['slug' => $trick->getSlug()], 'redirect');
         }

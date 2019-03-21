@@ -8,10 +8,9 @@
 
 namespace App\Action;
 
-use App\Domain\Entity\Trick;
 use App\Repository\TrickRepository;
 use App\Responder\HomeResponder;
-use App\Service\SnowtrickConfig;
+use App\Utils\SnowtrickConfig;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeAction
@@ -20,26 +19,21 @@ class HomeAction
      * @var TrickRepository
      */
     private $trickRepository;
-    /**
-     * @var HomeResponder
-     */
-    private $responder;
 
     /**
      * HomeAction constructor.
      *
      * @param TrickRepository $trickRepository
-     * @param HomeResponder   $responder
      */
-    public function __construct(TrickRepository $trickRepository, HomeResponder $responder)
+    public function __construct(TrickRepository $trickRepository)
     {
         $this->trickRepository = $trickRepository;
-        $this->responder = $responder;
     }
 
     /**
      * @Route("/", name="homepage")
      *
+     * @param HomeResponder $responder
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
@@ -47,17 +41,13 @@ class HomeAction
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke()
+    public function __invoke(HomeResponder $responder)
     {
         $numberOfResults = SnowtrickConfig::getNumberOfResults();
-
-        //Todo: Utiliser le manager
 
         $tricks = $this->trickRepository->getTricksPagination(0, $numberOfResults);
 
         $totalTricks = $this->trickRepository->getNumberOfTotalTricks();
-
-        $responder = $this->responder;
 
         return $responder([
             'tricks' => $tricks,

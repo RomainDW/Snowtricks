@@ -9,48 +9,39 @@
 namespace App\Action;
 
 use App\Domain\Entity\Trick;
-use App\Domain\Manager\TrickManager;
 use App\Responder\DeleteTrickResponder;
-use App\Service\DeleteService;
+use App\Domain\Service\TrickService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DeleteTrickAction
 {
     /**
-     * @var DeleteTrickResponder
+     * @var TrickService
      */
-    private $responder;
-
-    /**
-     * @var TrickManager
-     */
-    private $trickManager;
+    private $trickService;
 
     /**
      * DeleteTrickAction constructor.
      *
-     * @param DeleteTrickResponder $responder
-     * @param TrickManager         $trickManager
+     * @param TrickService $trickService
      */
-    public function __construct(DeleteTrickResponder $responder, TrickManager $trickManager)
+    public function __construct(TrickService $trickService)
     {
-        $this->responder = $responder;
-        $this->trickManager = $trickManager;
+        $this->trickService = $trickService;
     }
 
     /**
      * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")
      *
-     * @param Trick $trick
+     * @param Trick                $trick
+     * @param DeleteTrickResponder $responder
      *
      * @return RedirectResponse
      */
-    public function __invoke(Trick $trick)
+    public function __invoke(Trick $trick, DeleteTrickResponder $responder)
     {
-        $this->trickManager->deleteTrick($trick);
-
-        $responder = $this->responder;
+        $this->trickService->deleteTrick($trick);
 
         return $responder();
     }

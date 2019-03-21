@@ -11,7 +11,7 @@ namespace App\Action;
 use App\Domain\Entity\Trick;
 use App\Repository\CommentRepository;
 use App\Responder\LoadCommentsResponder;
-use App\Service\SnowtrickConfig;
+use App\Utils\SnowtrickConfig;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LoadCommentsAction
@@ -22,26 +22,20 @@ class LoadCommentsAction
     private $commentRepository;
 
     /**
-     * @var LoadCommentsResponder
-     */
-    private $responder;
-
-    /**
      * LoadCommentsAction constructor.
      *
-     * @param CommentRepository     $commentRepository
-     * @param LoadCommentsResponder $responder
+     * @param CommentRepository $commentRepository
      */
-    public function __construct(CommentRepository $commentRepository, LoadCommentsResponder $responder)
+    public function __construct(CommentRepository $commentRepository)
     {
         $this->commentRepository = $commentRepository;
-        $this->responder = $responder;
     }
 
     /**
      * @param Trick $trick
      * @param $offset
      *
+     * @param LoadCommentsResponder $responder
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Twig_Error_Loader
@@ -49,12 +43,9 @@ class LoadCommentsAction
      * @throws \Twig_Error_Syntax
      * @Route("/load-comments/{slug}/{offset}", name="loadComments", methods={"POST"})
      */
-    public function __invoke(Trick $trick, $offset)
+    public function __invoke(Trick $trick, $offset, LoadCommentsResponder $responder)
     {
-        // Todo: utiliser le manager
         $comments = $this->commentRepository->getCommentsPagination($offset, SnowtrickConfig::getNumberOfCommentsDisplayed(), $trick);
-
-        $responder = $this->responder;
 
         return $responder(['comments' => $comments]);
     }

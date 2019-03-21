@@ -9,12 +9,10 @@
 namespace App\Action;
 
 use App\Domain\Entity\User;
-use App\Domain\Manager\UserManager;
 use App\Form\ResetPasswordFormType;
 use App\Handler\FormHandler\ResetPasswordFormHandler;
-use App\Responder\AccountRedirectResponder;
-use App\Responder\LoginRedirectResponder;
 use App\Responder\ResetPasswordResponder;
+use App\Domain\Service\UserService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,15 +26,6 @@ class ResetPasswordAction
      * @var FormFactoryInterface
      */
     private $formFactory;
-
-    /**
-     * @var ResetPasswordResponder
-     */
-    private $responder;
-    /**
-     * @var UserManager
-     */
-    private $userManager;
     /**
      * @var FlashBagInterface
      */
@@ -46,78 +35,65 @@ class ResetPasswordAction
      */
     private $security;
     /**
-     * @var AccountRedirectResponder
+     * @var UserService
      */
-    private $accountRedirectResponder;
+    private $userService;
     /**
-     * @var LoginRedirectResponder
+     * @var ResetPasswordFormHandler
      */
-    private $loginRedirectResponder;
+    private $formHandler;
 
     /**
      * ResetPasswordAction constructor.
      *
      * @param FormFactoryInterface     $formFactory
-     * @param ResetPasswordResponder   $responder
-     * @param UserManager              $userManager
      * @param FlashBagInterface        $flashBag
      * @param Security                 $security
-     * @param AccountRedirectResponder $accountRedirectResponder
-     * @param LoginRedirectResponder   $loginRedirectResponder
+     * @param ResetPasswordFormHandler $formHandler
+     * @param UserService              $userService
      */
     public function __construct(
         FormFactoryInterface $formFactory,
-        ResetPasswordResponder $responder,
-        UserManager $userManager,
         FlashBagInterface $flashBag,
         Security $security,
-        AccountRedirectResponder $accountRedirectResponder,
-        LoginRedirectResponder $loginRedirectResponder
+        ResetPasswordFormHandler $formHandler,
+        UserService $userService
     ) {
         $this->formFactory = $formFactory;
-        $this->responder = $responder;
-        $this->userManager = $userManager;
         $this->flashBag = $flashBag;
         $this->security = $security;
-        $this->accountRedirectResponder = $accountRedirectResponder;
-        $this->loginRedirectResponder = $loginRedirectResponder;
+        $this->userService = $userService;
+        $this->formHandler = $formHandler;
     }
 
     /**
      * @Route("/reset-password/{vkey}", name="app_reset_password")
      *
-     * @param User                     $user
-     * @param Request                  $request
-     * @param ResetPasswordFormHandler $formHandler
+     * @param User                   $user
+     * @param Request                $request
+     * @param ResetPasswordResponder $responder
      *
      * @return bool|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \App\Domain\Exception\ValidationException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \App\Domain\Exception\ValidationException
      */
-    public function __invoke(User $user, Request $request, ResetPasswordFormHandler $formHandler)
+    public function __invoke(User $user, Request $request, ResetPasswordResponder $responder)
     {
         $form = $this->formFactory->create(ResetPasswordFormType::class);
         $form->handleRequest($request);
 
-        if ($formHandler->handle($form, $user)) {
-            $this->userManager->save($user);
+        if ($this->formHandler->handle($form, $user)) {
             $this->flashBag->add('success', 'Votre mot de passe a été réinitialisé, vous pouvez maintenant vous connecter');
 
             if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                $responder = $this->accountRedirectResponder;
-                return $responder();
+                return $responder([], 'redirect-account');
             } else {
-                $responder = $this->loginRedirectResponder;
-                return $responder();
+                return $responder([], 'redirect-login');
             }
         }
-
-        $responder = $this->responder;
 
         return $responder(['form' => $form->createView()]);
     }

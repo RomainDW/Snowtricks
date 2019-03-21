@@ -11,13 +11,12 @@ namespace App\Action;
 use App\Domain\Entity\Comment;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
-use App\Domain\Manager\CommentManager;
 use App\Form\CommentFormType;
 use App\Handler\FormHandler\CommentFormHandler;
 use App\Repository\CommentRepository;
-use App\Responder\CommentRedirectResponder;
 use App\Responder\ShowTrickResponder;
-use App\Service\SnowtrickConfig;
+use App\Domain\Service\CommentService;
+use App\Utils\SnowtrickConfig;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,56 +35,40 @@ class ShowTrickAction
      * @var CommentRepository
      */
     private $commentRepository;
-
-    /**
-     * @var ShowTrickResponder
-     */
-    private $responder;
-
     /**
      * @var FormFactoryInterface
      */
     private $formFactory;
     /**
-     * @var CommentManager
-     */
-    private $commentManager;
-    /**
      * @var FlashBagInterface
      */
     private $flashBag;
     /**
-     * @var CommentRedirectResponder
+     * @var CommentFormHandler
      */
-    private $commentRedirectResponder;
+    private $formHandler;
 
     /**
      * ShowTrickAction constructor.
      *
-     * @param Security                 $security
-     * @param CommentRepository        $commentRepository
-     * @param ShowTrickResponder       $responder
-     * @param FormFactoryInterface     $formFactory
-     * @param CommentManager           $commentManager
-     * @param FlashBagInterface        $flashBag
-     * @param CommentRedirectResponder $commentRedirectResponder
+     * @param Security             $security
+     * @param CommentRepository    $commentRepository
+     * @param FormFactoryInterface $formFactory
+     * @param FlashBagInterface    $flashBag
+     * @param CommentFormHandler   $formHandler
      */
     public function __construct(
         Security $security,
         CommentRepository $commentRepository,
-        ShowTrickResponder $responder,
         FormFactoryInterface $formFactory,
-        CommentManager $commentManager,
         FlashBagInterface $flashBag,
-        CommentRedirectResponder $commentRedirectResponder
+        CommentFormHandler $formHandler
     ) {
         $this->security = $security;
         $this->commentRepository = $commentRepository;
-        $this->responder = $responder;
         $this->formFactory = $formFactory;
-        $this->commentManager = $commentManager;
         $this->flashBag = $flashBag;
-        $this->commentRedirectResponder = $commentRedirectResponder;
+        $this->formHandler = $formHandler;
     }
 
     /**
@@ -93,7 +76,7 @@ class ShowTrickAction
      *
      * @param Trick              $trick
      * @param Request            $request
-     * @param CommentFormHandler $formHandler
+     * @param ShowTrickResponder $responder
      *
      * @return bool|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
@@ -103,7 +86,7 @@ class ShowTrickAction
      * @throws \Twig_Error_Syntax
      * @throws \Exception
      */
-    public function __invoke(Trick $trick, Request $request, CommentFormHandler $formHandler)
+    public function __invoke(Trick $trick, Request $request, ShowTrickResponder $responder)
     {
         $comment = new Comment();
 
@@ -112,13 +95,10 @@ class ShowTrickAction
         $form = $this->formFactory->create(CommentFormType::class, $comment);
         $form->handleRequest($request);
 
-        if ($user && $this->security->isGranted('ROLE_USER') && ($formHandler->handle($form, $comment, $user, $trick))) {
-            $this->commentManager->save($comment);
+        if ($user && $this->security->isGranted('ROLE_USER') && ($this->formHandler->handle($form, $comment, $user, $trick))) {
             $this->flashBag->add('success', 'Le commentaire a bien été ajouté !');
 
-            $responder = $this->commentRedirectResponder;
-
-            return $responder($trick);
+            return $responder(['slug' => $trick->getSlug(), '_fragment' => 'comments'], 'redirect-comment');
         }
 
         $numberOfResults = SnowtrickConfig::getNumberOfCommentsDisplayed();
@@ -126,8 +106,6 @@ class ShowTrickAction
         $comments = $this->commentRepository->getCommentsPagination(0, $numberOfResults, $trick);
 
         $totalComments = $this->commentRepository->getNumberOfTotalComments($trick);
-
-        $responder = $this->responder;
 
         return $responder([
             'trick' => $trick,

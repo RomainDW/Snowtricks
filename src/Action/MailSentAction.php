@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MailSentAction
 {
@@ -24,52 +23,38 @@ class MailSentAction
     private $flashBag;
 
     /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
-     * @var MailSentResponder
-     */
-    private $responder;
-
-    /**
      * MailSentAction constructor.
      *
-     * @param FlashBagInterface     $flashBag
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param MailSentResponder     $responder
+     * @param FlashBagInterface $flashBag
      */
-    public function __construct(FlashBagInterface $flashBag, UrlGeneratorInterface $urlGenerator, MailSentResponder $responder)
+    public function __construct(FlashBagInterface $flashBag)
     {
         $this->flashBag = $flashBag;
-        $this->urlGenerator = $urlGenerator;
-        $this->responder = $responder;
     }
 
     /**
      * @Route("/register/{id}", name="app_mail_sent")
      *
-     * @param User $user
+     * @param User              $user
+     * @param MailSentResponder $responder
      *
      * @return Response
+     *
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke(User $user)
+    public function __invoke(User $user, MailSentResponder $responder)
     {
         $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
 
         if (!$hasAccess) {
             $this->flashBag->add('error', 'Votre compte est déjà vérifié.');
 
-            return new RedirectResponse($this->urlGenerator->generate('homepage'));
+            return $responder([], 'redirect');
         }
 
         $userEmail = $user->getEmail();
-
-        $responder = $this->responder;
 
         return $responder(['userEmail' => $userEmail]);
     }

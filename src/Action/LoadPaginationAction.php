@@ -10,7 +10,7 @@ namespace App\Action;
 
 use App\Repository\TrickRepository;
 use App\Responder\LoadPaginationResponder;
-use App\Service\SnowtrickConfig;
+use App\Utils\SnowtrickConfig;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LoadPaginationAction
@@ -21,26 +21,20 @@ class LoadPaginationAction
     private $trickRepository;
 
     /**
-     * @var LoadPaginationResponder
-     */
-    private $responder;
-
-    /**
      * LoadPaginationAction constructor.
      *
-     * @param TrickRepository         $trickRepository
-     * @param LoadPaginationResponder $responder
+     * @param TrickRepository $trickRepository
      */
-    public function __construct(TrickRepository $trickRepository, LoadPaginationResponder $responder)
+    public function __construct(TrickRepository $trickRepository)
     {
         $this->trickRepository = $trickRepository;
-        $this->responder = $responder;
     }
 
     /**
      * @Route("/more/{offset}", name="loadPagination", methods={"POST"})
      *
      * @param $offset
+     * @param LoadPaginationResponder $responder
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
@@ -48,12 +42,9 @@ class LoadPaginationAction
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke($offset)
+    public function __invoke($offset, LoadPaginationResponder $responder)
     {
-        // Todo: utiliser le manager
         $tricks = $this->trickRepository->getTricksPagination($offset, SnowtrickConfig::getNumberOfResults());
-
-        $responder = $this->responder;
 
         return $responder(['tricks' => $tricks]);
     }

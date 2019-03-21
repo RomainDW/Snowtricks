@@ -2,7 +2,6 @@
 
 namespace App\Action;
 
-use App\Responder\HomeRedirectResponder;
 use App\Responder\SecurityResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -23,34 +22,22 @@ class SecurityAction
     private $flashBag;
 
     /**
-     * @var SecurityResponder
-     */
-    private $responder;
-    /**
-     * @var HomeRedirectResponder
-     */
-    private $homeRedirectResponder;
-
-    /**
      * SecurityAction constructor.
      *
-     * @param Security              $security
-     * @param FlashBagInterface     $flashBag
-     * @param SecurityResponder     $responder
-     * @param HomeRedirectResponder $homeRedirectResponder
+     * @param Security          $security
+     * @param FlashBagInterface $flashBag
      */
-    public function __construct(Security $security, FlashBagInterface $flashBag, SecurityResponder $responder, HomeRedirectResponder $homeRedirectResponder)
+    public function __construct(Security $security, FlashBagInterface $flashBag)
     {
         $this->security = $security;
         $this->flashBag = $flashBag;
-        $this->responder = $responder;
-        $this->homeRedirectResponder = $homeRedirectResponder;
     }
 
     /**
      * @Route("/login", name="app_login")
      *
      * @param AuthenticationUtils $authenticationUtils
+     * @param SecurityResponder   $responder
      *
      * @return Response
      *
@@ -58,20 +45,18 @@ class SecurityAction
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke(AuthenticationUtils $authenticationUtils): Response
+    public function __invoke(AuthenticationUtils $authenticationUtils, SecurityResponder $responder): Response
     {
         if ($this->security->isGranted('ROLE_USER')) {
             $this->flashBag->add('error', 'Vous êtes déjà connecté(e)');
-            $responder = $this->homeRedirectResponder;
 
-            return $responder();
+            return $responder([], 'redirect-homepage');
         }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-        $responder = $this->responder;
 
         return $responder(['last_username' => $lastUsername, 'error' => $error]);
     }

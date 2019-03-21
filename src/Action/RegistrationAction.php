@@ -2,13 +2,10 @@
 
 namespace App\Action;
 
-use App\Domain\Entity\User;
-use App\Domain\Manager\UserManager;
 use App\Form\RegistrationFormType;
 use App\Handler\FormHandler\RegistrationFormHandler;
-use App\Responder\HomeRedirectResponder;
-use App\Responder\MailSentRedirectResponder;
 use App\Responder\RegistrationResponder;
+use App\Domain\Service\UserService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +15,6 @@ use Symfony\Component\Security\Core\Security;
 
 class RegistrationAction
 {
-    /**
-     * @var RegistrationResponder
-     */
-    private $responder;
-
     /**
      * @var FormFactoryInterface
      */
@@ -37,82 +29,64 @@ class RegistrationAction
      * @var FlashBagInterface
      */
     private $flashBag;
-
     /**
-     * @var HomeRedirectResponder
+     * @var UserService
      */
-    private $homeRedirectResponder;
+    private $userService;
     /**
-     * @var UserManager
+     * @var RegistrationFormHandler
      */
-    private $userManager;
-    /**
-     * @var MailSentRedirectResponder
-     */
-    private $mailSentRedirectResponder;
+    private $formHandler;
 
     /**
      * RegistrationAction constructor.
      *
-     * @param RegistrationResponder     $responder
-     * @param FormFactoryInterface      $formFactory
-     * @param Security                  $security
-     * @param FlashBagInterface         $flashBag
-     * @param HomeRedirectResponder     $homeRedirectResponder
-     * @param UserManager               $userManager
-     * @param MailSentRedirectResponder $mailSentRedirectResponder
+     * @param FormFactoryInterface    $formFactory
+     * @param Security                $security
+     * @param FlashBagInterface       $flashBag
+     * @param UserService             $userService
+     * @param RegistrationFormHandler $formHandler
      */
     public function __construct(
-        RegistrationResponder $responder,
         FormFactoryInterface $formFactory,
         Security $security,
         FlashBagInterface $flashBag,
-        HomeRedirectResponder $homeRedirectResponder,
-        UserManager $userManager,
-        MailSentRedirectResponder $mailSentRedirectResponder
+        UserService $userService,
+        RegistrationFormHandler $formHandler
     ) {
-        $this->responder = $responder;
         $this->formFactory = $formFactory;
         $this->security = $security;
         $this->flashBag = $flashBag;
-        $this->homeRedirectResponder = $homeRedirectResponder;
-        $this->userManager = $userManager;
-        $this->mailSentRedirectResponder = $mailSentRedirectResponder;
+        $this->userService = $userService;
+        $this->formHandler = $formHandler;
     }
 
     /**
      * @Route("/register", name="app_register")
      *
-     * @param Request                 $request
-     * @param RegistrationFormHandler $formHandler
+     * @param Request               $request
+     * @param RegistrationResponder $responder
      *
      * @return Response
      *
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \App\Domain\Exception\ValidationException
      * @throws \Exception
      */
-    public function __invoke(Request $request, RegistrationFormHandler $formHandler)
+    public function __invoke(Request $request, RegistrationResponder $responder)
     {
-        $homeRedirectResponder = $this->homeRedirectResponder;
-        $responder = $this->responder;
-
         if ($this->security->isGranted('ROLE_USER')) {
             $this->flashBag->add('error', 'Vous êtes déjà connecté(e)');
 
-            return $homeRedirectResponder();
+            return $responder([], 'redirect-homepage');
         }
 
         $form = $this->formFactory->create(RegistrationFormType::class);
         $form->handleRequest($request);
 
-        if (($user = $formHandler->handle($form)) instanceof User) {
-            $this->userManager->register($user);
-            $responder = $this->mailSentRedirectResponder;
-
-            return $responder($user);
+        if ($this->formHandler->handle($form)) {
+            return $responder(['id' => $this->formHandler->getUserId()], 'redirect-mail-sent');
         }
 
         return $responder(['registrationForm' => $form->createView()]);
