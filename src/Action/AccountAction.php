@@ -8,12 +8,12 @@
 
 namespace App\Action;
 
-use App\Domain\Manager\UserManager;
 use App\DTO\UpdateUserDTO;
 use App\Domain\Entity\User;
 use App\Form\UserUpdateFormType;
 use App\Handler\FormHandler\AccountFormHandler;
 use App\Responder\AccountResponder;
+use App\Domain\Service\UserService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,11 +27,6 @@ class AccountAction
     private $formFactory;
 
     /**
-     * @var AccountResponder
-     */
-    private $responder;
-
-    /**
      * @var Security
      */
     private $security;
@@ -40,46 +35,42 @@ class AccountAction
      * @var AccountFormHandler
      */
     private $formHandler;
-
     /**
-     * @var UserManager
+     * @var UserService
      */
-    private $userManager;
+    private $userService;
 
     /**
      * AccountAction constructor.
      *
      * @param FormFactoryInterface $formFactory
-     * @param AccountResponder     $responder
      * @param Security             $security
      * @param AccountFormHandler   $formHandler
-     * @param UserManager          $userManager
+     * @param UserService          $userService
      */
-    public function __construct(FormFactoryInterface $formFactory, AccountResponder $responder, Security $security, AccountFormHandler $formHandler, UserManager $userManager)
+    public function __construct(FormFactoryInterface $formFactory, Security $security, AccountFormHandler $formHandler, UserService $userService)
     {
         $this->formFactory = $formFactory;
-        $this->responder = $responder;
         $this->security = $security;
         $this->formHandler = $formHandler;
-        $this->userManager = $userManager;
+        $this->userService = $userService;
     }
 
     /**
      * @Route("/my-account", name="app_account")
      *
-     * @param Request $request
+     * @param Request          $request
+     * @param AccountResponder $responder
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
+     * @throws \App\Domain\Exception\ValidationException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \App\Domain\Exception\ValidationException
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, AccountResponder $responder)
     {
-        $responder = $this->responder;
-
         /** @var User $user */
         $user = $this->security->getUser();
 
@@ -89,8 +80,6 @@ class AccountAction
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form, $user)) {
-            $this->userManager->update($user);
-
             return $responder([], 'redirect');
         }
 
