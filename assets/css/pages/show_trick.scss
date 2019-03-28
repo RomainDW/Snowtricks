@@ -5,7 +5,31 @@
   height: 50vh;
 }
 
-// Gallery
+main {
+  padding-top: 2rem;
+}
+
+.display-medias {
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #fff;
+  border: 1px solid #343a40;
+  color: #000000;
+  display: block;
+  
+  &:hover {
+    color: #FFFFFF;
+    background-color: #343a40;
+  }
+
+  @media screen and (min-width: 576px) {
+    display: none;
+  }
+}
+
+
+
 .trick-image, .trick-video {
   max-height: 200px;
   object-fit: cover;
@@ -87,13 +111,21 @@
 
 // Information
 .trick-information {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-gap: 30px;
+
+  @supports (justify-content: center) {
+    justify-content: center;
+  }
+
   padding-bottom: 20px;
   border-bottom: solid 2px #343a40;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  text-align: center;
 
   .information {
     padding: 1rem;
+    border: solid 1px #343a40;
 
     @include e('label') {
       font-weight: bold;

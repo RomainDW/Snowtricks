@@ -46,6 +46,14 @@ Encore
     // enables Sass/SCSS support
     .enableSassLoader()
 
+    // enable Post CSS support
+    .enablePostCssLoader((options) => {
+        options.config = {
+            // the directory where the postcss.config.js file is stored
+            path: 'postcss.config.js'
+        };
+    })
+
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
 
