@@ -23,6 +23,7 @@ Encore
     .addEntry('email-send', './assets/js/pages/email-send.js')
     .addEntry('tricks_form', './assets/js/pages/tricks_form.js')
     .addEntry('show_trick', './assets/js/pages/show_trick.js')
+    .addEntry('errors', './assets/js/pages/errors.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
