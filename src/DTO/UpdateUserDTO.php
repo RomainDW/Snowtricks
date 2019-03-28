@@ -8,7 +8,7 @@
 
 namespace App\DTO;
 
-use App\Entity\User;
+use App\Domain\Entity\User;
 
 class UpdateUserDTO
 {

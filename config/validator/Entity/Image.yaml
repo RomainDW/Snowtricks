@@ -1,11 +1,11 @@
-App\Entity\Image:
+App\Domain\Entity\Image:
     properties:
         file:
             - Image:
                   mimeTypesMessage: L'image n'est pas au bon format ({{ type }}). Les formats autorisés sont {{ types }}.
                   disallowEmptyMessage: Le fichier est vide.
-                  groups: [add_trick, edit_trick]
+                  groups: [edit_trick, add_trick]
         alt:
             - NotBlank:
                   message: La description de l'image ne doit pas être vide.
-                  groups: [add_trick, edit_trick]
+                  groups: [edit_trick, add_trick]

@@ -8,7 +8,7 @@
 
 namespace App\Event;
 
-use App\Entity\Video;
+use App\Domain\Entity\Video;
 use Symfony\Component\EventDispatcher\Event;
 
 class VideoUploadEvent extends Event

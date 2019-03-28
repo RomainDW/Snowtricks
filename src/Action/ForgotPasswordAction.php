@@ -8,69 +8,66 @@
 
 namespace App\Action;
 
-use App\Entity\User;
 use App\Form\ForgotPasswordFormType;
-use App\Form\ResetPasswordFormType;
 use App\Handler\FormHandler\ForgotPasswordFormHandler;
-use App\Handler\FormHandler\ResetPasswordFormHandler;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Domain\Service\UserService;
+use App\Responder\ForgotPasswordResponder;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ForgotPasswordAction extends AbstractController
+class ForgotPasswordAction
 {
     /**
-     * @Route("/forgot-password", name="app_forgot_password")
-     *
-     * @param Request                   $request
-     * @param ForgotPasswordFormHandler $formHandler
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @var FormFactoryInterface
      */
-    public function index(Request $request, ForgotPasswordFormHandler $formHandler)
+    private $formFactory;
+    /**
+     * @var UserService
+     */
+    private $userService;
+    /**
+     * @var ForgotPasswordFormHandler
+     */
+    private $formHandler;
+
+    /**
+     * ForgotPasswordAction constructor.
+     *
+     * @param FormFactoryInterface      $formFactory
+     * @param UserService               $userService
+     * @param ForgotPasswordFormHandler $formHandler
+     */
+    public function __construct(FormFactoryInterface $formFactory, UserService $userService, ForgotPasswordFormHandler $formHandler)
     {
-        $form = $this->createForm(ForgotPasswordFormType::class);
-        $form->handleRequest($request);
-
-        if (($response = $formHandler->handle($form)) instanceof RedirectResponse) {
-            return $response;
-        }
-
-        return $this->render('security/forgot-password.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        $this->formFactory = $formFactory;
+        $this->userService = $userService;
+        $this->formHandler = $formHandler;
     }
 
     /**
-     * @Route("/reset-password/{vkey}", name="app_reset_password")
+     * @Route("/forgot-password", name="app_forgot_password")
      *
-     * @param User                     $user
-     * @param Request                  $request
-     * @param ResetPasswordFormHandler $formHandler
+     * @param Request                 $request
+     * @param ForgotPasswordResponder $responder
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \Exception
      */
-    public function resetPassword(User $user, Request $request, ResetPasswordFormHandler $formHandler)
+    public function __invoke(Request $request, ForgotPasswordResponder $responder)
     {
-        $form = $this->createForm(ResetPasswordFormType::class);
+        $form = $this->formFactory->create(ForgotPasswordFormType::class);
         $form->handleRequest($request);
 
-        if (($response = $formHandler->handle($form, $user)) instanceof RedirectResponse) {
-            return $response;
+        if ($this->formHandler->handle($form)) {
+
+            return $responder([], 'redirect');
         }
 
-        return $this->render('security/reset-password.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $responder(['form' => $form->createView()]);
     }
 }

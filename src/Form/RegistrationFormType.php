@@ -84,6 +84,7 @@ class RegistrationFormType extends AbstractType
                     $form->get('picture')->getData()
                 );
             },
+            'validation_groups' => ['registration'],
         ]);
     }
 }

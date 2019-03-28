@@ -8,7 +8,7 @@
 
 namespace App\Form;
 
-use App\Entity\Picture;
+use App\Domain\Entity\Picture;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;

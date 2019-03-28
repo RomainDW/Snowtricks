@@ -8,22 +8,17 @@
 
 namespace App\Action;
 
+use App\Domain\Service\TrickService;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\CreateTrickFormHandler;
 use App\Responder\CreateTrickResponder;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 class CreateTrickAction
 {
-    /**
-     * @var CreateTrickResponder
-     */
-    private $responder;
-
     /**
      * @var FormFactoryInterface
      */
@@ -35,40 +30,51 @@ class CreateTrickAction
     private $security;
 
     /**
+     * @var CreateTrickFormHandler
+     */
+    private $formHandler;
+    /**
+     * @var TrickService
+     */
+    private $trickService;
+
+    /**
      * CreateTrickAction constructor.
      *
-     * @param CreateTrickResponder $responder
-     * @param FormFactoryInterface $formFactory
-     * @param Security             $security
+     * @param FormFactoryInterface   $formFactory
+     * @param Security               $security
+     * @param CreateTrickFormHandler $formHandler
+     * @param TrickService           $trickService
      */
-    public function __construct(CreateTrickResponder $responder, FormFactoryInterface $formFactory, Security $security)
+    public function __construct(FormFactoryInterface $formFactory, Security $security, CreateTrickFormHandler $formHandler, TrickService $trickService)
     {
-        $this->responder = $responder;
         $this->formFactory = $formFactory;
         $this->security = $security;
+        $this->formHandler = $formHandler;
+        $this->trickService = $trickService;
     }
 
     /**
-     * @param Request                $request
-     * @param CreateTrickFormHandler $formHandler
+     * @param Request              $request
+     * @param CreateTrickResponder $responder
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \Exception
      * @Route("/trick/add", name="app_create_trick")
      */
-    public function __invoke(Request $request, CreateTrickFormHandler $formHandler)
+    public function __invoke(Request $request, CreateTrickResponder $responder)
     {
         $form = $this->formFactory->create(TrickFormType::class);
         $form->handleRequest($request);
 
-        if (($response = $formHandler->handle($form, $this->security->getUser())) instanceof RedirectResponse) {
-            return $response;
+        if ($this->formHandler->handle($form, $this->security)) {
+            return $responder(['slug' => $this->trickService->getSlug()], 'redirect');
         }
 
-        $responder = $this->responder;
-
-        return $responder($form);
+        return $responder(['form' => $form->createView()]);
     }
 }

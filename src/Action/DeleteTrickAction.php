@@ -8,42 +8,41 @@
 
 namespace App\Action;
 
-use App\Entity\Trick;
-use App\Event\ImageRemoveEvent;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Domain\Entity\Trick;
+use App\Responder\DeleteTrickResponder;
+use App\Domain\Service\TrickService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DeleteTrickAction extends AbstractController
+class DeleteTrickAction
 {
+    /**
+     * @var TrickService
+     */
+    private $trickService;
+
+    /**
+     * DeleteTrickAction constructor.
+     *
+     * @param TrickService $trickService
+     */
+    public function __construct(TrickService $trickService)
+    {
+        $this->trickService = $trickService;
+    }
+
     /**
      * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")
      *
-     * @param $slug
-     * @param EntityManagerInterface   $em
-     * @param EventDispatcherInterface $dispatcher
+     * @param Trick                $trick
+     * @param DeleteTrickResponder $responder
      *
      * @return RedirectResponse
      */
-    public function delete($slug, EntityManagerInterface $em, EventDispatcherInterface $dispatcher)
+    public function __invoke(Trick $trick, DeleteTrickResponder $responder)
     {
-        if (null === $trick = $em->getRepository(Trick::class)->findOneBy(['slug' => $slug])) {
-            throw $this->createNotFoundException('Aucune figure trouvée avec le slug '.$slug);
-        }
+        $this->trickService->deleteTrick($trick);
 
-        foreach ($trick->getImages() as $image) {
-            $imageRemoveEvent = new ImageRemoveEvent($image);
-            $dispatcher->dispatch(ImageRemoveEvent::NAME, $imageRemoveEvent);
-        }
-
-        $em->remove($trick);
-        $em->flush();
-
-        $this->addFlash('success', 'la figure '.$trick->getTitle().' a bien été supprimée.');
-
-        return $this->redirectToRoute('homepage');
+        return $responder();
     }
 }

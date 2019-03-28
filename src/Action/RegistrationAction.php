@@ -2,107 +2,93 @@
 
 namespace App\Action;
 
-use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Handler\FormHandler\RegistrationFormHandler;
-use App\Service\AccountVerification;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Responder\RegistrationResponder;
+use App\Domain\Service\UserService;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Security\Core\Security;
 
-class RegistrationAction extends AbstractController
+class RegistrationAction
 {
-    private $validator;
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
 
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
+    /**
+     * @var Security
+     */
+    private $security;
+
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
+    /**
+     * @var UserService
+     */
+    private $userService;
+    /**
+     * @var RegistrationFormHandler
+     */
+    private $formHandler;
+
+    /**
+     * RegistrationAction constructor.
+     *
+     * @param FormFactoryInterface    $formFactory
+     * @param Security                $security
+     * @param FlashBagInterface       $flashBag
+     * @param UserService             $userService
+     * @param RegistrationFormHandler $formHandler
+     */
+    public function __construct(
+        FormFactoryInterface $formFactory,
+        Security $security,
+        FlashBagInterface $flashBag,
+        UserService $userService,
+        RegistrationFormHandler $formHandler
+    ) {
+        $this->formFactory = $formFactory;
+        $this->security = $security;
+        $this->flashBag = $flashBag;
+        $this->userService = $userService;
+        $this->formHandler = $formHandler;
     }
 
     /**
      * @Route("/register", name="app_register")
      *
-     * @param Request                 $request
-     * @param RegistrationFormHandler $formHandler
+     * @param Request               $request
+     * @param RegistrationResponder $responder
      *
      * @return Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \Exception
      */
-    public function register(Request $request, RegistrationFormHandler $formHandler): Response
+    public function __invoke(Request $request, RegistrationResponder $responder)
     {
-        if ($this->isGranted('ROLE_USER')) {
-            $this->addFlash('error', 'Vous êtes déjà connecté(e)');
+        if ($this->security->isGranted('ROLE_USER')) {
+            $this->flashBag->add('error', 'Vous êtes déjà connecté(e)');
 
-            return $this->redirectToRoute('homepage');
+            return $responder([], 'redirect-homepage');
         }
-        $form = $this->createForm(RegistrationFormType::class);
+
+        $form = $this->formFactory->create(RegistrationFormType::class);
         $form->handleRequest($request);
 
-        if (($response = $formHandler->handle($form)) instanceof RedirectResponse) {
-            return $response;
+        if ($this->formHandler->handle($form)) {
+            return $responder(['id' => $this->userService->getUserId()], 'redirect-mail-sent');
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/register/{id}", name="app_mail_sent")
-     *
-     * @param User $user
-     *
-     * @return Response
-     */
-    public function mailSent(User $user)
-    {
-        $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
-
-        if (!$hasAccess) {
-            $this->addFlash('error', 'Votre compte est déjà vérifié.');
-
-            return $this->redirectToRoute('homepage');
-        }
-
-        $userEmail = $user->getEmail();
-
-        return $this->render('registration/registration-pre-validation.html.twig', [
-            'userEmail' => $userEmail,
-        ]);
-    }
-
-    /**
-     * @Route("/verification/{vkey}", name="app_verification", methods={"GET"})
-     *
-     * @param User                $user
-     * @param AccountVerification $accountVerification
-     *
-     * @return Response
-     */
-    public function registerVerification(User $user, AccountVerification $accountVerification)
-    {
-        $verification = $accountVerification->verification($user);
-
-        if (false === $verification) {
-            $this->addFlash('error', 'Votre compte est déjà vérifié.');
-
-            return $this->redirectToRoute('homepage');
-        } else {
-            // Connexion à mettre dans service
-            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-            $this->get('security.token_storage')->setToken($token);
-            $this->get('session')->set('_security_secured_area', serialize($token));
-
-            return $this->render('registration/registration-confirmed.html.twig');
-        }
+        return $responder(['registrationForm' => $form->createView()]);
     }
 }

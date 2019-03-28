@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Video;
+use App\Domain\Entity\Video;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

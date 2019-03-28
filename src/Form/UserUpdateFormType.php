@@ -19,15 +19,16 @@ class UserUpdateFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('picture', PictureFormType::class, [
+        $builder
+            ->add('picture', PictureFormType::class, [
             'label' => 'Votre photo de profil',
             'attr' => ['placeholder' => 'Photo de profil'],
             'required' => false,
-            'error_bubbling' => true, ])
+            'error_bubbling' => false,
+            ])
             ->add('username', TextType::class, [
                 'label' => 'Votre Pseudo',
                 'attr' => ['placeholder' => 'pseudo'],
-                'error_bubbling' => true,
             ])
         ;
     }
@@ -42,6 +43,7 @@ class UserUpdateFormType extends AbstractType
                     $form->get('picture')->getData()
                 );
             },
+            'validation_groups' => ['update_account'],
         ]);
     }
 }

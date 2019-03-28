@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Entity\ImageInterface;
+use App\Domain\Entity\ImageInterface;
 
 interface ImageEventInterface
 {

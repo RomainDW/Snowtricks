@@ -1,4 +1,9 @@
-App\Entity\User:
+App\Domain\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields: [email]
+              message: Cette adresse email est déjà enregistrée.
+              groups: [registration]
     properties:
         email:
             - NotBlank:

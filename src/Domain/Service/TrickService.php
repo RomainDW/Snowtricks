@@ -6,42 +6,71 @@
  * Time: 4:00 PM.
  */
 
-namespace App\Service;
+namespace App\Domain\Service;
 
+use App\Domain\Exception\ValidationException;
 use App\DTO\CreateTrickDTO;
-use App\Entity\Image;
-use App\Entity\Trick;
-use App\Entity\User;
-use App\Entity\Video;
+use App\Domain\Entity\Image;
+use App\Domain\Entity\Trick;
+use App\Domain\Entity\Video;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
 use App\Event\VideoUploadEvent;
+use App\Utils\Slugger;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TrickService
 {
     private $dispatcher;
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
+    /**
+     * @var ManagerRegistry
+     */
+    private $doctrine;
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
 
-    public function __construct(EventDispatcherInterface $dispatcher)
-    {
+    /**
+     * @var string
+     */
+    private $slug;
+
+    public function __construct(
+        EventDispatcherInterface $dispatcher,
+        ValidatorInterface $validator,
+        ManagerRegistry $doctrine,
+        FlashBagInterface $flashBag
+    ) {
         $this->dispatcher = $dispatcher;
+        $this->validator = $validator;
+        $this->doctrine = $doctrine;
+        $this->flashBag = $flashBag;
     }
 
     /**
      * @param CreateTrickDTO $createTrickDTO
-     * @param User           $user
+     * @param UserInterface  $user
      *
      * @return Trick
      *
      * @throws \Exception
      */
-    public function InitTrick(CreateTrickDTO $createTrickDTO, User $user)
+    public function InitTrick(CreateTrickDTO $createTrickDTO, UserInterface $user)
     {
         $createTrickDTO->createdAt = new \DateTime();
 
         $createTrickDTO->user = $user;
-        $createTrickDTO->slug = SlugService::slugify($createTrickDTO->title);
+        $createTrickDTO->slug = Slugger::slugify($createTrickDTO->title);
 
         $trick = new Trick($createTrickDTO);
 
@@ -49,6 +78,7 @@ class TrickService
             $image->setTrick($trick);
             $event = new ImageUploadEvent($image);
             $this->dispatcher->dispatch(ImageUploadEvent::NAME, $event);
+            $image->setFile(null);
         }
 
         foreach ($trick->getVideos() as $video) {
@@ -56,6 +86,8 @@ class TrickService
             $event = new VideoUploadEvent($video);
             $this->dispatcher->dispatch(VideoUploadEvent::NAME, $event);
         }
+
+        $this->slug = $trick->getSlug();
 
         return $trick;
     }
@@ -71,7 +103,7 @@ class TrickService
     public function UpdateTrick(Trick $trick, CreateTrickDTO $trickDTO)
     {
         $trickDTO->updatedAt = new \DateTime();
-        $trickDTO->slug = SlugService::slugify($trickDTO->title);
+        $trickDTO->slug = Slugger::slugify($trickDTO->title);
 
         $originalImages = new ArrayCollection();
         $originalVideos = new ArrayCollection();
@@ -95,6 +127,7 @@ class TrickService
                     $image->setTrick($trick);
                     $imageUploadEvent = new ImageUploadEvent($image);
                     $this->dispatcher->dispatch(ImageUploadEvent::NAME, $imageUploadEvent);
+                    $image->setFile(null);
                 }
             }
         }
@@ -124,5 +157,50 @@ class TrickService
         }
 
         return $trickDTO;
+    }
+
+    /**
+     * @param Trick  $trick
+     * @param string $type
+     *
+     * @throws ValidationException
+     */
+    public function save(Trick $trick, string $type = 'add')
+    {
+        if (count($errors = $this->validator->validate($trick))) {
+            throw new ValidationException($errors);
+        }
+
+        $manager = $this->doctrine->getManager();
+        $manager->persist($trick);
+        $manager->flush();
+
+        if ('update' == $type) {
+            $this->flashBag->add('success', 'La figure a bien été modifiée !');
+        } elseif ('add' == $type) {
+            $this->flashBag->add('success', 'La figure a bien été ajoutée !');
+        }
+    }
+
+    /**
+     * @param Trick $trick
+     */
+    public function deleteTrick(Trick $trick)
+    {
+        foreach ($trick->getImages() as $image) {
+            $imageRemoveEvent = new ImageRemoveEvent($image);
+            $this->dispatcher->dispatch(ImageRemoveEvent::NAME, $imageRemoveEvent);
+        }
+
+        $manager = $this->doctrine->getManager();
+        $manager->remove($trick);
+        $manager->flush();
+
+        $this->flashBag->add('success', 'la figure '.$trick->getTitle().' a bien été supprimée.');
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

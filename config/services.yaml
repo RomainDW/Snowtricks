@@ -18,7 +18,7 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,DTO}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -30,9 +30,9 @@ services:
     # please note that last definitions always *replace* previous ones
 
     init_trick:
-        class: App\Service\TrickService
+        class: App\Domain\Service\TrickService
         arguments: ["@event_dispatcher"]
 
     account_verification:
-        class: App\Service\AccountVerification
+        class: App\Domain\Service\AccountVerification
         arguments: ["@doctrine.orm.entity_manager"]

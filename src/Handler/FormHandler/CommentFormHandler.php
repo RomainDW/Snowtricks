@@ -8,33 +8,28 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Entity\Comment;
-use App\Entity\Trick;
-use App\Entity\User;
-use App\Repository\CommentRepository;
+use App\Domain\Entity\Comment;
+use App\Domain\Entity\Trick;
+use App\Domain\Entity\User;
+use App\Domain\Service\CommentService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CommentFormHandler
 {
-    private $commentRepository;
-    private $url_generator;
-    private $flashBag;
+    /**
+     * @var CommentService
+     */
+    private $commentService;
 
     /**
      * CommentFormhandler constructor.
      *
-     * @param CommentRepository     $commentRepository
-     * @param UrlGeneratorInterface $url_generator
-     * @param FlashBagInterface     $flashBag
+     * @param CommentService $commentService
      */
-    public function __construct(CommentRepository $commentRepository, UrlGeneratorInterface $url_generator, FlashBagInterface $flashBag)
+    public function __construct(CommentService $commentService)
     {
-        $this->commentRepository = $commentRepository;
-        $this->url_generator = $url_generator;
-        $this->flashBag = $flashBag;
+        $this->commentService = $commentService;
     }
 
     /**
@@ -48,20 +43,18 @@ class CommentFormHandler
      *
      * @throws \Exception
      */
-    public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick, $slug)
+    public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick)
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setCreatedAt(new \DateTime());
             $comment->setUser($user);
             $comment->setTrick($trick);
 
-            $this->commentRepository->save($comment);
+            $this->commentService->save($comment);
 
-            $this->flashBag->add('success', 'Le commentaire a bien été ajouté !');
-
-            return new RedirectResponse($this->url_generator->generate('app_show_trick', ['slug' => $slug, '_fragment' => 'comments']));
-        } else {
-            return false;
+            return true;
         }
+
+        return false;
     }
 }

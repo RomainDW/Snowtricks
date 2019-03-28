@@ -8,62 +8,45 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Entity\User;
+use App\Domain\Entity\Picture;
+use App\Domain\Entity\User;
+use App\Domain\Service\UserService;
 use App\Event\UserPictureUploadEvent;
-use App\Repository\UserRepository;
-use Swift_Mailer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationFormHandler
 {
-    private $userRepository;
     private $passwordEncoder;
     private $dispatcher;
     private $validator;
-    private $flashBag;
-    private $url_generator;
-    private $mailer;
-    private $templating;
+    private $userService;
 
     /**
      * RegistrationFormHandler constructor.
      *
-     * @param UserRepository               $userRepository
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param EventDispatcherInterface     $dispatcher
      * @param ValidatorInterface           $validator
-     * @param FlashBagInterface            $flashBag
-     * @param UrlGeneratorInterface        $url_generator
-     * @param Swift_Mailer                 $mailer
-     * @param \Twig_Environment            $templating
+     * @param UserService                  $userService
      */
-    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $dispatcher, ValidatorInterface $validator, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, Swift_Mailer $mailer, \Twig_Environment $templating)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $dispatcher, ValidatorInterface $validator, UserService $userService)
     {
-        $this->userRepository = $userRepository;
         $this->passwordEncoder = $passwordEncoder;
         $this->dispatcher = $dispatcher;
         $this->validator = $validator;
-        $this->flashBag = $flashBag;
-        $this->url_generator = $url_generator;
-        $this->mailer = $mailer;
-        $this->templating = $templating;
+        $this->userService = $userService;
     }
 
     /**
      * @param FormInterface $form
-     * @return bool|RedirectResponse
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     *
+     * @return User|bool
+     *
+     * @throws \Exception
      */
     public function handle(FormInterface $form)
     {
@@ -71,68 +54,35 @@ class RegistrationFormHandler
             $user = new User();
             $userDTO = $form->getData();
 
-            if ($userDTO->picture) {
-                $pictureViolations = $this->validator->validate($userDTO->picture, null, ['registration']);
-
-                if (0 !== count($pictureViolations)) {
-                    foreach ($pictureViolations as $violation) {
-                        $form->get('picture')->addError(new FormError($violation->getMessage()));
-                    }
-
-                    $userDTO->picture->setFile(null);
-
-                    return false;
-                }
-            }
-
             // encode the plain password
             $userDTO->password = $this->passwordEncoder->encodePassword($user, $userDTO->password);
 
-            if (null !== $userDTO->picture) {
-                $event = new UserPictureUploadEvent($userDTO->picture);
+            /** @var Picture $picture */
+            $picture = $userDTO->picture;
+
+            if (null !== $picture) {
+                $event = new UserPictureUploadEvent($picture);
                 $this->dispatcher->dispatch(UserPictureUploadEvent::NAME, $event);
-                $userDTO->picture->setUser($user);
-                $userDTO->picture->setAlt('Photo de profil de '.$userDTO->username);
+                $picture->setUser($user);
+                $picture->setAlt('Photo de profil de '.$userDTO->username);
+                $picture->setFile(null);
             }
 
-            $violations = $this->validator->validate($userDTO, null, ['registration']);
+            $user->createFromRegistration($userDTO);
+
+            $violations = $this->validator->validate($user, null, ['registration']);
 
             if (0 !== count($violations)) {
                 foreach ($violations as $violation) {
-                    $form->addError(new FormError($violation->getMessage()));
+                    $form->get($violation->getPropertyPath())->addError(new FormError($violation->getMessage()));
                 }
 
                 return false;
             }
 
-            $user->createFromRegistration($userDTO);
-            $this->userRepository->save($user);
+            $this->userService->register($user);
 
-            $message = (new \Swift_Message('Confirmation de création de compte'))
-                ->setFrom('noreply@snowtricks.com')
-                ->setTo('romain.ollier34@gmail.com')
-                ->setBody(
-                    $this->templating->render(
-                        'emails/registration.html.twig',
-                        ['name' => $form->get('username')->getData(), 'vkey' => $userDTO->vkey]
-                    ),
-                    'text/html'
-                )
-                /*
-                 * plaintext version
-                ->addPart(
-                    $this->renderView(
-                        'emails/registration.txt.twig',
-                        ['name' => $name]
-                    ),
-                    'text/plain'
-                )
-                */
-            ;
-
-            $this->mailer->send($message);
-
-            return new RedirectResponse($this->url_generator->generate('app_mail_sent', ['id' => $user->getId()]));
+            return true;
         }
 
         return false;

@@ -31,7 +31,7 @@ class TrickFormType extends AbstractType
             ->add('description', TextareaType::class)
             ->add('category', EntityType::class, [
                 'label' => 'Catégorie',
-                'class' => 'App\Entity\Category',
+                'class' => 'App\Domain\Entity\Category',
                 'choice_label' => 'name',
             ])
             ->add('images', CollectionType::class, [
@@ -65,6 +65,7 @@ class TrickFormType extends AbstractType
                     $form->get('videos')->getData()
                 );
             },
+            'validation_groups' => ['Default', 'add_trick'],
         ]);
     }
 }

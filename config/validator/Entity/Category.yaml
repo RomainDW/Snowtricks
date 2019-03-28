@@ -1,4 +1,4 @@
-App\Entity\Category:
+App\Domain\Entity\Category:
     properties:
         name:
             - NotBlank:
