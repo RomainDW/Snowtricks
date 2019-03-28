@@ -1,9 +1,14 @@
+<!-- On mobile devices, this button display the trick images -->
+<button class="btn display-medias" data-action="show-medias">Afficher les photos & videos</button>
+
 <section class="row gallery">
+
     {% for image in trick.images %}
         <div class="col-lg-4 col-sm-6 col-xs-12">
             <img class="trick-image img-thumbnail" src="{{ asset('uploads/images/' ~ image.fileName) }}" alt="{{ image.alt }}">
         </div>
     {% endfor %}
+
     {% for video in trick.videos %}
         <div class="col-sm-6 col-lg-4 col-xs-12">
             <!-- Youtube -->
@@ -29,7 +34,7 @@
         </div>
     {% endfor %}
 
-    {#Modal#}
+    <!-- Image Modal -->
     <div id="image-modal" class="modal">
 
         <!-- The Close Button -->

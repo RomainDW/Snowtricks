@@ -21,4 +21,33 @@ $(function () {
     span.onclick = function() {
         modal.style.display = "none";
     };
+
+    let index = 0;
+    $('[data-action="show-medias"]').on('click', function () {
+        index++;
+       $('.gallery').fadeToggle();
+
+       // if even
+       if (index % 2 === 0) {
+           $(this).text('Afficher les photos & videos')
+       } else {
+           $(this).text('Masquer les photos & videos')
+       }
+
+    });
+
+    $(document).ready(onResize);
+    $(window).resize(onResize);
+
+    function onResize () {
+        if (isMobile()) {
+            $('.gallery').fadeIn();
+        } else {
+            $('.gallery').fadeOut();
+        }
+    }
+    
+    function isMobile() {
+        return ($( window ).width() > 575);
+    }
 });
