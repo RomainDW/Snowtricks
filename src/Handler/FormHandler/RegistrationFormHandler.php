@@ -24,7 +24,6 @@ class RegistrationFormHandler
     private $dispatcher;
     private $validator;
     private $userService;
-    private $userId;
 
     /**
      * RegistrationFormHandler constructor.
@@ -82,16 +81,10 @@ class RegistrationFormHandler
             }
 
             $this->userService->register($user);
-            $this->userId = $user->getId();
 
             return true;
         }
 
         return false;
-    }
-
-    public function getUserId()
-    {
-        return $this->userId;
     }
 }

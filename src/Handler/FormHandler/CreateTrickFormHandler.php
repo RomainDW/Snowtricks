@@ -31,11 +31,6 @@ class CreateTrickFormHandler
     private $flashBag;
 
     /**
-     * @var string
-     */
-    private $slug;
-
-    /**
      * CreateTrickFormHandler constructor.
      *
      * @param TrickService       $trickService
@@ -61,7 +56,6 @@ class CreateTrickFormHandler
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $trick = $this->trickService->InitTrick($form->getData(), $security->getUser());
-            $this->slug = $trick->getSlug();
 
             if (count($errors = $this->validator->validate($trick, null, ['Default', 'add_trick']))) {
                 foreach ($errors as $error) {
@@ -77,10 +71,5 @@ class CreateTrickFormHandler
         }
 
         return false;
-    }
-
-    public function getSlug()
-    {
-        return $this->slug;
     }
 }

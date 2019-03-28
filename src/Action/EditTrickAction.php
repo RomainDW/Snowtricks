@@ -63,14 +63,12 @@ class EditTrickAction
      */
     public function __invoke(Trick $trick, Request $request, EditTrickResponder $responder)
     {
-        $trickDTO = CreateTrickDTO::createFromTrick($trick);
-
-        $form = $this->formFactory->create(TrickFormType::class, $trickDTO);
+        $form = $this->formFactory->create(TrickFormType::class, CreateTrickDTO::createFromTrick($trick));
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form, $trick)) {
 
-            $responder(['slug' => $trick->getSlug()], 'redirect');
+            return $responder(['slug' => $trick->getSlug()], 'redirect');
         }
 
         return $responder(['trick' => $trick, 'form' => $form->createView()]);

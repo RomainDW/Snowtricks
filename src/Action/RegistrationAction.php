@@ -86,7 +86,7 @@ class RegistrationAction
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form)) {
-            return $responder(['id' => $this->formHandler->getUserId()], 'redirect-mail-sent');
+            return $responder(['id' => $this->userService->getUserId()], 'redirect-mail-sent');
         }
 
         return $responder(['registrationForm' => $form->createView()]);

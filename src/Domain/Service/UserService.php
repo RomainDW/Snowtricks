@@ -21,6 +21,7 @@ class UserService
     private $doctrine;
     private $flashBag;
     private $notifier;
+    private $userId;
 
     /**
      * UserService constructor.
@@ -62,9 +63,11 @@ class UserService
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function register($user)
+    public function register(User $user)
     {
         $this->save($user);
+
+        $this->userId = $user->getId();
 
         $this->notifier->notifyRegistration($user);
     }
@@ -98,6 +101,11 @@ class UserService
             $manager->flush();
             return true;
         }
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
     }
 
     /**

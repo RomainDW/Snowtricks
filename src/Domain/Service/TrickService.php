@@ -40,6 +40,11 @@ class TrickService
      */
     private $flashBag;
 
+    /**
+     * @var string
+     */
+    private $slug;
+
     public function __construct(
         EventDispatcherInterface $dispatcher,
         ValidatorInterface $validator,
@@ -81,6 +86,8 @@ class TrickService
             $event = new VideoUploadEvent($video);
             $this->dispatcher->dispatch(VideoUploadEvent::NAME, $event);
         }
+
+        $this->slug = $trick->getSlug();
 
         return $trick;
     }
@@ -190,5 +197,10 @@ class TrickService
         $manager->flush();
 
         $this->flashBag->add('success', 'la figure '.$trick->getTitle().' a bien été supprimée.');
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

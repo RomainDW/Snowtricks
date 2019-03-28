@@ -8,6 +8,7 @@
 
 namespace App\Action;
 
+use App\Domain\Service\TrickService;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\CreateTrickFormHandler;
 use App\Responder\CreateTrickResponder;
@@ -32,6 +33,10 @@ class CreateTrickAction
      * @var CreateTrickFormHandler
      */
     private $formHandler;
+    /**
+     * @var TrickService
+     */
+    private $trickService;
 
     /**
      * CreateTrickAction constructor.
@@ -39,12 +44,14 @@ class CreateTrickAction
      * @param FormFactoryInterface   $formFactory
      * @param Security               $security
      * @param CreateTrickFormHandler $formHandler
+     * @param TrickService           $trickService
      */
-    public function __construct(FormFactoryInterface $formFactory, Security $security, CreateTrickFormHandler $formHandler)
+    public function __construct(FormFactoryInterface $formFactory, Security $security, CreateTrickFormHandler $formHandler, TrickService $trickService)
     {
         $this->formFactory = $formFactory;
         $this->security = $security;
         $this->formHandler = $formHandler;
+        $this->trickService = $trickService;
     }
 
     /**
@@ -65,7 +72,7 @@ class CreateTrickAction
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form, $this->security)) {
-            return $responder(['slug' => $this->formHandler->getSlug()], 'redirect');
+            return $responder(['slug' => $this->trickService->getSlug()], 'redirect');
         }
 
         return $responder(['form' => $form->createView()]);
