@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('errors') }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ status_code }}</h1>
+    <div class="block-text">
+        <p>Cette page n'existe pas ou n'existe plus.</p>
+        <p>Nous vous prions de nous excuser pour la gêne occasionnée.</p>
+        <span>Nous vous invitons à revenir à la <a href="{{ path('homepage') }}">page d'accueil</a> de notre site</span>
+    </div>
+{% endblock %}
