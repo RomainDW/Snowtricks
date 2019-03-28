@@ -1,0 +1,43 @@
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+main {
+  display: flex;
+  bottom: 0;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  justify-content: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 8em;
+}
+
+.block-text {
+  text-align: center;
+
+  p {
+    font-size: 1.5em;
+  }
+
+  span {
+    font-size: 1em;
+  }
+
+  @media screen and (max-width: 550px) {
+    p {
+      font-size: 12px;
+    }
+    span {
+      font-size: 10px;
+    }
+  }
+}
