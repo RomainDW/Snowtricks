@@ -5,7 +5,7 @@ namespace App\Tests\Utils;
 use App\Utils\Slugger;
 use PHPUnit\Framework\TestCase;
 
-class SlugServiceTest extends TestCase
+class SluggerTest extends TestCase
 {
     public function testSlugify()
     {
