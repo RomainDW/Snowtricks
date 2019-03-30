@@ -11,7 +11,9 @@ namespace App\Handler\FormHandler;
 use App\Domain\Entity\Comment;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
+use App\Domain\Exception\ValidationException;
 use App\Domain\Service\CommentService;
+use DateTime;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -37,16 +39,15 @@ class CommentFormHandler
      * @param Comment       $comment
      * @param User          $user
      * @param Trick         $trick
-     * @param $slug
      *
      * @return bool|RedirectResponse
      *
-     * @throws \Exception
+     * @throws ValidationException
      */
     public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick)
     {
         if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setCreatedAt(new \DateTime());
+            $comment->setCreatedAt(new DateTime());
             $comment->setUser($user);
             $comment->setTrick($trick);
 

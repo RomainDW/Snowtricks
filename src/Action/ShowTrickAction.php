@@ -11,6 +11,7 @@ namespace App\Action;
 use App\Domain\Entity\Comment;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
+use App\Domain\Exception\ValidationException;
 use App\Form\CommentFormType;
 use App\Handler\FormHandler\CommentFormHandler;
 use App\Repository\CommentRepository;
@@ -82,6 +83,7 @@ class ShowTrickAction
      * @return bool|RedirectResponse|Response
      *
      * @throws NonUniqueResultException
+     * @throws ValidationException
      */
     public function __invoke(Trick $trick, Request $request, TwigResponderInterface $responder)
     {

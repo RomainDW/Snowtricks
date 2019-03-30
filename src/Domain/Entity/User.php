@@ -7,6 +7,8 @@ use App\Domain\DTO\UserRegistrationDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -164,8 +166,14 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @param UserRegistrationDTO $registrationDTO
+     * @return User
+     * @throws Exception
+     */
     public function createFromRegistration(UserRegistrationDTO $registrationDTO): self
     {
+        $this->id = Uuid::uuid4();
         $this->email = $registrationDTO->email;
         $this->password = $registrationDTO->password;
         $this->username = $registrationDTO->username;
@@ -233,7 +241,7 @@ class User implements UserInterface
 
     public function removeCreatedAt(Comment $comments): self
     {
-        if ($this->comments->contains(comments)) {
+        if ($this->comments->contains($comments)) {
             $this->comments->removeElement($comments);
             // set the owning side to null (unless already changed)
             if ($comments->getUser() === $this) {
