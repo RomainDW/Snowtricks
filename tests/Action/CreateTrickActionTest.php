@@ -9,15 +9,18 @@
 namespace App\Tests\Action;
 
 use App\Action\CreateTrickAction;
-use App\Domain\Manager\TrickManager;
+use App\Domain\Service\TrickService;
 use App\Handler\FormHandler\CreateTrickFormHandler;
-use App\Responder\CreateTrickResponder;
-use App\Service\TrickService;
+use App\Responder\TwigResponder;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
+use Twig\Environment;
 
 class CreateTrickActionTest extends KernelTestCase
 {
@@ -37,14 +40,14 @@ class CreateTrickActionTest extends KernelTestCase
     private $createTrickFormHandler;
 
     /**
-     * @var CreateTrickResponder
+     * @var UrlGeneratorInterface
      */
-    private $responder;
+    private $urlGenerator;
 
     /**
-     * @var TrickManager
+     * @var Environment
      */
-    private $trickManager;
+    private $twig;
 
     /**
      * @var TrickService
@@ -56,30 +59,28 @@ class CreateTrickActionTest extends KernelTestCase
         static::bootKernel();
 
         $this->formFactory = static::$kernel->getContainer()->get('form.factory');
+        $this->urlGenerator = static::$kernel->getContainer()->get('router');
 
         $this->createTrickFormHandler = $this->createMock(CreateTrickFormHandler::class);
         $this->security = $this->createMock(Security::class);
-        $this->responder = $this->createMock(CreateTrickResponder::class);
-        $this->trickManager = $this->createMock(TrickManager::class);
+        $this->twig = $this->createMock(Environment::class);
         $this->trickService = $this->createMock(TrickService::class);
     }
 
     public function testDependencies()
     {
         static::assertInstanceOf(FormFactoryInterface::class, $this->formFactory);
-        static::assertInstanceOf(CreateTrickResponder::class, $this->responder);
+        static::assertInstanceOf(Environment::class, $this->twig);
+        static::assertInstanceOf(UrlGeneratorInterface::class, $this->urlGenerator);
         static::assertInstanceOf(Security::class, $this->security);
-        static::assertInstanceOf(TrickService::class, $this->trickService);
-        static::assertInstanceOf(TrickManager::class, $this->trickManager);
         static::assertInstanceOf(CreateTrickFormHandler::class, $this->createTrickFormHandler);
+        static::assertInstanceOf(TrickService::class, $this->trickService);
 
         $createTrickAction = new CreateTrickAction(
-            $this->responder,
             $this->formFactory,
             $this->security,
-            $this->trickManager,
-            $this->trickService,
-            $this->createTrickFormHandler
+            $this->createTrickFormHandler,
+            $this->trickService
         );
 
         static::assertInstanceOf(
@@ -89,30 +90,53 @@ class CreateTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testCorrectHandling()
     {
-        // Comment mettre des arguments à la méthode handle ?
         $request = Request::create('/trick/add', 'POST');
-        $this->createTrickFormHandler->method('handle')->willReturn(RedirectResponse::class);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $createTrickAction = new CreateTrickAction(
-            $this->responder,
             $this->formFactory,
             $this->security,
-            $this->trickManager,
-            $this->trickService,
-            $this->createTrickFormHandler
+            $this->createTrickFormHandler,
+            $this->trickService
         );
+
+        $this->createTrickFormHandler->method('handle')->willReturn(true);
+        $this->trickService->method('getSlug')->willReturn('test');
+
+        $response = $createTrickAction($request, $responder);
 
         static::assertInstanceOf(
             RedirectResponse::class,
-            $createTrickAction($request)
+            $response
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testWrongHandling()
+    {
+        $request = Request::create('/trick/add', 'GET');
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
+
+        $createTrickAction = new CreateTrickAction(
+            $this->formFactory,
+            $this->security,
+            $this->createTrickFormHandler,
+            $this->trickService
         );
 
+        $this->createTrickFormHandler->method('handle')->willReturn(false);
 
+        $response = $createTrickAction($request, $responder);
+
+        static::assertInstanceOf(
+            Response::class,
+            $response
+        );
     }
 }

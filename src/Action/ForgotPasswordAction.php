@@ -11,9 +11,11 @@ namespace App\Action;
 use App\Form\ForgotPasswordFormType;
 use App\Handler\FormHandler\ForgotPasswordFormHandler;
 use App\Domain\Service\UserService;
-use App\Responder\ForgotPasswordResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
+use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ForgotPasswordAction
@@ -48,26 +50,22 @@ class ForgotPasswordAction
     /**
      * @Route("/forgot-password", name="app_forgot_password")
      *
-     * @param Request                 $request
-     * @param ForgotPasswordResponder $responder
+     * @param Request                $request
+     * @param TwigResponderInterface $responder
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __invoke(Request $request, ForgotPasswordResponder $responder)
+    public function __invoke(Request $request, TwigResponderInterface $responder)
     {
         $form = $this->formFactory->create(ForgotPasswordFormType::class);
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form)) {
-
-            return $responder([], 'redirect');
+            return $responder('app_forgot_password');
         }
 
-        return $responder(['form' => $form->createView()]);
+        return $responder('security/forgot-password.html.twig', ['form' => $form->createView()]);
     }
 }

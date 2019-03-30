@@ -10,8 +10,9 @@ namespace App\Action;
 
 use App\Domain\Entity\Trick;
 use App\Repository\CommentRepository;
-use App\Responder\LoadCommentsResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Utils\SnowtrickConfig;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LoadCommentsAction
@@ -34,19 +35,16 @@ class LoadCommentsAction
     /**
      * @param Trick $trick
      * @param $offset
+     * @param TwigResponderInterface $responder
      *
-     * @param LoadCommentsResponder $responder
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      * @Route("/load-comments/{slug}/{offset}", name="loadComments", methods={"POST"})
      */
-    public function __invoke(Trick $trick, $offset, LoadCommentsResponder $responder)
+    public function __invoke(Trick $trick, $offset, TwigResponderInterface $responder)
     {
         $comments = $this->commentRepository->getCommentsPagination($offset, SnowtrickConfig::getNumberOfCommentsDisplayed(), $trick);
 
-        return $responder(['comments' => $comments]);
+        return $responder('trick/_partials/ajax-comments.html.twig', ['comments' => $comments]);
     }
 }

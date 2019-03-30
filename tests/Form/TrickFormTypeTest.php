@@ -9,14 +9,14 @@
 namespace App\Tests\Form;
 
 use App\Form\TrickFormType;
-use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Test\TypeTestCase;
 
-class TrickFormTypeTest extends TestCase
+class TrickFormTypeTest extends TypeTestCase
 {
     private $systemUnderTest;
 

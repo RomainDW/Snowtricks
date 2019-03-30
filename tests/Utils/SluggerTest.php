@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Tests\Service;
+namespace App\Tests\Utils;
 
-use App\Service\SlugService;
+use App\Utils\Slugger;
 use PHPUnit\Framework\TestCase;
 
-class SlugServiceTest extends TestCase
+class SluggerTest extends TestCase
 {
     public function testSlugify()
     {
         $slug = 'lorem zef ezf-e // M-u_Y';
 
-        $result = SlugService::slugify($slug);
+        $result = Slugger::slugify($slug);
 
         static::assertEquals('lorem-zef-ezf-e-m-u-y', $result);
     }

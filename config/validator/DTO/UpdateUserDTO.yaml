@@ -1,4 +1,4 @@
-App\DTO\UpdateUserDTO:
+App\Domain\DTO\UpdateUserDTO:
     properties:
         username:
             - NotBlank:

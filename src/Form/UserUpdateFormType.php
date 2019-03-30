@@ -8,7 +8,7 @@
 
 namespace App\Form;
 
-use App\DTO\UpdateUserDTO;
+use App\Domain\DTO\UpdateUserDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;

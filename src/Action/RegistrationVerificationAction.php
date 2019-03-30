@@ -9,7 +9,7 @@
 namespace App\Action;
 
 use App\Domain\Entity\User;
-use App\Responder\RegistrationVerificationResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Domain\Service\UserService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,29 +64,25 @@ class RegistrationVerificationAction
     /**
      * @Route("/verification/{vkey}", name="app_verification", methods={"GET"})
      *
-     * @param User                              $user
-     * @param RegistrationVerificationResponder $responder
+     * @param User                   $user
+     * @param TwigResponderInterface $responder
      *
-     * @return RedirectResponse|Response
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @return RedirectResponse|Response*
      */
-    public function __invoke(User $user, RegistrationVerificationResponder $responder)
+    public function __invoke(User $user, TwigResponderInterface $responder)
     {
         $verification = $this->userService->verification($user);
 
         if (false === $verification) {
             $this->flashBag->add('error', 'Votre compte est déjà vérifié.');
 
-            return $responder('redirect-homepage');
+            return $responder('homepage');
         } else {
             $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
             $this->tokenStorage->setToken($token);
             $this->session->set('_security_secured_area', serialize($token));
 
-            return $responder();
+            return $responder('registration/registration-confirmed.html.twig');
         }
     }
 }

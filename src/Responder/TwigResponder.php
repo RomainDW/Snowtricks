@@ -2,35 +2,23 @@
 /**
  * Created by Romain Ollier.
  * Project: Snowtricks
- * Date: 3/7/19
- * Time: 8:37 PM.
+ * Date: 3/30/19
+ * Time: 11:57 AM.
  */
 
 namespace App\Responder;
 
+use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
-class SecurityResponder
+final class TwigResponder implements TwigResponderInterface
 {
-    /**
-     * @var Environment
-     */
     private $twig;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
     private $urlGenerator;
 
-    /**
-     * EditTrickResponder constructor.
-     *
-     * @param Environment           $twig
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(Environment $twig, UrlGeneratorInterface $urlGenerator)
     {
         $this->twig = $twig;
@@ -38,8 +26,8 @@ class SecurityResponder
     }
 
     /**
-     * @param array       $args
-     * @param string|null $type
+     * @param string     $view
+     * @param array|null $args
      *
      * @return RedirectResponse|Response
      *
@@ -47,12 +35,12 @@ class SecurityResponder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function __invoke(array $args, string $type = null)
+    public function __invoke(string $view, array $args = [])
     {
-        if ('redirect-homepage' == $type) {
-            return new RedirectResponse($this->urlGenerator->generate('homepage'));
+        if (false === strpos($view, 'twig')) {
+            return new RedirectResponse($this->urlGenerator->generate($view, $args));
         }
 
-        return new Response($this->twig->render('security/login.html.twig', $args));
+        return new Response($this->twig->render($view, $args));
     }
 }

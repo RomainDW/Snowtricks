@@ -11,9 +11,10 @@ namespace App\Action;
 use App\Domain\Service\TrickService;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\CreateTrickFormHandler;
-use App\Responder\CreateTrickResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -55,26 +56,23 @@ class CreateTrickAction
     }
 
     /**
-     * @param Request              $request
-     * @param CreateTrickResponder $responder
+     * @param Request                $request
+     * @param TwigResponderInterface $responder
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      * @throws \Exception
      * @Route("/trick/add", name="app_create_trick")
      */
-    public function __invoke(Request $request, CreateTrickResponder $responder)
+    public function __invoke(Request $request, TwigResponderInterface $responder)
     {
         $form = $this->formFactory->create(TrickFormType::class);
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form, $this->security)) {
-            return $responder(['slug' => $this->trickService->getSlug()], 'redirect');
+            return $responder('app_show_trick', ['slug' => $this->trickService->getSlug()]);
         }
 
-        return $responder(['form' => $form->createView()]);
+        return $responder('trick/tricks-form.html.twig', ['form' => $form->createView()]);
     }
 }

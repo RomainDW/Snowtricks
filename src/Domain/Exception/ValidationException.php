@@ -5,15 +5,14 @@
  * Date: 3/9/19
  * Time: 11:15 AM.
  */
-
 namespace App\Domain\Exception;
 
+use Exception;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class ValidationException extends \Exception
+class ValidationException extends Exception
 {
     private $constraintViolationList;
-
     /**
      * ValidationException constructor.
      * @param $constraintViolationList
@@ -23,7 +22,6 @@ class ValidationException extends \Exception
         parent::__construct();
         $this->constraintViolationList = $constraintViolationList;
     }
-
     public function getConstraintViolationList()
     {
         return $this->constraintViolationList;

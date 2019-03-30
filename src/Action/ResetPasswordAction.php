@@ -11,11 +11,12 @@ namespace App\Action;
 use App\Domain\Entity\User;
 use App\Form\ResetPasswordFormType;
 use App\Handler\FormHandler\ResetPasswordFormHandler;
-use App\Responder\ResetPasswordResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Domain\Service\UserService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -71,16 +72,11 @@ class ResetPasswordAction
      *
      * @param User                   $user
      * @param Request                $request
-     * @param ResetPasswordResponder $responder
+     * @param TwigResponderInterface $responder
      *
-     * @return bool|RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \App\Domain\Exception\ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @return bool|RedirectResponse|Response*
      */
-    public function __invoke(User $user, Request $request, ResetPasswordResponder $responder)
+    public function __invoke(User $user, Request $request, TwigResponderInterface $responder)
     {
         $form = $this->formFactory->create(ResetPasswordFormType::class);
         $form->handleRequest($request);
@@ -89,12 +85,12 @@ class ResetPasswordAction
             $this->flashBag->add('success', 'Votre mot de passe a été réinitialisé, vous pouvez maintenant vous connecter');
 
             if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                return $responder([], 'redirect-account');
+                return $responder('app_account');
             } else {
-                return $responder([], 'redirect-login');
+                return $responder('app_login');
             }
         }
 
-        return $responder(['form' => $form->createView()]);
+        return $responder('security/reset-password.html.twig', ['form' => $form->createView()]);
     }
 }

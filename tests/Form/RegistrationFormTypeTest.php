@@ -8,15 +8,16 @@
 
 namespace App\Tests\Form;
 
+use App\Domain\DTO\UserRegistrationDTO;
 use App\Form\PictureFormType;
 use App\Form\RegistrationFormType;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Test\TypeTestCase;
 
-class RegistrationFormTypeTest extends TestCase
+class RegistrationFormTypeTest extends TypeTestCase
 {
     private $systemUnderTest;
 

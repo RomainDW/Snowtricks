@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO;
+namespace App\Domain\DTO;
 
 use App\Domain\Entity\Category;
 use App\Domain\Entity\Trick;
