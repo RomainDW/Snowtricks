@@ -4,8 +4,9 @@ namespace App\Action;
 
 use App\Form\RegistrationFormType;
 use App\Handler\FormHandler\RegistrationFormHandler;
-use App\Responder\RegistrationResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Domain\Service\UserService;
+use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,31 +65,28 @@ class RegistrationAction
     /**
      * @Route("/register", name="app_register")
      *
-     * @param Request               $request
-     * @param RegistrationResponder $responder
+     * @param Request                $request
+     * @param TwigResponderInterface $responder
      *
      * @return Response
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __invoke(Request $request, RegistrationResponder $responder)
+    public function __invoke(Request $request, TwigResponderInterface $responder)
     {
         if ($this->security->isGranted('ROLE_USER')) {
             $this->flashBag->add('error', 'Vous êtes déjà connecté(e)');
 
-            return $responder([], 'redirect-homepage');
+            return $responder('homepage');
         }
 
         $form = $this->formFactory->create(RegistrationFormType::class);
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form)) {
-            return $responder(['id' => $this->userService->getUserId()], 'redirect-mail-sent');
+            return $responder('app_mail_sent', ['id' => $this->userService->getUserId()]);
         }
 
-        return $responder(['registrationForm' => $form->createView()]);
+        return $responder('registration/register.html.twig', ['registrationForm' => $form->createView()]);
     }
 }

@@ -14,12 +14,13 @@ use App\Domain\Entity\User;
 use App\Form\CommentFormType;
 use App\Handler\FormHandler\CommentFormHandler;
 use App\Repository\CommentRepository;
-use App\Responder\ShowTrickResponder;
-use App\Domain\Service\CommentService;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Utils\SnowtrickConfig;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -74,19 +75,15 @@ class ShowTrickAction
     /**
      * @Route("/trick/show/{slug}", name="app_show_trick")
      *
-     * @param Trick              $trick
-     * @param Request            $request
-     * @param ShowTrickResponder $responder
+     * @param Trick                  $trick
+     * @param Request                $request
+     * @param TwigResponderInterface $responder
      *
-     * @return bool|RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return bool|RedirectResponse|Response
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws \Exception
+     * @throws NonUniqueResultException
      */
-    public function __invoke(Trick $trick, Request $request, ShowTrickResponder $responder)
+    public function __invoke(Trick $trick, Request $request, TwigResponderInterface $responder)
     {
         $comment = new Comment();
 
@@ -98,7 +95,7 @@ class ShowTrickAction
         if ($user && $this->security->isGranted('ROLE_USER') && ($this->formHandler->handle($form, $comment, $user, $trick))) {
             $this->flashBag->add('success', 'Le commentaire a bien été ajouté !');
 
-            return $responder(['slug' => $trick->getSlug(), '_fragment' => 'comments'], 'redirect-comment');
+            return $responder('app_show_trick', ['slug' => $trick->getSlug(), '_fragment' => 'comments']);
         }
 
         $numberOfResults = SnowtrickConfig::getNumberOfCommentsDisplayed();
@@ -107,7 +104,7 @@ class ShowTrickAction
 
         $totalComments = $this->commentRepository->getNumberOfTotalComments($trick);
 
-        return $responder([
+        return $responder('trick/show.html.twig', [
             'trick' => $trick,
             'form' => $form->createView(),
             'comments' => $comments,

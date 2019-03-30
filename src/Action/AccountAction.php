@@ -8,14 +8,16 @@
 
 namespace App\Action;
 
-use App\DTO\UpdateUserDTO;
+use App\Domain\Exception\ValidationException;
+use App\Domain\DTO\UpdateUserDTO;
 use App\Domain\Entity\User;
 use App\Form\UserUpdateFormType;
 use App\Handler\FormHandler\AccountFormHandler;
-use App\Responder\AccountResponder;
 use App\Domain\Service\UserService;
+use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -59,17 +61,14 @@ class AccountAction
     /**
      * @Route("/my-account", name="app_account")
      *
-     * @param Request          $request
-     * @param AccountResponder $responder
+     * @param Request                $request
+     * @param TwigResponderInterface $responder
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \App\Domain\Exception\ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws ValidationException
      */
-    public function __invoke(Request $request, AccountResponder $responder)
+    public function __invoke(Request $request, TwigResponderInterface $responder)
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -80,9 +79,9 @@ class AccountAction
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form, $user)) {
-            return $responder([], 'redirect');
+            return $responder('app_account');
         }
 
-        return $responder(['form' => $form->createView()]);
+        return $responder('account/my-account.html.twig', ['form' => $form->createView()]);
     }
 }

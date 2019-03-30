@@ -9,8 +9,7 @@
 namespace App\Action;
 
 use App\Domain\Entity\User;
-use App\Responder\MailSentResponder;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,27 +34,23 @@ class MailSentAction
     /**
      * @Route("/register/{id}", name="app_mail_sent")
      *
-     * @param User              $user
-     * @param MailSentResponder $responder
+     * @param User                   $user
+     * @param TwigResponderInterface $responder
      *
      * @return Response
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
-    public function __invoke(User $user, MailSentResponder $responder)
+    public function __invoke(User $user, TwigResponderInterface $responder)
     {
         $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
 
         if (!$hasAccess) {
             $this->flashBag->add('error', 'Votre compte est déjà vérifié.');
 
-            return $responder([], 'redirect');
+            return $responder('homepage');
         }
 
         $userEmail = $user->getEmail();
 
-        return $responder(['userEmail' => $userEmail]);
+        return $responder('registration/registration-pre-validation.html.twig', ['userEmail' => $userEmail]);
     }
 }

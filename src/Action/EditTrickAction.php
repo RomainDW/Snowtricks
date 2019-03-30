@@ -8,14 +8,16 @@
 
 namespace App\Action;
 
-use App\DTO\CreateTrickDTO;
+use App\Domain\DTO\CreateTrickDTO;
 use App\Domain\Entity\Trick;
 use App\Form\TrickFormType;
 use App\Handler\FormHandler\EditTrickFormHandler;
-use App\Responder\EditTrickResponder;
 use App\Domain\Service\TrickService;
+use App\Responder\Interfaces\TwigResponderInterface;
+use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EditTrickAction
@@ -50,27 +52,23 @@ class EditTrickAction
     /**
      * @Route("/trick/edit/{slug}", name="app_edit_trick")
      *
-     * @param Trick              $trick
-     * @param Request            $request
-     * @param EditTrickResponder $responder
+     * @param Trick                  $trick
+     * @param Request                $request
+     * @param TwigResponderInterface $responder
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws \Twig_Error_Loader
-     * @throws \Exception
+     * @throws Exception
      */
-    public function __invoke(Trick $trick, Request $request, EditTrickResponder $responder)
+    public function __invoke(Trick $trick, Request $request, TwigResponderInterface $responder)
     {
         $form = $this->formFactory->create(TrickFormType::class, CreateTrickDTO::createFromTrick($trick));
         $form->handleRequest($request);
 
         if ($this->formHandler->handle($form, $trick)) {
-
-            return $responder(['slug' => $trick->getSlug()], 'redirect');
+            return $responder('app_edit_trick', ['slug' => $trick->getSlug()]);
         }
 
-        return $responder(['trick' => $trick, 'form' => $form->createView()]);
+        return $responder('trick/tricks-form.html.twig', ['trick' => $trick, 'form' => $form->createView()]);
     }
 }

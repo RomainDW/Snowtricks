@@ -2,7 +2,7 @@
 
 namespace App\Action;
 
-use App\Responder\SecurityResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,21 +36,17 @@ class SecurityAction
     /**
      * @Route("/login", name="app_login")
      *
-     * @param AuthenticationUtils $authenticationUtils
-     * @param SecurityResponder   $responder
+     * @param AuthenticationUtils    $authenticationUtils
+     * @param TwigResponderInterface $responder
      *
      * @return Response
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
-    public function __invoke(AuthenticationUtils $authenticationUtils, SecurityResponder $responder): Response
+    public function __invoke(AuthenticationUtils $authenticationUtils, TwigResponderInterface $responder): Response
     {
         if ($this->security->isGranted('ROLE_USER')) {
             $this->flashBag->add('error', 'Vous êtes déjà connecté(e)');
 
-            return $responder([], 'redirect-homepage');
+            return $responder('homepage');
         }
 
         // get the login error if there is one
@@ -58,6 +54,6 @@ class SecurityAction
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $responder(['last_username' => $lastUsername, 'error' => $error]);
+        return $responder('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 }

@@ -9,8 +9,8 @@
 namespace App\Action;
 
 use App\Domain\Entity\Trick;
-use App\Responder\DeleteTrickResponder;
 use App\Domain\Service\TrickService;
+use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,15 +34,15 @@ class DeleteTrickAction
     /**
      * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")
      *
-     * @param Trick                $trick
-     * @param DeleteTrickResponder $responder
+     * @param Trick                  $trick
+     * @param TwigResponderInterface $responder
      *
      * @return RedirectResponse
      */
-    public function __invoke(Trick $trick, DeleteTrickResponder $responder)
+    public function __invoke(Trick $trick, TwigResponderInterface $responder)
     {
         $this->trickService->deleteTrick($trick);
 
-        return $responder();
+        return $responder('homepage');
     }
 }

@@ -9,8 +9,10 @@
 namespace App\Action;
 
 use App\Repository\TrickRepository;
-use App\Responder\HomeResponder;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Utils\SnowtrickConfig;
+use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeAction
@@ -33,15 +35,13 @@ class HomeAction
     /**
      * @Route("/", name="homepage")
      *
-     * @param HomeResponder $responder
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param TwigResponderInterface $responder
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @return Response
+     *
+     * @throws NonUniqueResultException
      */
-    public function __invoke(HomeResponder $responder)
+    public function __invoke(TwigResponderInterface $responder)
     {
         $numberOfResults = SnowtrickConfig::getNumberOfResults();
 
@@ -49,7 +49,7 @@ class HomeAction
 
         $totalTricks = $this->trickRepository->getNumberOfTotalTricks();
 
-        return $responder([
+        return $responder('homepage/index.html.twig', [
             'tricks' => $tricks,
             'number_of_results' => $numberOfResults,
             'total_tricks' => $totalTricks,

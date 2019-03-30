@@ -9,8 +9,10 @@
 namespace App\Action;
 
 use App\Repository\TrickRepository;
+use App\Responder\Interfaces\TwigResponderInterface;
 use App\Responder\LoadPaginationResponder;
 use App\Utils\SnowtrickConfig;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LoadPaginationAction
@@ -34,18 +36,14 @@ class LoadPaginationAction
      * @Route("/more/{offset}", name="loadPagination", methods={"POST"})
      *
      * @param $offset
-     * @param LoadPaginationResponder $responder
+     * @param TwigResponderInterface $responder
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @return Response
      */
-    public function __invoke($offset, LoadPaginationResponder $responder)
+    public function __invoke($offset, TwigResponderInterface $responder)
     {
         $tricks = $this->trickRepository->getTricksPagination($offset, SnowtrickConfig::getNumberOfResults());
 
-        return $responder(['tricks' => $tricks]);
+        return $responder('homepage/_partials/ajax-content.html.twig', ['tricks' => $tricks]);
     }
 }
