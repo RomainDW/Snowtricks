@@ -6,7 +6,7 @@
  * Time: 3:40 PM.
  */
 
-namespace App\DTO;
+namespace App\Domain\DTO;
 
 use App\Domain\Entity\User;
 

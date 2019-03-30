@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\DTO\CreateTrickDTO;
-use App\DTO\UserRegistrationDTO;
+use App\Domain\DTO\CreateTrickDTO;
+use App\Domain\DTO\UserRegistrationDTO;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;

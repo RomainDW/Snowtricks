@@ -2,8 +2,8 @@
 
 namespace App\Domain\Entity;
 
-use App\DTO\UpdateUserDTO;
-use App\DTO\UserRegistrationDTO;
+use App\Domain\DTO\UpdateUserDTO;
+use App\Domain\DTO\UserRegistrationDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

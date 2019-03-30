@@ -1,4 +1,4 @@
-App\DTO\CreateTrickDTO:
+App\Domain\DTO\CreateTrickDTO:
     properties:
         title:
             - NotBlank:

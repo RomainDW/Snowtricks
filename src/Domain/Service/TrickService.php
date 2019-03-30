@@ -9,7 +9,7 @@
 namespace App\Domain\Service;
 
 use App\Domain\Exception\ValidationException;
-use App\DTO\CreateTrickDTO;
+use App\Domain\DTO\CreateTrickDTO;
 use App\Domain\Entity\Image;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\Video;

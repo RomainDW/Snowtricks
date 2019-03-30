@@ -8,7 +8,7 @@
 
 namespace App\Form;
 
-use App\DTO\UserRegistrationDTO;
+use App\Domain\DTO\UserRegistrationDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;

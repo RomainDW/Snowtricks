@@ -8,7 +8,7 @@
 
 namespace App\Tests\Form;
 
-use App\DTO\UserRegistrationDTO;
+use App\Domain\DTO\UserRegistrationDTO;
 use App\Form\PictureFormType;
 use App\Form\RegistrationFormType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;

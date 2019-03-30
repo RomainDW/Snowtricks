@@ -1,4 +1,4 @@
-App\DTO\UserRegistrationDTO:
+App\Domain\DTO\UserRegistrationDTO:
     properties:
         email:
             -   NotBlank:
