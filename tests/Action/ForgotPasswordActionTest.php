@@ -11,7 +11,8 @@ namespace App\Tests\Action;
 use App\Action\ForgotPasswordAction;
 use App\Domain\Service\UserService;
 use App\Handler\FormHandler\ForgotPasswordFormHandler;
-use App\Responder\ForgotPasswordResponder;
+use App\Responder\TwigResponder;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -61,14 +62,12 @@ class ForgotPasswordActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testCorrectHandling()
     {
         $request = Request::create('/trick/edit/test', 'POST');
-        $responder = new ForgotPasswordResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $forgotPasswordAction = new ForgotPasswordAction(
             $this->formFactory,
@@ -87,14 +86,12 @@ class ForgotPasswordActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testWrongHandling()
     {
         $request = Request::create('/trick/edit/test', 'POST');
-        $responder = new ForgotPasswordResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $forgotPasswordAction = new ForgotPasswordAction(
             $this->formFactory,

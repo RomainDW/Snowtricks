@@ -11,7 +11,8 @@ namespace App\Tests\Action;
 use App\Action\CreateTrickAction;
 use App\Domain\Service\TrickService;
 use App\Handler\FormHandler\CreateTrickFormHandler;
-use App\Responder\CreateTrickResponder;
+use App\Responder\TwigResponder;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -89,14 +90,12 @@ class CreateTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testCorrectHandling()
     {
         $request = Request::create('/trick/add', 'POST');
-        $responder = new CreateTrickResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $createTrickAction = new CreateTrickAction(
             $this->formFactory,
@@ -117,14 +116,12 @@ class CreateTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testWrongHandling()
     {
         $request = Request::create('/trick/add', 'GET');
-        $responder = new CreateTrickResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $createTrickAction = new CreateTrickAction(
             $this->formFactory,

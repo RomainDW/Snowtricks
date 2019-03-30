@@ -11,7 +11,8 @@ namespace App\Tests\Action;
 use App\Action\RegistrationAction;
 use App\Domain\Service\UserService;
 use App\Handler\FormHandler\RegistrationFormHandler;
-use App\Responder\RegistrationResponder;
+use App\Responder\TwigResponder;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -69,14 +70,12 @@ class RegistrationActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testCorrectHandling()
     {
         $request = Request::create('/register', 'POST');
-        $responder = new RegistrationResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $registrationAction = new RegistrationAction(
             $this->formFactory,
@@ -98,14 +97,12 @@ class RegistrationActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testWrongHandling()
     {
         $request = Request::create('/register', 'POST');
-        $responder = new RegistrationResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $registrationAction = new RegistrationAction(
             $this->formFactory,

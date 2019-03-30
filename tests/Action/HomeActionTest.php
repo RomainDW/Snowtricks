@@ -10,7 +10,8 @@ namespace App\Tests\Action;
 
 use App\Action\HomeAction;
 use App\Repository\TrickRepository;
-use App\Responder\HomeResponder;
+use App\Responder\TwigResponder;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -19,6 +20,7 @@ class HomeActionTest extends KernelTestCase
 {
     private $trickRepository;
     private $twig;
+    private $urlGenerator;
 
     public function setUp()
     {
@@ -26,6 +28,7 @@ class HomeActionTest extends KernelTestCase
 
         $this->trickRepository = $this->createMock(TrickRepository::class);
         $this->twig = $this->createMock(Environment::class);
+        $this->urlGenerator = static::$kernel->getContainer()->get('router');
     }
 
     public function testDependencies()
@@ -44,14 +47,11 @@ class HomeActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws NonUniqueResultException
      */
     public function testResponse()
     {
-        $responder = new HomeResponder($this->twig);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $homeAction = new HomeAction($this->trickRepository);
 

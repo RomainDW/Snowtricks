@@ -10,9 +10,10 @@ namespace App\Tests\Action;
 
 use App\Action\AccountAction;
 use App\Domain\Entity\User;
+use App\Domain\Exception\ValidationException;
 use App\Domain\Service\UserService;
 use App\Handler\FormHandler\AccountFormHandler;
-use App\Responder\AccountResponder;
+use App\Responder\TwigResponder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -89,15 +90,12 @@ class AccountActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \App\Domain\Exception\ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws ValidationException
      */
     public function testCorrectHandling()
     {
         $request = Request::create('/my-account', 'POST');
-        $responder = new AccountResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $accountAction = new AccountAction(
             $this->formFactory,
@@ -120,15 +118,12 @@ class AccountActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \App\Domain\Exception\ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws ValidationException
      */
     public function testWrongHandling()
     {
         $request = Request::create('/my-account', 'POST');
-        $responder = new AccountResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $accountAction = new AccountAction(
             $this->formFactory,

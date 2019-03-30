@@ -11,7 +11,7 @@ namespace App\Tests\Action;
 use App\Action\DeleteTrickAction;
 use App\Domain\Entity\Trick;
 use App\Domain\Service\TrickService;
-use App\Responder\DeleteTrickResponder;
+use App\Responder\TwigResponder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -56,7 +56,7 @@ class DeleteActionTest extends KernelTestCase
         );
 
         $trick = $this->createMock(Trick::class);
-        $deleteTrickResponder = new DeleteTrickResponder($this->twig, $this->urlGenerator);
+        $deleteTrickResponder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $deleteTrickAction($trick, $deleteTrickResponder);
 

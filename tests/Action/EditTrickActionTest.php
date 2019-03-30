@@ -12,7 +12,8 @@ use App\Action\EditTrickAction;
 use App\Domain\Entity\Trick;
 use App\Domain\Service\TrickService;
 use App\Handler\FormHandler\EditTrickFormHandler;
-use App\Responder\EditTrickResponder;
+use App\Responder\TwigResponder;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -65,14 +66,12 @@ class EditTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testCorrectHandling()
     {
         $request = Request::create('/trick/edit/test', 'POST');
-        $responder = new EditTrickResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $editTrickAction = new EditTrickAction(
             $this->formFactory,
@@ -93,14 +92,12 @@ class EditTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function testWrongHandling()
     {
         $request = Request::create('/trick/edit/test', 'POST');
-        $responder = new EditTrickResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $editTrickAction = new EditTrickAction(
             $this->formFactory,

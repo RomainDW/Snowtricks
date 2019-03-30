@@ -11,7 +11,7 @@ namespace App\Tests\Action;
 use App\Action\RegistrationVerificationAction;
 use App\Domain\Entity\User;
 use App\Domain\Service\UserService;
-use App\Responder\RegistrationVerificationResponder;
+use App\Responder\TwigResponder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,15 +65,10 @@ class RegistrationVerificationActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function testCorrectVerification()
     {
         $user = new User();
-        $responder = new RegistrationVerificationResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $registrationVerificationAction = new RegistrationVerificationAction(
             $this->flashBag,
@@ -92,15 +87,10 @@ class RegistrationVerificationActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function testWrongVerification()
     {
         $user = new User();
-        $responder = new RegistrationVerificationResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $registrationVerificationAction = new RegistrationVerificationAction(
             $this->flashBag,

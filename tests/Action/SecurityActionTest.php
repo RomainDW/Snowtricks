@@ -9,7 +9,7 @@
 namespace App\Tests\Action;
 
 use App\Action\SecurityAction;
-use App\Responder\SecurityResponder;
+use App\Responder\TwigResponder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,14 +55,9 @@ class SecurityActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function testResponseAlreadyConnected()
     {
-        $responder = new SecurityResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
         $authenticationUtils = $this->createMock(AuthenticationUtils::class);
 
         $securityAction = new SecurityAction(
@@ -80,14 +75,9 @@ class SecurityActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function testResponseNotConnected()
     {
-        $responder = new SecurityResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
         $authenticationUtils = $this->createMock(AuthenticationUtils::class);
 
         $securityAction = new SecurityAction(

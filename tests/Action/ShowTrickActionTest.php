@@ -13,7 +13,8 @@ use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
 use App\Handler\FormHandler\CommentFormHandler;
 use App\Repository\CommentRepository;
-use App\Responder\ShowTrickResponder;
+use App\Responder\TwigResponder;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,17 +74,14 @@ class ShowTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws NonUniqueResultException
      */
     public function testCorrectHandling()
     {
         $tricks = $this->entityManager->getRepository(Trick::class)->findAll();
         $trick = $tricks[0];
         $request = Request::create('/trick/show/test', 'POST');
-        $responder = new ShowTrickResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $this->security->method('getUser')->willreturn(new User());
         $this->security->method('isGranted')->willreturn(true);
@@ -106,17 +104,14 @@ class ShowTrickActionTest extends KernelTestCase
     }
 
     /**
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws NonUniqueResultException
      */
     public function testWrongHandling()
     {
         $tricks = $this->entityManager->getRepository(Trick::class)->findAll();
         $trick = $tricks[0];
         $request = Request::create('/trick/show/test', 'POST');
-        $responder = new ShowTrickResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         // If any of these return false => Wrong handling
         $this->security->method('getUser')->willreturn(false);

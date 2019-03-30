@@ -12,7 +12,7 @@ use App\Action\ResetPasswordAction;
 use App\Domain\Entity\User;
 use App\Domain\Service\UserService;
 use App\Handler\FormHandler\ResetPasswordFormHandler;
-use App\Responder\ResetPasswordResponder;
+use App\Responder\TwigResponder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,16 +69,10 @@ class ResetPasswordActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws \App\Domain\Exception\ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function testCorrectHandling()
     {
         $request = Request::create('/reset-password/{vkey}', 'POST');
-        $responder = new ResetPasswordResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
         $user = new User();
 
         $resetPasswordAction = new ResetPasswordAction(
@@ -99,16 +93,10 @@ class ResetPasswordActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws \App\Domain\Exception\ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function testWrongHandling()
     {
         $request = Request::create('/reset-password/{vkey}', 'POST');
-        $responder = new ResetPasswordResponder($this->twig, $this->urlGenerator);
+        $responder = new TwigResponder($this->twig, $this->urlGenerator);
         $user = new User();
 
         $resetPasswordAction = new ResetPasswordAction(
