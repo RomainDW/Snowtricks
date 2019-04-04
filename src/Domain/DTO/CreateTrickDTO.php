@@ -2,10 +2,11 @@
 
 namespace App\Domain\DTO;
 
+use App\Domain\DTO\Interfaces\TrickDTOInterface;
 use App\Domain\Entity\Category;
 use App\Domain\Entity\Trick;
 
-class CreateTrickDTO
+class CreateTrickDTO implements TrickDTOInterface
 {
     public $title;
     public $description;
@@ -34,7 +35,7 @@ class CreateTrickDTO
         $this->videos = $videos;
     }
 
-    public static function createFromTrick(Trick $trick)
+    public static function createFromTrick(Trick $trick): TrickDTOInterface
     {
         $trickRequest = new self(
             $trick->getTitle(),

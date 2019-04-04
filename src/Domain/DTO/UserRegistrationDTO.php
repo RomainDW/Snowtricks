@@ -8,9 +8,10 @@
 
 namespace App\Domain\DTO;
 
-use App\Domain\Entity\ImageInterface;
+use App\Domain\DTO\Interfaces\UserRegistrationDTOInterface;
+use App\Domain\Entity\Interfaces\ImageInterface;
 
-class UserRegistrationDTO
+class UserRegistrationDTO implements UserRegistrationDTOInterface
 {
     public $email;
     public $username;

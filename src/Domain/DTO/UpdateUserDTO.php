@@ -8,9 +8,10 @@
 
 namespace App\Domain\DTO;
 
+use App\Domain\DTO\Interfaces\UpdateUserDTOInterface;
 use App\Domain\Entity\User;
 
-class UpdateUserDTO
+class UpdateUserDTO implements UpdateUserDTOInterface
 {
     public $username;
     public $picture;
@@ -26,7 +27,7 @@ class UpdateUserDTO
         $this->picture = $picture;
     }
 
-    public static function createFromUser(User $user)
+    public static function createFromUser(User $user): UpdateUserDTOInterface
     {
         $userRequest = new self(
             $user->getUsername(),
