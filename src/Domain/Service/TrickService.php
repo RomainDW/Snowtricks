@@ -8,11 +8,13 @@
 
 namespace App\Domain\Service;
 
+use App\Domain\Entity\Interfaces\TrickInterface;
 use App\Domain\Exception\ValidationException;
 use App\Domain\DTO\CreateTrickDTO;
 use App\Domain\Entity\Image;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\Video;
+use App\Domain\Service\Interfaces\TrickServiceInterface;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
 use App\Event\VideoUploadEvent;
@@ -24,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class TrickService
+class TrickService implements TrickServiceInterface
 {
     private $dispatcher;
     /**
@@ -93,14 +95,14 @@ class TrickService
     }
 
     /**
-     * @param Trick          $trick
+     * @param TrickInterface $trick
      * @param CreateTrickDTO $trickDTO
      *
      * @return CreateTrickDTO
      *
      * @throws \Exception
      */
-    public function UpdateTrick(Trick $trick, CreateTrickDTO $trickDTO)
+    public function UpdateTrick(TrickInterface $trick, CreateTrickDTO $trickDTO)
     {
         $trickDTO->updatedAt = new \DateTime();
         $trickDTO->slug = Slugger::slugify($trickDTO->title);
@@ -160,12 +162,12 @@ class TrickService
     }
 
     /**
-     * @param Trick  $trick
-     * @param string $type
+     * @param TrickInterface $trick
+     * @param string         $type
      *
      * @throws ValidationException
      */
-    public function save(Trick $trick, string $type = 'add')
+    public function save(TrickInterface $trick, string $type = 'add')
     {
         if (count($errors = $this->validator->validate($trick))) {
             throw new ValidationException($errors);
@@ -183,9 +185,9 @@ class TrickService
     }
 
     /**
-     * @param Trick $trick
+     * @param TrickInterface $trick
      */
-    public function deleteTrick(Trick $trick)
+    public function deleteTrick(TrickInterface $trick)
     {
         foreach ($trick->getImages() as $image) {
             $imageRemoveEvent = new ImageRemoveEvent($image);

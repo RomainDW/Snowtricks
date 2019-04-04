@@ -25,7 +25,6 @@ use Twig\Environment;
 class EditTrickActionTest extends KernelTestCase
 {
     private $formFactory;
-    private $trickService;
     private $formHandler;
     private $twig;
     private $urlGenerator;
@@ -42,7 +41,6 @@ class EditTrickActionTest extends KernelTestCase
 
         $this->formHandler = $this->createMock(EditTrickFormHandler::class);
         $this->twig = $this->createMock(Environment::class);
-        $this->trickService = $this->createMock(TrickService::class);
     }
 
     public function testDependencies()
@@ -51,11 +49,9 @@ class EditTrickActionTest extends KernelTestCase
         static::assertInstanceOf(Environment::class, $this->twig);
         static::assertInstanceOf(UrlGeneratorInterface::class, $this->urlGenerator);
         static::assertInstanceOf(EditTrickFormHandler::class, $this->formHandler);
-        static::assertInstanceOf(TrickService::class, $this->trickService);
 
         $createTrickAction = new EditTrickAction(
             $this->formFactory,
-            $this->trickService,
             $this->formHandler
         );
 
@@ -75,7 +71,6 @@ class EditTrickActionTest extends KernelTestCase
 
         $editTrickAction = new EditTrickAction(
             $this->formFactory,
-            $this->trickService,
             $this->formHandler
         );
 
@@ -101,7 +96,6 @@ class EditTrickActionTest extends KernelTestCase
 
         $editTrickAction = new EditTrickAction(
             $this->formFactory,
-            $this->trickService,
             $this->formHandler
         );
 

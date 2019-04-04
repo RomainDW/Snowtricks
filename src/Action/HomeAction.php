@@ -8,6 +8,7 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\HomeActionInterface;
 use App\Repository\TrickRepository;
 use App\Responder\Interfaces\TwigResponderInterface;
 use App\Utils\SnowtrickConfig;
@@ -15,7 +16,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeAction
+class HomeAction implements HomeActionInterface
 {
     /**
      * @var TrickRepository

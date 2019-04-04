@@ -8,11 +8,11 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\EditTrickInterface;
 use App\Domain\DTO\CreateTrickDTO;
 use App\Domain\Entity\Trick;
 use App\Form\TrickFormType;
-use App\Handler\FormHandler\EditTrickFormHandler;
-use App\Domain\Service\TrickService;
+use App\Handler\FormHandler\Interfaces\EditTrickFormHandlerInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
 use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -20,32 +20,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EditTrickAction
+class EditTrickAction implements EditTrickInterface
 {
     /**
      * @var FormFactoryInterface
      */
     private $formFactory;
+
     /**
-     * @var TrickService
-     */
-    private $trickService;
-    /**
-     * @var EditTrickFormHandler
+     * @var EditTrickFormHandlerInterface
      */
     private $formHandler;
 
     /**
      * EditTrickAction constructor.
      *
-     * @param FormFactoryInterface $formFactory
-     * @param TrickService         $trickService
-     * @param EditTrickFormHandler $formHandler
+     * @param FormFactoryInterface          $formFactory
+     * @param EditTrickFormHandlerInterface $formHandler
      */
-    public function __construct(FormFactoryInterface $formFactory, TrickService $trickService, EditTrickFormHandler $formHandler)
+    public function __construct(FormFactoryInterface $formFactory, EditTrickFormHandlerInterface $formHandler)
     {
         $this->formFactory = $formFactory;
-        $this->trickService = $trickService;
         $this->formHandler = $formHandler;
     }
 

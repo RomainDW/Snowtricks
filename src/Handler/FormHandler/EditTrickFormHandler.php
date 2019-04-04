@@ -9,16 +9,17 @@
 namespace App\Handler\FormHandler;
 
 use App\Domain\Entity\Image;
-use App\Domain\Entity\Trick;
+use App\Domain\Entity\Interfaces\TrickInterface;
+use App\Domain\Service\Interfaces\TrickServiceInterface;
+use App\Handler\FormHandler\Interfaces\EditTrickFormHandlerInterface;
 use App\Repository\TrickRepository;
-use App\Domain\Service\TrickService;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class EditTrickFormHandler
+class EditTrickFormHandler implements EditTrickFormHandlerInterface
 {
     private $trickService;
     private $trickRepository;
@@ -29,13 +30,13 @@ class EditTrickFormHandler
     /**
      * CreateTrickFormHandler constructor.
      *
-     * @param TrickService          $trickService
+     * @param TrickServiceInterface $trickService
      * @param TrickRepository       $trickRepository
      * @param FlashBagInterface     $flashBag
      * @param UrlGeneratorInterface $url_generator
      * @param ValidatorInterface    $validator
      */
-    public function __construct(TrickService $trickService, TrickRepository $trickRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, ValidatorInterface $validator)
+    public function __construct(TrickServiceInterface $trickService, TrickRepository $trickRepository, FlashBagInterface $flashBag, UrlGeneratorInterface $url_generator, ValidatorInterface $validator)
     {
         $this->trickService = $trickService;
         $this->trickRepository = $trickRepository;
@@ -45,17 +46,14 @@ class EditTrickFormHandler
     }
 
     /**
-     * @param FormInterface $form
-     * @param Trick         $trick
+     * @param FormInterface  $form
+     * @param TrickInterface $trick
      *
      * @return bool|RedirectResponse
-     *
-     * @throws \Exception
      */
-    public function handle(FormInterface $form, Trick $trick)
+    public function handle(FormInterface $form, TrickInterface $trick)
     {
         if ($form->isSubmitted() && $form->isValid()) {
-
             $updatedTrickDTO = $this->trickService->UpdateTrick($trick, $form->getData());
 
             $trick->updateFromDTO($updatedTrickDTO);

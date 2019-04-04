@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Event;
+namespace App\Event\Interfaces;
 
-use App\Domain\Entity\ImageInterface;
+use App\Domain\Entity\Interfaces\ImageInterface;
 
 interface ImageEventInterface
 {

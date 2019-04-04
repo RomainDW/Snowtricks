@@ -8,7 +8,7 @@
 
 namespace App\Tests\Domain\Entity;
 
-use App\Domain\Entity\ImageInterface;
+use App\Domain\Entity\Interfaces\ImageInterface;
 use App\Domain\Entity\Picture;
 use App\Domain\Entity\User;
 use PHPUnit\Framework\TestCase;

@@ -8,10 +8,17 @@
 
 namespace App\Domain\Notifier;
 
+use App\Domain\Entity\Interfaces\UserInterface;
 use App\Domain\Entity\User;
+use App\Domain\Notifier\Interfaces\MailNotifierInterface;
+use Swift_Mailer;
+use Swift_Message;
 use Twig\Environment;
+use Twig_Error_Loader;
+use Twig_Error_Runtime;
+use Twig_Error_Syntax;
 
-class MailNotifier
+class MailNotifier implements MailNotifierInterface
 {
     private $mailer;
     private $templating;
@@ -19,10 +26,10 @@ class MailNotifier
     /**
      * MailNotifier constructor.
      *
-     * @param \Swift_Mailer $mailer
-     * @param Environment   $templating
+     * @param Swift_Mailer $mailer
+     * @param Environment  $templating
      */
-    public function __construct(\Swift_Mailer $mailer, Environment $templating)
+    public function __construct(Swift_Mailer $mailer, Environment $templating)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -33,13 +40,13 @@ class MailNotifier
      * @param string $from
      * @param string $to
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
      */
     public function notifyResetPassword(User $user, string $from = 'noreply@snowtricks.com', $to = 'romain.ollier34@gmail.com')
     {
-        $message = (new \Swift_Message('Réinitialiser votre mot de passe.'))
+        $message = (new Swift_Message('Réinitialiser votre mot de passe.'))
             ->setFrom($from)
             ->setTo($to)
             ->setBody(
@@ -55,17 +62,17 @@ class MailNotifier
     }
 
     /**
-     * @param User   $user
-     * @param string $from
-     * @param string $to
+     * @param UserInterface $user
+     * @param string        $from
+     * @param string        $to
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
      */
-    public function notifyRegistration(User $user, string $from = 'noreply@snowtricks.com', $to = 'romain.ollier34@gmail.com')
+    public function notifyRegistration(UserInterface $user, string $from = 'noreply@snowtricks.com', $to = 'romain.ollier34@gmail.com')
     {
-        $message = (new \Swift_Message('Confirmation de création de compte'))
+        $message = (new Swift_Message('Confirmation de création de compte'))
             ->setFrom($from)
             ->setTo($to)
             ->setBody(

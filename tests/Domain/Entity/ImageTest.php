@@ -9,7 +9,7 @@
 namespace App\Tests\Domain\Entity;
 
 use App\Domain\Entity\Image;
-use App\Domain\Entity\ImageInterface;
+use App\Domain\Entity\Interfaces\ImageInterface;
 use App\Domain\Entity\Trick;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

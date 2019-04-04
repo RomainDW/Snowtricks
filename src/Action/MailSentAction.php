@@ -8,13 +8,14 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\MailSentActionInterface;
 use App\Domain\Entity\User;
 use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MailSentAction
+class MailSentAction implements MailSentActionInterface
 {
     /**
      * @var FlashBagInterface

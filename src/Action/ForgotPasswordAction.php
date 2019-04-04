@@ -8,9 +8,9 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\ForgotPasswordInterface;
 use App\Form\ForgotPasswordFormType;
-use App\Handler\FormHandler\ForgotPasswordFormHandler;
-use App\Domain\Service\UserService;
+use App\Handler\FormHandler\Interfaces\ForgotPasswordFormHandlerInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
 use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -18,32 +18,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ForgotPasswordAction
+class ForgotPasswordAction implements ForgotPasswordInterface
 {
     /**
      * @var FormFactoryInterface
      */
     private $formFactory;
+
     /**
-     * @var UserService
-     */
-    private $userService;
-    /**
-     * @var ForgotPasswordFormHandler
+     * @var ForgotPasswordFormHandlerInterface
      */
     private $formHandler;
 
     /**
      * ForgotPasswordAction constructor.
      *
-     * @param FormFactoryInterface      $formFactory
-     * @param UserService               $userService
-     * @param ForgotPasswordFormHandler $formHandler
+     * @param FormFactoryInterface               $formFactory
+     * @param ForgotPasswordFormHandlerInterface $formHandler
      */
-    public function __construct(FormFactoryInterface $formFactory, UserService $userService, ForgotPasswordFormHandler $formHandler)
+    public function __construct(FormFactoryInterface $formFactory, ForgotPasswordFormHandlerInterface $formHandler)
     {
         $this->formFactory = $formFactory;
-        $this->userService = $userService;
         $this->formHandler = $formHandler;
     }
 

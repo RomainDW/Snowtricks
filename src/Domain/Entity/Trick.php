@@ -3,18 +3,21 @@
 namespace App\Domain\Entity;
 
 use App\Domain\DTO\CreateTrickDTO;
+use App\Domain\Entity\Interfaces\TrickInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrickRepository")
  */
-class Trick
+class Trick implements TrickInterface
 {
     /**
-     * @var \Ramsey\Uuid\UuidInterface
+     * @var UuidInterface
      *
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
@@ -80,7 +83,7 @@ class Trick
      *
      * @param CreateTrickDTO $createTrickDTO
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(CreateTrickDTO $createTrickDTO)
     {

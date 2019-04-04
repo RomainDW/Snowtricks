@@ -8,6 +8,7 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\LoadCommentsInterface;
 use App\Domain\Entity\Trick;
 use App\Repository\CommentRepository;
 use App\Responder\Interfaces\TwigResponderInterface;
@@ -15,7 +16,7 @@ use App\Utils\SnowtrickConfig;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LoadCommentsAction
+class LoadCommentsAction implements LoadCommentsInterface
 {
     /**
      * @var CommentRepository

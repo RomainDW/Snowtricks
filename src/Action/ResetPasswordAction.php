@@ -8,11 +8,11 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\ResetPasswordInterface;
 use App\Domain\Entity\User;
 use App\Form\ResetPasswordFormType;
-use App\Handler\FormHandler\ResetPasswordFormHandler;
+use App\Handler\FormHandler\Interfaces\ResetPasswordFormHandlerInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
-use App\Domain\Service\UserService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-class ResetPasswordAction
+class ResetPasswordAction implements ResetPasswordInterface
 {
     /**
      * @var FormFactoryInterface
@@ -36,34 +36,27 @@ class ResetPasswordAction
      */
     private $security;
     /**
-     * @var UserService
-     */
-    private $userService;
-    /**
-     * @var ResetPasswordFormHandler
+     * @var ResetPasswordFormHandlerInterface
      */
     private $formHandler;
 
     /**
      * ResetPasswordAction constructor.
      *
-     * @param FormFactoryInterface     $formFactory
-     * @param FlashBagInterface        $flashBag
-     * @param Security                 $security
-     * @param ResetPasswordFormHandler $formHandler
-     * @param UserService              $userService
+     * @param FormFactoryInterface              $formFactory
+     * @param FlashBagInterface                 $flashBag
+     * @param Security                          $security
+     * @param ResetPasswordFormHandlerInterface $formHandler
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         FlashBagInterface $flashBag,
         Security $security,
-        ResetPasswordFormHandler $formHandler,
-        UserService $userService
+        ResetPasswordFormHandlerInterface $formHandler
     ) {
         $this->formFactory = $formFactory;
         $this->flashBag = $flashBag;
         $this->security = $security;
-        $this->userService = $userService;
         $this->formHandler = $formHandler;
     }
 
@@ -74,7 +67,7 @@ class ResetPasswordAction
      * @param Request                $request
      * @param TwigResponderInterface $responder
      *
-     * @return bool|RedirectResponse|Response*
+     * @return RedirectResponse|Response
      */
     public function __invoke(User $user, Request $request, TwigResponderInterface $responder)
     {

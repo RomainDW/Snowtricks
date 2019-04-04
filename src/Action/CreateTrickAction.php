@@ -8,9 +8,10 @@
 
 namespace App\Action;
 
-use App\Domain\Service\TrickService;
+use App\Action\Interfaces\CreateTrickActionInterface;
+use App\Domain\Service\Interfaces\TrickServiceInterface;
 use App\Form\TrickFormType;
-use App\Handler\FormHandler\CreateTrickFormHandler;
+use App\Handler\FormHandler\Interfaces\CreateTrickFormHandlerInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-class CreateTrickAction
+class CreateTrickAction implements CreateTrickActionInterface
 {
     /**
      * @var FormFactoryInterface
@@ -31,23 +32,23 @@ class CreateTrickAction
     private $security;
 
     /**
-     * @var CreateTrickFormHandler
+     * @var CreateTrickFormHandlerInterface
      */
     private $formHandler;
     /**
-     * @var TrickService
+     * @var TrickServiceInterface
      */
     private $trickService;
 
     /**
      * CreateTrickAction constructor.
      *
-     * @param FormFactoryInterface   $formFactory
-     * @param Security               $security
-     * @param CreateTrickFormHandler $formHandler
-     * @param TrickService           $trickService
+     * @param FormFactoryInterface            $formFactory
+     * @param Security                        $security
+     * @param CreateTrickFormHandlerInterface $formHandler
+     * @param TrickServiceInterface           $trickService
      */
-    public function __construct(FormFactoryInterface $formFactory, Security $security, CreateTrickFormHandler $formHandler, TrickService $trickService)
+    public function __construct(FormFactoryInterface $formFactory, Security $security, CreateTrickFormHandlerInterface $formHandler, TrickServiceInterface $trickService)
     {
         $this->formFactory = $formFactory;
         $this->security = $security;

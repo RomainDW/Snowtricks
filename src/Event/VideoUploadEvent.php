@@ -8,10 +8,11 @@
 
 namespace App\Event;
 
-use App\Domain\Entity\Video;
+use App\Domain\Entity\Interfaces\VideoInterface;
+use App\Event\Interfaces\VideoEventInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class VideoUploadEvent extends Event
+class VideoUploadEvent extends Event implements VideoEventInterface
 {
     public const NAME = 'video.upload';
 
@@ -22,12 +23,12 @@ class VideoUploadEvent extends Event
      *
      * @param $video
      */
-    public function __construct(Video $video)
+    public function __construct(VideoInterface $video)
     {
         $this->video = $video;
     }
 
-    public function getVideo()
+    public function getVideo(): VideoInterface
     {
         return $this->video;
     }

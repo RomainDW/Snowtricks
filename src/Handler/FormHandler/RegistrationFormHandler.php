@@ -10,15 +10,16 @@ namespace App\Handler\FormHandler;
 
 use App\Domain\Entity\Picture;
 use App\Domain\Entity\User;
-use App\Domain\Service\UserService;
+use App\Domain\Service\Interfaces\UserServiceInterface;
 use App\Event\UserPictureUploadEvent;
+use App\Handler\FormHandler\Interfaces\RegistrationFormHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class RegistrationFormHandler
+class RegistrationFormHandler implements RegistrationFormHandlerInterface
 {
     private $passwordEncoder;
     private $dispatcher;
@@ -31,9 +32,9 @@ class RegistrationFormHandler
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param EventDispatcherInterface     $dispatcher
      * @param ValidatorInterface           $validator
-     * @param UserService                  $userService
+     * @param UserServiceInterface         $userService
      */
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $dispatcher, ValidatorInterface $validator, UserService $userService)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $dispatcher, ValidatorInterface $validator, UserServiceInterface $userService)
     {
         $this->passwordEncoder = $passwordEncoder;
         $this->dispatcher = $dispatcher;
@@ -48,7 +49,7 @@ class RegistrationFormHandler
      *
      * @throws \Exception
      */
-    public function handle(FormInterface $form)
+    public function handle(FormInterface $form): bool
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $user = new User();

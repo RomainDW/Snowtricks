@@ -8,14 +8,20 @@
 
 namespace App\Domain\Service;
 
+use App\Domain\Entity\Interfaces\UserInterface;
 use App\Domain\Entity\User;
 use App\Domain\Exception\ValidationException;
 use App\Domain\Notifier\MailNotifier;
+use App\Domain\Service\Interfaces\UserServiceInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig_Error_Loader;
+use Twig_Error_Runtime;
+use Twig_Error_Syntax;
 
-class UserService
+class UserService implements UserServiceInterface
 {
     private $validator;
     private $doctrine;
@@ -40,11 +46,11 @@ class UserService
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      *
      * @throws ValidationException
      */
-    public function save(User $user)
+    public function save(UserInterface $user)
     {
         if (count($errors = $this->validator->validate($user))) {
             throw new ValidationException($errors);
@@ -59,11 +65,11 @@ class UserService
      * @param $user
      *
      * @throws ValidationException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
      */
-    public function register(User $user)
+    public function register(UserInterface $user)
     {
         $this->save($user);
 
@@ -73,21 +79,21 @@ class UserService
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      *
      * @throws ValidationException
      */
-    public function update(User $user)
+    public function update(UserInterface $user)
     {
         $this->save($user);
         $this->flashBag->add('success', 'Votre compte a bien été modifié !');
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      * @return bool
      */
-    public function verification(User $user)
+    public function verification(UserInterface $user): bool
     {
         $hasAccess = $user->hasRole('ROLE_USER_NOT_VERIFIED');
 
@@ -110,7 +116,7 @@ class UserService
 
     /**
      * @param string $email
-     * @throws \Exception
+     * @throws Exception
      */
     public function forgotPassword(string $email)
     {

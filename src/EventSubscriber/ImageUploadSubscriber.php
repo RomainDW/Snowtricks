@@ -8,8 +8,8 @@
 
 namespace App\EventSubscriber;
 
-use App\Domain\Entity\ImageInterface;
-use App\Event\ImageEventInterface;
+use App\Domain\Entity\Interfaces\ImageInterface;
+use App\Event\Interfaces\ImageEventInterface;
 use App\Event\ImageRemoveEvent;
 use App\Event\ImageUploadEvent;
 use App\Event\UserPictureRemoveEvent;

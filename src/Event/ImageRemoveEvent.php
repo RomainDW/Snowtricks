@@ -8,7 +8,8 @@
 
 namespace App\Event;
 
-use App\Domain\Entity\ImageInterface;
+use App\Domain\Entity\Interfaces\ImageInterface;
+use App\Event\Interfaces\ImageEventInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class ImageRemoveEvent extends Event implements ImageEventInterface

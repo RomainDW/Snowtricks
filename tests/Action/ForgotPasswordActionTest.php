@@ -24,7 +24,6 @@ use Twig\Environment;
 class ForgotPasswordActionTest extends KernelTestCase
 {
     private $formFactory;
-    private $userService;
     private $formHandler;
     private $twig;
     private $urlGenerator;
@@ -38,7 +37,6 @@ class ForgotPasswordActionTest extends KernelTestCase
 
         $this->formHandler = $this->createMock(ForgotPasswordFormHandler::class);
         $this->twig = $this->createMock(Environment::class);
-        $this->userService = $this->createMock(UserService::class);
     }
 
     public function testDependencies()
@@ -47,11 +45,9 @@ class ForgotPasswordActionTest extends KernelTestCase
         static::assertInstanceOf(Environment::class, $this->twig);
         static::assertInstanceOf(UrlGeneratorInterface::class, $this->urlGenerator);
         static::assertInstanceOf(ForgotPasswordFormHandler::class, $this->formHandler);
-        static::assertInstanceOf(UserService::class, $this->userService);
 
         $forgotPasswordAction = new ForgotPasswordAction(
             $this->formFactory,
-            $this->userService,
             $this->formHandler
         );
 
@@ -71,7 +67,6 @@ class ForgotPasswordActionTest extends KernelTestCase
 
         $forgotPasswordAction = new ForgotPasswordAction(
             $this->formFactory,
-            $this->userService,
             $this->formHandler
         );
 
@@ -95,7 +90,6 @@ class ForgotPasswordActionTest extends KernelTestCase
 
         $forgotPasswordAction = new ForgotPasswordAction(
             $this->formFactory,
-            $this->userService,
             $this->formHandler
         );
 
