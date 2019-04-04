@@ -8,6 +8,13 @@
 {% block header %}{% include 'homepage/_partials/header.html.twig' %}{% endblock %}
 
 {% block body %}
+
+    {% if is_granted('ROLE_USER') %}
+        <div class="mb-5 d-flex justify-content-center">
+            <a class="btn btn-secondary" role="button" href="{{ path('app_create_trick') }}">Ajouter une figure</a>
+        </div>
+    {% endif %}
+
     <!-- Content -->
     <div class="row">
         <div class="card-deck wrapper" data-number-of-results="{{ number_of_results }}" data-url="/more/" data-total-entities="{{ total_tricks }}">
