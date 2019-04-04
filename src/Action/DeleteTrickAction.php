@@ -8,25 +8,26 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\DeleteTrickActionInterface;
 use App\Domain\Entity\Trick;
-use App\Domain\Service\TrickService;
+use App\Domain\Service\Interfaces\TrickServiceInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DeleteTrickAction
+class DeleteTrickAction implements DeleteTrickActionInterface
 {
     /**
-     * @var TrickService
+     * @var TrickServiceInterface
      */
     private $trickService;
 
     /**
      * DeleteTrickAction constructor.
      *
-     * @param TrickService $trickService
+     * @param TrickServiceInterface $trickService
      */
-    public function __construct(TrickService $trickService)
+    public function __construct(TrickServiceInterface $trickService)
     {
         $this->trickService = $trickService;
     }

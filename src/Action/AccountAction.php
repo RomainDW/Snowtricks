@@ -8,12 +8,11 @@
 
 namespace App\Action;
 
-use App\Domain\Exception\ValidationException;
+use App\Action\Interfaces\AccountActionInterface;
 use App\Domain\DTO\UpdateUserDTO;
 use App\Domain\Entity\User;
 use App\Form\UserUpdateFormType;
-use App\Handler\FormHandler\AccountFormHandler;
-use App\Domain\Service\UserService;
+use App\Handler\FormHandler\Interfaces\AccountFormHandlerInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-class AccountAction
+class AccountAction implements AccountActionInterface
 {
     /**
      * @var FormFactoryInterface
@@ -34,28 +33,22 @@ class AccountAction
     private $security;
 
     /**
-     * @var AccountFormHandler
+     * @var AccountFormHandlerInterface
      */
     private $formHandler;
-    /**
-     * @var UserService
-     */
-    private $userService;
 
     /**
      * AccountAction constructor.
      *
-     * @param FormFactoryInterface $formFactory
-     * @param Security             $security
-     * @param AccountFormHandler   $formHandler
-     * @param UserService          $userService
+     * @param FormFactoryInterface        $formFactory
+     * @param Security                    $security
+     * @param AccountFormHandlerInterface $formHandler
      */
-    public function __construct(FormFactoryInterface $formFactory, Security $security, AccountFormHandler $formHandler, UserService $userService)
+    public function __construct(FormFactoryInterface $formFactory, Security $security, AccountFormHandlerInterface $formHandler)
     {
         $this->formFactory = $formFactory;
         $this->security = $security;
         $this->formHandler = $formHandler;
-        $this->userService = $userService;
     }
 
     /**
@@ -65,8 +58,6 @@ class AccountAction
      * @param TwigResponderInterface $responder
      *
      * @return Response
-     *
-     * @throws ValidationException
      */
     public function __invoke(Request $request, TwigResponderInterface $responder)
     {

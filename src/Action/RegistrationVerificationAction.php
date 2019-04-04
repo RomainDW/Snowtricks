@@ -8,9 +8,10 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\RegistrationVerificationInterface;
 use App\Domain\Entity\User;
+use App\Domain\Service\Interfaces\UserServiceInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
-use App\Domain\Service\UserService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
-class RegistrationVerificationAction
+class RegistrationVerificationAction implements RegistrationVerificationInterface
 {
     /**
      * @var FlashBagInterface
@@ -37,7 +38,7 @@ class RegistrationVerificationAction
     private $session;
 
     /**
-     * @var UserService
+     * @var UserServiceInterface
      */
     private $userService;
 
@@ -47,13 +48,13 @@ class RegistrationVerificationAction
      * @param FlashBagInterface     $flashBag
      * @param TokenStorageInterface $tokenStorage
      * @param SessionInterface      $session
-     * @param UserService           $userService
+     * @param UserServiceInterface  $userService
      */
     public function __construct(
         FlashBagInterface $flashBag,
         TokenStorageInterface $tokenStorage,
         SessionInterface $session,
-        UserService $userService
+        UserServiceInterface $userService
     ) {
         $this->flashBag = $flashBag;
         $this->tokenStorage = $tokenStorage;

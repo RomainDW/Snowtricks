@@ -8,14 +8,14 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\LoadPaginationInterface;
 use App\Repository\TrickRepository;
 use App\Responder\Interfaces\TwigResponderInterface;
-use App\Responder\LoadPaginationResponder;
 use App\Utils\SnowtrickConfig;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LoadPaginationAction
+class LoadPaginationAction implements LoadPaginationInterface
 {
     /**
      * @var TrickRepository

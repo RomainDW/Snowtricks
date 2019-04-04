@@ -8,12 +8,12 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\ShowTrickActionInterface;
 use App\Domain\Entity\Comment;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
-use App\Domain\Exception\ValidationException;
 use App\Form\CommentFormType;
-use App\Handler\FormHandler\CommentFormHandler;
+use App\Handler\FormHandler\Interfaces\CommentFormHandlerInterface;
 use App\Repository\CommentRepository;
 use App\Responder\Interfaces\TwigResponderInterface;
 use App\Utils\SnowtrickConfig;
@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-class ShowTrickAction
+class ShowTrickAction implements ShowTrickActionInterface
 {
     /**
      * @var Security
@@ -46,25 +46,25 @@ class ShowTrickAction
      */
     private $flashBag;
     /**
-     * @var CommentFormHandler
+     * @var CommentFormHandlerInterface
      */
     private $formHandler;
 
     /**
      * ShowTrickAction constructor.
      *
-     * @param Security             $security
-     * @param CommentRepository    $commentRepository
-     * @param FormFactoryInterface $formFactory
-     * @param FlashBagInterface    $flashBag
-     * @param CommentFormHandler   $formHandler
+     * @param Security                    $security
+     * @param CommentRepository           $commentRepository
+     * @param FormFactoryInterface        $formFactory
+     * @param FlashBagInterface           $flashBag
+     * @param CommentFormHandlerInterface $formHandler
      */
     public function __construct(
         Security $security,
         CommentRepository $commentRepository,
         FormFactoryInterface $formFactory,
         FlashBagInterface $flashBag,
-        CommentFormHandler $formHandler
+        CommentFormHandlerInterface $formHandler
     ) {
         $this->security = $security;
         $this->commentRepository = $commentRepository;
@@ -83,7 +83,6 @@ class ShowTrickAction
      * @return bool|RedirectResponse|Response
      *
      * @throws NonUniqueResultException
-     * @throws ValidationException
      */
     public function __invoke(Trick $trick, Request $request, TwigResponderInterface $responder)
     {

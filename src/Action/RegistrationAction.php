@@ -2,10 +2,11 @@
 
 namespace App\Action;
 
+use App\Action\Interfaces\RegistrationActionInterface;
+use App\Domain\Service\Interfaces\UserServiceInterface;
 use App\Form\RegistrationFormType;
-use App\Handler\FormHandler\RegistrationFormHandler;
+use App\Handler\FormHandler\Interfaces\RegistrationFormHandlerInterface;
 use App\Responder\Interfaces\TwigResponderInterface;
-use App\Domain\Service\UserService;
 use Exception;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
-class RegistrationAction
+class RegistrationAction implements RegistrationActionInterface
 {
     /**
      * @var FormFactoryInterface
@@ -31,29 +32,29 @@ class RegistrationAction
      */
     private $flashBag;
     /**
-     * @var UserService
+     * @var UserServiceInterface
      */
     private $userService;
     /**
-     * @var RegistrationFormHandler
+     * @var RegistrationFormHandlerInterface
      */
     private $formHandler;
 
     /**
      * RegistrationAction constructor.
      *
-     * @param FormFactoryInterface    $formFactory
-     * @param Security                $security
-     * @param FlashBagInterface       $flashBag
-     * @param UserService             $userService
-     * @param RegistrationFormHandler $formHandler
+     * @param FormFactoryInterface             $formFactory
+     * @param Security                         $security
+     * @param FlashBagInterface                $flashBag
+     * @param UserServiceInterface             $userService
+     * @param RegistrationFormHandlerInterface $formHandler
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         Security $security,
         FlashBagInterface $flashBag,
-        UserService $userService,
-        RegistrationFormHandler $formHandler
+        UserServiceInterface $userService,
+        RegistrationFormHandlerInterface $formHandler
     ) {
         $this->formFactory = $formFactory;
         $this->security = $security;
