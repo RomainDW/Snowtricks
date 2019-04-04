@@ -8,6 +8,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Event\Interfaces\VideoEventInterface;
 use App\Event\VideoUploadEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -20,7 +21,7 @@ class VideoUploadSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onVideoUpload(VideoUploadEvent $event)
+    public function onVideoUpload(VideoEventInterface $event)
     {
         $video = $event->getVideo();
 
