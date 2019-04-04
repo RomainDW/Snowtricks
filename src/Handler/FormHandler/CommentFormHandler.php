@@ -8,43 +8,43 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Domain\Entity\Comment;
+use App\Domain\Entity\Interfaces\CommentInterface;
 use App\Domain\Entity\Trick;
 use App\Domain\Entity\User;
-use App\Domain\Exception\ValidationException;
-use App\Domain\Service\CommentService;
+use App\Domain\Service\Interfaces\CommentServiceInterface;
+use App\Handler\FormHandler\Interfaces\CommentFormHandlerInterface;
 use DateTime;
+use Exception;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class CommentFormHandler
+class CommentFormHandler implements CommentFormHandlerInterface
 {
     /**
-     * @var CommentService
+     * @var CommentServiceInterface
      */
     private $commentService;
 
     /**
-     * CommentFormhandler constructor.
+     * CommentFormHandler constructor.
      *
-     * @param CommentService $commentService
+     * @param CommentServiceInterface $commentService
      */
-    public function __construct(CommentService $commentService)
+    public function __construct(CommentServiceInterface $commentService)
     {
         $this->commentService = $commentService;
     }
 
     /**
-     * @param FormInterface $form
-     * @param Comment       $comment
-     * @param User          $user
-     * @param Trick         $trick
+     * @param FormInterface    $form
+     * @param CommentInterface $comment
+     * @param User             $user
+     * @param Trick            $trick
      *
-     * @return bool|RedirectResponse
+     * @return bool
      *
-     * @throws ValidationException
+     * @throws Exception
      */
-    public function handle(FormInterface $form, Comment $comment, User $user, Trick $trick)
+    public function handle(FormInterface $form, CommentInterface $comment, User $user, Trick $trick): bool
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setCreatedAt(new DateTime());

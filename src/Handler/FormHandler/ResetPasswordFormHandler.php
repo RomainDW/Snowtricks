@@ -8,19 +8,19 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Domain\Entity\User;
-use App\Domain\Service\UserService;
+use App\Domain\Entity\Interfaces\UserInterface;
+use App\Domain\Service\Interfaces\UserServiceInterface;
+use App\Handler\FormHandler\Interfaces\ResetPasswordFormHandlerInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class ResetPasswordFormHandler
+class ResetPasswordFormHandler implements ResetPasswordFormHandlerInterface
 {
     private $userRepository;
     private $passwordEncoder;
     /**
-     * @var UserService
+     * @var UserServiceInterface
      */
     private $userService;
 
@@ -29,9 +29,9 @@ class ResetPasswordFormHandler
      *
      * @param UserRepository               $userRepository
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param UserService                  $userService
+     * @param UserServiceInterface         $userService
      */
-    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, UserService $userService)
+    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, UserServiceInterface $userService)
     {
         $this->userRepository = $userRepository;
         $this->passwordEncoder = $passwordEncoder;
@@ -40,13 +40,11 @@ class ResetPasswordFormHandler
 
     /**
      * @param FormInterface $form
-     * @param User          $user
+     * @param UserInterface $user
      *
-     * @return bool|RedirectResponse
-     *
-     * @throws \App\Domain\Exception\ValidationException
+     * @return bool
      */
-    public function handle(FormInterface $form, User $user)
+    public function handle(FormInterface $form, UserInterface $user): bool
     {
         if ($form->isSubmitted() && $form->isValid() && $user->exist($form->get('email')->getData())) {
             $password = $this->passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());

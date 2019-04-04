@@ -8,19 +8,21 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Domain\Service\UserService;
+use App\Domain\Service\Interfaces\UserServiceInterface;
+use App\Handler\FormHandler\Interfaces\ForgotPasswordFormHandlerInterface;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 
-class ForgotPasswordFormHandler
+class ForgotPasswordFormHandler implements ForgotPasswordFormHandlerInterface
 {
     private $userService;
 
     /**
      * ForgotPasswordFormHandler constructor.
      *
-     * @param UserService $userService
+     * @param UserServiceInterface $userService
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserServiceInterface $userService)
     {
         $this->userService = $userService;
     }
@@ -30,9 +32,9 @@ class ForgotPasswordFormHandler
      *
      * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function handle(FormInterface $form)
+    public function handle(FormInterface $form): bool
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $this->userService->forgotPassword($form->get('email')->getData());

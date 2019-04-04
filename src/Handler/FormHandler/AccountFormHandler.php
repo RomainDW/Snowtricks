@@ -8,16 +8,17 @@
 
 namespace App\Handler\FormHandler;
 
-use App\Domain\Entity\User;
-use App\Domain\Service\UserService;
+use App\Domain\Entity\Interfaces\UserInterface;
+use App\Domain\Service\Interfaces\UserServiceInterface;
 use App\Event\UserPictureRemoveEvent;
 use App\Event\UserPictureUploadEvent;
+use App\Handler\FormHandler\Interfaces\AccountFormHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class AccountFormHandler
+class AccountFormHandler implements AccountFormHandlerInterface
 {
     private $dispatcher;
     private $flashBag;
@@ -30,8 +31,9 @@ class AccountFormHandler
      * @param EventDispatcherInterface $dispatcher
      * @param FlashBagInterface        $flashBag
      * @param ValidatorInterface       $validator
+     * @param UserServiceInterface     $userService
      */
-    public function __construct(EventDispatcherInterface $dispatcher, FlashBagInterface $flashBag, ValidatorInterface $validator, UserService $userService)
+    public function __construct(EventDispatcherInterface $dispatcher, FlashBagInterface $flashBag, ValidatorInterface $validator, UserServiceInterface $userService)
     {
         $this->dispatcher = $dispatcher;
         $this->flashBag = $flashBag;
@@ -41,13 +43,11 @@ class AccountFormHandler
 
     /**
      * @param FormInterface $form
-     * @param User          $user
+     * @param UserInterface $user
      *
      * @return bool
-     *
-     * @throws \App\Domain\Exception\ValidationException
      */
-    public function handle(FormInterface $form, User $user)
+    public function handle(FormInterface $form, UserInterface $user): bool
     {
         if ($form->isSubmitted() && $form->isValid()) {
             $updatedUserDTO = $form->getData();
