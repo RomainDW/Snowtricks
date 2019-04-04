@@ -4,13 +4,14 @@ namespace App\Domain\Entity;
 
 use App\Domain\DTO\UpdateUserDTO;
 use App\Domain\DTO\UserRegistrationDTO;
+use App\Domain\Entity\Interfaces\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -19,7 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
     /**
-     * @var \Ramsey\Uuid\UuidInterface
+     * @var UuidInterface
      *
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
@@ -171,7 +172,7 @@ class User implements UserInterface
      * @return User
      * @throws Exception
      */
-    public function createFromRegistration(UserRegistrationDTO $registrationDTO): self
+    public function createFromRegistration(UserRegistrationDTO $registrationDTO): UserInterface
     {
         $this->id = Uuid::uuid4();
         $this->email = $registrationDTO->email;

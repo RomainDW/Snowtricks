@@ -2,17 +2,19 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Interfaces\CategoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
  */
-class Category
+class Category implements CategoryInterface
 {
     /**
-     * @var \Ramsey\Uuid\UuidInterface
+     * @var UuidInterface
      *
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)

@@ -2,16 +2,18 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Interfaces\VideoInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VideoRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Video
+class Video implements VideoInterface
 {
     /**
-     * @var \Ramsey\Uuid\UuidInterface
+     * @var UuidInterface
      *
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)

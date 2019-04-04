@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Entity;
+namespace App\Domain\Entity\Interfaces;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-interface ImageInterface
+interface ImageInterface extends EntityInterface
 {
     /**
      * @return string|null
@@ -18,8 +18,6 @@ interface ImageInterface
 
     /**
      * @param UploadedFile $file
-     *
-     * @return Image
      */
     public function setFile($file);
 
@@ -29,4 +27,11 @@ interface ImageInterface
      * @return mixed
      */
     public function setFileName(string $file_name);
+
+    /**
+     * @return string|null
+     */
+    public function getAlt(): ?string;
+
+
 }

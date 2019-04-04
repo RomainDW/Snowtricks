@@ -2,15 +2,17 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Interfaces\CommentInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
-class Comment
+class Comment implements CommentInterface
 {
     /**
-     * @var \Ramsey\Uuid\UuidInterface
+     * @var UuidInterface
      *
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
