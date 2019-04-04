@@ -8,12 +8,13 @@
 
 namespace App\Domain\Service;
 
-use App\Domain\Entity\Comment;
+use App\Domain\Entity\Interfaces\CommentInterface;
 use App\Domain\Exception\ValidationException;
+use App\Domain\Service\Interfaces\CommentServiceInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class CommentService
+class CommentService implements CommentServiceInterface
 {
     private $validator;
     private $doctrine;
@@ -31,10 +32,11 @@ class CommentService
     }
 
     /**
-     * @param Comment $comment
+     * @param CommentInterface $comment
+     *
      * @throws ValidationException
      */
-    public function save(Comment $comment)
+    public function save(CommentInterface $comment)
     {
         if (count($errors = $this->validator->validate($comment))) {
             throw new ValidationException($errors);
