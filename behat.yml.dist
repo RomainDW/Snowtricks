@@ -1,0 +1,19 @@
+default:
+    suites:
+        web:
+            contexts:
+                - DoctrineContext:
+                      container: '@service_container'
+                      entityManager: '@doctrine.orm.entity_manager'
+                - Behat\MinkExtension\Context\MinkContext
+            paths: ['%paths.base%/features/features/']
+
+    extensions:
+        Behat\Symfony2Extension:
+            kernel:
+                bootstrap: features/bootstrap/bootstrap.php
+                class: App\Kernel
+        Behat\MinkExtension:
+            sessions:
+                default:
+                    symfony2: ~
