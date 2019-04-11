@@ -82,7 +82,9 @@ class AccountFormHandler implements AccountFormHandlerInterface
             return true;
         }
 
-        $form->getData()->picture->setFile(null);
+        if ($form->getData()->picture) {
+            $form->getData()->picture->setFile(null);
+        }
 
         return false;
     }
