@@ -14,9 +14,9 @@ use App\Domain\Notifier\Interfaces\MailNotifierInterface;
 use Swift_Mailer;
 use Swift_Message;
 use Twig\Environment;
-use Twig_Error_Loader;
-use Twig_Error_Runtime;
-use Twig_Error_Syntax;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class MailNotifier implements MailNotifierInterface
 {
@@ -40,11 +40,11 @@ class MailNotifier implements MailNotifierInterface
      * @param string $from
      * @param string $to
      *
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function notifyResetPassword(User $user, string $from = 'noreply@snowtricks.com', $to = 'romain.ollier34@gmail.com')
+    public function notifyResetPassword(User $user, $to = 'romain.ollier34@gmail.com', string $from = 'noreply@snowtricks.com')
     {
         $message = (new Swift_Message('Réinitialiser votre mot de passe.'))
             ->setFrom($from)
@@ -66,11 +66,11 @@ class MailNotifier implements MailNotifierInterface
      * @param string        $from
      * @param string        $to
      *
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function notifyRegistration(UserInterface $user, string $from = 'noreply@snowtricks.com', $to = 'romain.ollier34@gmail.com')
+    public function notifyRegistration(UserInterface $user, $to = 'romain.ollier34@gmail.com', string $from = 'noreply@snowtricks.com')
     {
         $message = (new Swift_Message('Confirmation de création de compte'))
             ->setFrom($from)
