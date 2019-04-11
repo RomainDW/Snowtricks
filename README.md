@@ -1,7 +1,7 @@
 # Instalation
 - `git clone https://github.com/RomainDW/Snowtricks.git`
 - `composer install`
-- configure the `.env` file with your database configuration : `DATABASE_URL=mysql://user:password@domain/snowtricks`
+- configure the `.env.local` or `.env` file with your database configuration : `DATABASE_URL=mysql://user:password@domain/snowtricks`
 - `php bin/console d:d:c` (creation of the database)
 - `php bin/console d:m:m` (make migrations)
 - `php bin/console d:f:l` (load fixtures)
