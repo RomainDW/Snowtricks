@@ -79,8 +79,7 @@ class AccountActionTest extends KernelTestCase
         $accountAction = new AccountAction(
             $this->formFactory,
             $this->security,
-            $this->accountFormHandler,
-            $this->userService
+            $this->accountFormHandler
         );
 
         static::assertInstanceOf(
@@ -89,19 +88,15 @@ class AccountActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function testCorrectHandling()
     {
-        $request = Request::create('/my-account', 'POST');
+        $request = Request::create('/compte', 'POST');
         $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $accountAction = new AccountAction(
             $this->formFactory,
             $this->security,
-            $this->accountFormHandler,
-            $this->userService
+            $this->accountFormHandler
         );
 
         $user = $this->createMock(User::class);
@@ -117,19 +112,15 @@ class AccountActionTest extends KernelTestCase
         );
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function testWrongHandling()
     {
-        $request = Request::create('/my-account', 'POST');
+        $request = Request::create('/compte', 'POST');
         $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
         $accountAction = new AccountAction(
             $this->formFactory,
             $this->security,
-            $this->accountFormHandler,
-            $this->userService
+            $this->accountFormHandler
         );
 
         $user = $this->createMock(User::class);

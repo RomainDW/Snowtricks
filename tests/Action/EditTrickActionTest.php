@@ -74,7 +74,7 @@ class EditTrickActionTest extends KernelTestCase
             $this->formHandler
         );
 
-        $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['title' => 'test']);
+        $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['title' => 'Trick n°1']);
 
         $this->formHandler->method('handle')->willReturn(true);
 
@@ -99,7 +99,7 @@ class EditTrickActionTest extends KernelTestCase
             $this->formHandler
         );
 
-        $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['title' => 'test']);
+        $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['title' => 'Trick n°1']);
 
         $this->formHandler->method('handle')->willReturn(false);
 

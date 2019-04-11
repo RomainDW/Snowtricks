@@ -51,7 +51,7 @@ class LoadCommentsActionTest extends KernelTestCase
 
     public function testResponse()
     {
-        $trick = $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['title' => 'test']);
+        $trick = $trick = $this->entityManager->getRepository(Trick::class)->findOneBy(['title' => 'Trick n°1']);
         $offset = 0;
         $responder = new TwigResponder($this->twig, $this->urlGenerator);
 
