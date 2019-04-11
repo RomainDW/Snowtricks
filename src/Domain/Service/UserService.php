@@ -17,9 +17,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig_Error_Loader;
 use Twig_Error_Runtime;
-use Twig_Error_Syntax;
 
 class UserService implements UserServiceInterface
 {
@@ -62,12 +64,12 @@ class UserService implements UserServiceInterface
     }
 
     /**
-     * @param $user
+     * @param UserInterface $user
      *
      * @throws ValidationException
-     * @throws Twig_Error_Loader
-     * @throws Twig_Error_Runtime
-     * @throws Twig_Error_Syntax
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function register(UserInterface $user)
     {
@@ -75,7 +77,7 @@ class UserService implements UserServiceInterface
 
         $this->userId = $user->getId();
 
-        $this->notifier->notifyRegistration($user);
+        $this->notifier->notifyRegistration($user, $user->getEmail());
     }
 
     /**
@@ -91,6 +93,7 @@ class UserService implements UserServiceInterface
 
     /**
      * @param UserInterface $user
+     *
      * @return bool
      */
     public function verification(UserInterface $user): bool
@@ -105,6 +108,7 @@ class UserService implements UserServiceInterface
             $manager = $this->doctrine->getManager();
             $manager->persist($user);
             $manager->flush();
+
             return true;
         }
     }
@@ -116,6 +120,7 @@ class UserService implements UserServiceInterface
 
     /**
      * @param string $email
+     *
      * @throws Exception
      */
     public function forgotPassword(string $email)
@@ -130,10 +135,9 @@ class UserService implements UserServiceInterface
 
         if ($user instanceof User) {
             $this->save($user);
-            $this->notifier->notifyResetPassword($user);
+            $this->notifier->notifyResetPassword($user, $email);
         }
 
         $this->flashBag->add('success', 'Un email vous a été envoyé avec un lien de réinitialisation de mot de passe.');
-
     }
 }
