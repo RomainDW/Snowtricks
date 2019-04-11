@@ -11,7 +11,7 @@
         "node-sass": "^4.11.0",
         "postcss-loader": "^3.0.0",
         "sass-loader": "7.0.1",
-        "webpack-notifier": "^1.6.0"
+        "webpack-notifier": "^1.7.0"
     },
     "license": "UNLICENSED",
     "private": true,
