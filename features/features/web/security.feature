@@ -1,3 +1,4 @@
+@Security
 Feature: Security
 
   Scenario: new registration
