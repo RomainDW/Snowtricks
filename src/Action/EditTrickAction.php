@@ -45,7 +45,7 @@ class EditTrickAction implements EditTrickInterface
     }
 
     /**
-     * @Route("/trick/edit/{slug}", name="app_edit_trick")
+     * @Route("/figure/edition/{slug}", name="app_edit_trick")
      *
      * @param Trick                  $trick
      * @param Request                $request

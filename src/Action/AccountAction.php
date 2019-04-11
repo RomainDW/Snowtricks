@@ -52,7 +52,7 @@ class AccountAction implements AccountActionInterface
     }
 
     /**
-     * @Route("/my-account", name="app_account")
+     * @Route("/compte", name="app_account")
      *
      * @param Request                $request
      * @param TwigResponderInterface $responder

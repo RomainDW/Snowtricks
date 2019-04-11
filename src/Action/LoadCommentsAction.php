@@ -40,7 +40,7 @@ class LoadCommentsAction implements LoadCommentsInterface
      *
      * @return Response
      *
-     * @Route("/load-comments/{slug}/{offset}", name="loadComments", methods={"POST"})
+     * @Route("/charger-commentaires/{slug}/{offset}", name="loadComments", methods={"POST"})
      */
     public function __invoke(Trick $trick, $offset, TwigResponderInterface $responder)
     {

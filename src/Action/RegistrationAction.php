@@ -64,7 +64,7 @@ class RegistrationAction implements RegistrationActionInterface
     }
 
     /**
-     * @Route("/register", name="app_register")
+     * @Route("/enregistrement", name="app_register")
      *
      * @param Request                $request
      * @param TwigResponderInterface $responder

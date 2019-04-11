@@ -33,7 +33,7 @@ class MailSentAction implements MailSentActionInterface
     }
 
     /**
-     * @Route("/register/{id}", name="app_mail_sent")
+     * @Route("/enregistrement/{id}", name="app_mail_sent")
      *
      * @param User                   $user
      * @param TwigResponderInterface $responder

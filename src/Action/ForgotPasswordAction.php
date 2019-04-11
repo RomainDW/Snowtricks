@@ -43,7 +43,7 @@ class ForgotPasswordAction implements ForgotPasswordInterface
     }
 
     /**
-     * @Route("/forgot-password", name="app_forgot_password")
+     * @Route("/mot-de-pass-oublie", name="app_forgot_password")
      *
      * @param Request                $request
      * @param TwigResponderInterface $responder

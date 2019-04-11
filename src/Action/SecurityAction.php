@@ -35,7 +35,7 @@ class SecurityAction implements SecurityActionInterface
     }
 
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/connexion", name="app_login")
      *
      * @param AuthenticationUtils    $authenticationUtils
      * @param TwigResponderInterface $responder

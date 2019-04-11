@@ -74,7 +74,7 @@ class ShowTrickAction implements ShowTrickActionInterface
     }
 
     /**
-     * @Route("/trick/show/{slug}", name="app_show_trick")
+     * @Route("/figure/voir/{slug}", name="app_show_trick")
      *
      * @param Trick                  $trick
      * @param Request                $request

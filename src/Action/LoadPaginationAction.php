@@ -33,7 +33,7 @@ class LoadPaginationAction implements LoadPaginationInterface
     }
 
     /**
-     * @Route("/more/{offset}", name="loadPagination", methods={"POST"})
+     * @Route("/plus/{offset}", name="loadPagination", methods={"POST"})
      *
      * @param $offset
      * @param TwigResponderInterface $responder

@@ -33,7 +33,7 @@ class DeleteTrickAction implements DeleteTrickActionInterface
     }
 
     /**
-     * @Route("/trick/delete/{slug}", methods={"POST"}, name="app_delete_trick")
+     * @Route("/figure/supprimer/{slug}", methods={"POST"}, name="app_delete_trick")
      *
      * @param Trick                  $trick
      * @param TwigResponderInterface $responder

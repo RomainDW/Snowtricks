@@ -63,7 +63,7 @@ class CreateTrickAction implements CreateTrickActionInterface
      * @return Response
      *
      * @throws \Exception
-     * @Route("/trick/add", name="app_create_trick")
+     * @Route("/figure/creation", name="app_create_trick")
      */
     public function __invoke(Request $request, TwigResponderInterface $responder)
     {

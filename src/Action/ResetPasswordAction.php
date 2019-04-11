@@ -61,7 +61,7 @@ class ResetPasswordAction implements ResetPasswordInterface
     }
 
     /**
-     * @Route("/reset-password/{vkey}", name="app_reset_password")
+     * @Route("/réinitialiser-mdp/{vkey}", name="app_reset_password")
      *
      * @param User                   $user
      * @param Request                $request
