@@ -13,6 +13,7 @@ use App\Domain\Service\Interfaces\UserServiceInterface;
 use App\Handler\FormHandler\Interfaces\ResetPasswordFormHandlerInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ResetPasswordFormHandler implements ResetPasswordFormHandlerInterface
@@ -23,6 +24,10 @@ class ResetPasswordFormHandler implements ResetPasswordFormHandlerInterface
      * @var UserServiceInterface
      */
     private $userService;
+    /**
+     * @var FlashBagInterface
+     */
+    private $flashBag;
 
     /**
      * ResetPasswordFormHandler constructor.
@@ -31,11 +36,12 @@ class ResetPasswordFormHandler implements ResetPasswordFormHandlerInterface
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param UserServiceInterface         $userService
      */
-    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, UserServiceInterface $userService)
+    public function __construct(UserRepository $userRepository, UserPasswordEncoderInterface $passwordEncoder, UserServiceInterface $userService, FlashBagInterface $flashBag)
     {
         $this->userRepository = $userRepository;
         $this->passwordEncoder = $passwordEncoder;
         $this->userService = $userService;
+        $this->flashBag = $flashBag;
     }
 
     /**
@@ -46,7 +52,13 @@ class ResetPasswordFormHandler implements ResetPasswordFormHandlerInterface
      */
     public function handle(FormInterface $form, UserInterface $user): bool
     {
-        if ($form->isSubmitted() && $form->isValid() && $user->exist($form->get('email')->getData())) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$user->exist($form->get('email')->getData())) {
+                $this->flashBag->add('error', 'mauvaise adresse e-mail.');
+
+                return false;
+            }
+
             $password = $this->passwordEncoder->encodePassword($user, $form->get('plainPassword')->getData());
             $user->newPassword($password);
             $user->eraseCredentials();
